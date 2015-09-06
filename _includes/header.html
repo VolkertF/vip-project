@@ -13,17 +13,6 @@
 					<a href="{{ site.baseurl }}/index.html">home</a>
 				</li>			
 			{% endif %}
-			{% if page.path == "archive.html" %}
-			<span class="title">
-				<li>
-					<a href="{{ site.baseurl }}/archive.html">archive</a>
-				</li>
-			</span>			
-			{% else %}
-				<li>
-					<a href="{{ site.baseurl }}/archive.html">archive</a>
-				</li>			
-			{% endif %}
 			{% if page.path == "about.html" %}
 			<span class="title">
 				<li>
@@ -44,6 +33,28 @@
 			{% else %}
 				<li>
 					<a href="{{ site.baseurl }}/team.html">meet the team</a>
+				</li>			
+			{% endif %}
+			{% if page.path == "documentation.html" %}
+			<span class="title">
+				<li>
+					<a href="{{ site.baseurl }}/documentation.html">documentation</a>
+				</li>
+			</span>			
+			{% else %}
+				<li>
+					<a href="{{ site.baseurl }}/documentation.html">documentation</a>
+				</li>			
+			{% endif %}
+			{% if page.path == "archive.html" %}
+			<span class="title">
+				<li>
+					<a href="{{ site.baseurl }}/archive.html">archive</a>
+				</li>
+			</span>			
+			{% else %}
+				<li>
+					<a href="{{ site.baseurl }}/archive.html">archive</a>
 				</li>			
 			{% endif %}
 		</div>

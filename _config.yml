@@ -1,6 +1,6 @@
 # Site settings
-title: VIP - Video Information Project
-motto: VIP - The cool way to organize your virtual video collection.
+title: "VIP"
+motto: The cool way to organize your virtual video collection
 email: casapaoc@mail.gvsu.edu
 description: > # this means to ignore newlines until "baseurl:"
   VIP is the cool way to organize your virtual video collection.

@@ -290,6 +290,25 @@ li {
   color: #666; }
 
 /**
+* Team page
+*/
+.team-member {
+  display: block;
+  clear: both; }
+
+.team-member-name {
+  display: inline; }
+
+.team-image {
+  height: 160px;
+  width: 160px;
+  float: left;
+  margin: 10px 15px 15px 10px; }
+
+.team-icebreaker {
+  padding: 15px; }
+
+/**
  * Footer
  */
 .footer {

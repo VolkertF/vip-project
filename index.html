@@ -3,7 +3,7 @@ layout: default
 title: VIP - Home
 ---
 <h1>VIP: Video Information Project</h1>
-<!-- <div class="home"> -->
+<div class="home">
   <ul class="post-list">
     {% for post in site.posts %}
       <li>
@@ -13,11 +13,11 @@ title: VIP - Home
         </h3>
         <span class="post-meta">{{ post.date | date: "%b %-d, %Y %H:%m" }}</span>
         <hr id="line">
-		<!-- <div class="content"> -->
+		<div class="content">
 		{{ post.excerpt }}
-        <!-- </div> -->
+        </div>
 		<br>
       </li>
     {% endfor %}
   </ul>
-<!-- </div> -->
+</div>

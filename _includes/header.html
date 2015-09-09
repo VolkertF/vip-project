@@ -46,6 +46,17 @@
 					<a href="{{ site.baseurl }}/documentation.html">documentation</a>
 				</li>			
 			{% endif %}
+			{% if page.path == "journals.html" %}
+			<span class="title">
+				<li>
+					<a href="{{ site.baseurl }}/journals.html">Journals</a>
+				</li>
+			</span>			
+			{% else %}
+				<li>
+					<a href="{{ site.baseurl }}/journals.html">Journals</a>
+				</li>			
+			{% endif %}
 			{% if page.path == "archive.html" %}
 			<span class="title">
 				<li>

@@ -44,13 +44,10 @@ title: VIP - Meet the Team
 <div id="gizem" class="team-member">
 	<hr><br>
 	<h2 class="team-member-name">Gizem Boğa</h2>&nbsp;
-	<small><em>(gizembg@gmail.com)</em></small>
+	<small><em>(email@domain.com)</em></small>
 	<br><br>
 	<img src="#" class="team-image">
-	<p class="team-icebreaker">My name is Gizem!
-I am 22 years old and I am in my seventh semester of Computer Engineering. Actually, my first six semester was in Ankara, today I study at Hochschule Hannover for my seventh semester. In my free times, I would like to spend time with myself and also with my guitar. Moreover, I like to spend time with my friends, go outside together. Also, I like travelling as long as my budget enıugh! My favorite sports are Badminton and swimming.
-Technicially, I have been working with Java, C, SQL. Also I have some experiences on C#.
-I worked on Database and Java-GUI  in my university projects. Additionally, I am interested in Design Patterns. I have done a small project about MVVM pattern during my internship.</p>
+	<p class="team-icebreaker">Icebreaker text here!</p>
 	<br>
 </div>
 

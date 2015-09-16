@@ -1,9 +1,11 @@
 package com.vip.window;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 
 import javax.swing.BorderFactory;
@@ -23,13 +25,17 @@ public class VipFrame extends JFrame {
 	public VipFrame() {
 		super("VipFrame");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		defaultInsets = new Insets(2, 2, 2, 2);
 		
+		buildPanels();
 		pack();
+		
 	}
 
 	private JPanel jpnlExplorer;
 	private JPanel jpnlMovie;
 	private JPanel jpnlIntel;
+	private Insets defaultInsets;
 
 	/**
 	 * Helping routine for creating  components and adding them to a GridBagLayout
@@ -59,14 +65,26 @@ public class VipFrame extends JFrame {
 	
 	/**
 	 * Create Subpanels
+	 * Have to be called before any other building-methods
 	 */
 	private void buildPanels() {
 		jpnlExplorer = new JPanel();
 		jpnlExplorer.setLayout(new FlowLayout());
-		jpnlExplorer.setBorder(BorderFactory.createEmptyBorder());
+		jpnlExplorer.setBorder(BorderFactory.createTitledBorder("Explorer"));
+		
+		jpnlMovie = new JPanel();
+		jpnlMovie.setLayout(new BorderLayout());
+		jpnlMovie.setBorder(BorderFactory.createTitledBorder("Movie"));
+		
+		jpnlIntel = new JPanel();
+		jpnlIntel.setLayout(new BorderLayout());
+		jpnlIntel.setBorder(BorderFactory.createTitledBorder("Intel"));
 
-		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-		getContentPane().add(jpnlExplorer);
+		getContentPane().setLayout(new GridBagLayout());
+		
+		addComponent(0, 0, 1, 2, 0.0, 0.0, getContentPane(), jpnlExplorer, defaultInsets);
+		addComponent(1, 0, 1, 1, 1.0, 1.0, getContentPane(), jpnlMovie, defaultInsets);
+		addComponent(1, 1, 1, 1, 0.0, 0.0, getContentPane(), jpnlIntel, defaultInsets);
 	}
 	
 	

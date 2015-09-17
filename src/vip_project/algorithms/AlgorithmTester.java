@@ -59,7 +59,7 @@ public class AlgorithmTester {
 	
 	
 	/**
-	 * Here is the main method. It runs a looping user dialouge so we
+	 * Here is the main method. It runs a looping user dialogue so we
 	 * we can interactively test different search and sorting cases.
 	 */
 	public static void main(String[] args) {		
@@ -105,12 +105,18 @@ public class AlgorithmTester {
 		try {
 			int input = Integer.parseInt(text);
 			switch(input) {
-				case 1: 	alphabeticSort();
+				case 1: 	printSortMessages(
+								"Alphabetic Test", 
+								alphabeticData
+							);
 							break;
-				case 2: 	alphanumericSort();
+				case 2: 	printSortMessages(
+								"Alphanumeric Test",
+								alphanumericData
+							);
 							break;
-				case 3: 
-				case 4:
+				case 3: 	
+				case 4:		
 				default:	System.out.println("Invalid number.");
 							return true;
 			}
@@ -122,41 +128,9 @@ public class AlgorithmTester {
 	
 	
 	/**
-	 * Test the built-in sort method on simple alphabetic strings.
-	 */
-	private static void alphabeticSort() {
-		
-		// Create a temporary local variable so the original
-		// data set does not get modified which allows use to
-		// reuse it in other tests.
-		ArrayList<String> result = new ArrayList<String>();
-		result.addAll(alphabeticData);
-		
-		// Now we sort it!
-		Collections.sort(result);
-		
-		// Display testing messages.
-		printSortMessages("alphabeticSort", alphabeticData, result);
-	}
-	
-	
-	/**
-	 * Test the built-in sort method on more complicated
-	 * alphanumeric strings.
-	 */
-	private static void alphanumericSort() {
-		ArrayList<String> result = new ArrayList<String>();
-		result.addAll(alphanumericData);
-		Collections.sort(result);
-		printSortMessages("alphanumericSort", alphanumericData, result);
-	}
-	
-	
-	/**
-	 * This method simply prints the elements of the unsorted
-	 * array and then the sorted result in an organized manner.
-	 * It is here to separate the display logic from the actual
-	 * testing logic and helps make testing a little more modular.
+	 * This method tests the built-in sort. It performs the sort
+	 * and prints the original unsorted array and then the sorted
+	 * array.
 	 * 
 	 * @param testName		The name of the test being performed
 	 * @param toSort		The set of strings to be sorted
@@ -164,18 +138,29 @@ public class AlgorithmTester {
 	 */
 	private static void printSortMessages(
 		String testName,
-		ArrayList<String> toSort, 
-		ArrayList<String> result
+		ArrayList<String> dataToSort
 	)
 	{
-		System.out.println("|--------- BEGIN " + testName + "---------|");
-		int length = toSort.size();
 		
+		// Create a temporary local variable so the original
+		// data set does not get modified which allows use to
+		// reuse it in other tests.
+		ArrayList<String> result = new ArrayList<String>();
+		result.addAll(dataToSort);
+		
+		// Now we sort it!
+		Collections.sort(result);
+		
+		// Keep this info in a local variable so we don't have
+		// to keep calling the size method in our loops
+		int length = dataToSort.size();
+		
+		// Print messages
+		System.out.println("|--------- BEGIN " + testName + "---------|");
 		System.out.println("Initial array:");
 		for(int i = 0; i < length; i++) {
-			System.out.println("Element " + i + ": " + toSort.get(i) + "");
+			System.out.println("Element " + i + ": " + dataToSort.get(i) + "");
 		}
-
 		System.out.println("\nAfter sort:");
 		for(int i = 0; i < length; i++) {
 			System.out.println("Element " + i + ": " + result.get(i) + "");

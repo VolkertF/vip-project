@@ -9,10 +9,8 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -96,6 +94,13 @@ public class VipFrame extends JFrame {
 		cont.add(comp, gbc);
 	}
 	
+	/**
+	 * Helping routine for creating ActionListeners and add them to menuItems based on opening the standard browser and open a URL.
+	 * Uses URI and a menuItem.
+	 * @param menuItem The Item that the URL should be added to
+	 * @param url The URL that should open when you click the MenuItem
+	 * @throws URISyntaxException 
+	 */
 	private static void addURLActionListenerToMenuBarItem(JMenuItem menuItem, final URI url) throws URISyntaxException {
 		ActionListener al = new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -204,33 +209,84 @@ public class VipFrame extends JFrame {
 		//Here some information about the currently selected video file will be stored.
 	}
 	
+	/**
+	 * This JMenuBar makes the windowmenu come alive
+	 */
 	private JMenuBar jmbMenu;
-	private JMenu jmFile;
-	private JMenuItem jmiOpenVLC;
-	private JMenuItem jmiClose;
-	private JMenu jmHelp;
-	private JMenuItem jmiTutorial;
-	private JMenu jmAbout;
-	private JMenuItem jmiWebsite;
-	private JMenuItem jmiMeetTheTeam;
-	private JMenuItem jmiWatchCode;
-	private JMenuItem jmiJournals;
 	
+	/**
+	 * The submenu File containing a direct way to open VLC and to close the window without pressing the red X.s
+	 */
+	private JMenu jmFile;
+	
+	/**
+	 * MenuItem which allows to open the VLC Player apart from the program. //Dont know if this thing has a future use?!
+	 */
+	private JMenuItem jmiOpenVLC;
+	
+	/**
+	 * MenuItem which allows the user to close the program.
+	 */
+	private JMenuItem jmiClose;
+	
+	/**
+	 * The submenu Help containing the tutorial
+	 */
+	private JMenu jmHelp;
+	
+	/**
+	 * MenuItem from which the user will get a pop-up window with a short tutorial on how to use the program.
+	 */
+	private JMenuItem jmiTutorial;
+	
+	/**
+	 * The submenu About containing the website, the team, the code on GitHub and the journals so far
+	 */
+	private JMenu jmAbout;
+	
+	/**
+	 * MenuItem from which the user can access the website of the project
+	 */
+	private JMenuItem jmiWebsite;
+	
+	/**
+	 * MenuItem from which the user can access the team descriptions
+	 */
+	private JMenuItem jmiMeetTheTeam;
+	
+	/**
+	 * MenuItem from which the user can look up the code on GitHub
+	 */
+	private JMenuItem jmiWatchCode;
+	
+	/**
+	 * MenuItem from which the user can access the teams journals
+	 */
+	private JMenuItem jmiJournals;
+	//More menu stuff to come
+	
+	/**
+	 * Method for creating the menu with all submenus and menuItems + all eventhandlers
+	 */
 	private void buildMenuBar() {
+		//MenuBar
 		jmbMenu = new JMenuBar();
 		setJMenuBar(jmbMenu);
 		jmbMenu.setVisible(true);
 		
+		//MenuFile
 		jmFile = new JMenu("File");
 		jmiOpenVLC = new JMenuItem("Open VLC Player");
 		jmiClose = new JMenuItem("Close");
 		jmFile.add(jmiOpenVLC);
 		jmFile.add(jmiClose);
 		
+		//MenuHelp
 		jmHelp = new JMenu("Help");
 		jmiTutorial = new JMenuItem("Tutorial");
 		jmHelp.add(jmiTutorial);
 		
+		//MenuAbout
 		jmAbout = new JMenu("About");
 		jmiWebsite = new JMenuItem("Website");
 		jmiMeetTheTeam = new JMenuItem("Meet the Team");
@@ -241,10 +297,12 @@ public class VipFrame extends JFrame {
 		jmAbout.add(jmiWatchCode);
 		jmAbout.add(jmiJournals);
 		
+		//Adding all menus to the actual menuBar
 		jmbMenu.add(jmFile);
 		jmbMenu.add(jmHelp);
 		jmbMenu.add(jmAbout);
 		
+		//Adding ActionListeners with URLs
 		try {
 			addURLActionListenerToMenuBarItem(jmiWebsite, new URI("http://cyril-casapao.github.io/vip-project/"));
 			addURLActionListenerToMenuBarItem(jmiMeetTheTeam, new URI("http://cyril-casapao.github.io/vip-project/team.html"));
@@ -254,6 +312,7 @@ public class VipFrame extends JFrame {
 			e.printStackTrace();
 		}
 		
+		//Adding AL to the close button
 		jmiClose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				dispose();

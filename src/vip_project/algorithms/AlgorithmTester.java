@@ -57,12 +57,21 @@ public class AlgorithmTester {
 		)
 	);
 	
+	private static ArrayList<String> allData;
+	
 	
 	/**
 	 * Here is the main method. It runs a looping user dialogue so we
 	 * we can interactively test different search and sorting cases.
+	 * It also initializes an ArrayList of all the test items which
+	 * is used in testing the search functionality.
 	 */
 	public static void main(String[] args) {		
+		allData = new ArrayList<String>();
+		allData.addAll(alphabeticData);
+		allData.addAll(alphanumericData);
+		
+		// Begin dialogue loop
 		Scanner scan = new Scanner(System.in);
 		boolean wantToExit = false;
 		System.out.println("Welcome to the algorithm tester." +
@@ -75,13 +84,11 @@ public class AlgorithmTester {
 					"purely alphabetic strings.");
 			System.out.println("2) Alphanumeric Sort - Sort an array of " +
 					"alphanumeric strings.");
-			System.out.println("3) Alphabetic Search - Serach an array " +
-					"of purely alphabetic strings.");
-			System.out.println("4) Alphanumeric Search - Serach an array " +
-					"of alphanumeric strings.");
+			System.out.println("3) Search - Serach an array of " +
+					"alphanumeric strings.");
 			
 			String input = scan.nextLine();
-			wantToExit = checkInput(input);
+			wantToExit = checkInput(input, scan);
 		}
 		scan.close();
 		System.out.println("Exiting...");
@@ -92,12 +99,17 @@ public class AlgorithmTester {
 	/**
 	 * This method decides what to do based on user input. It either
 	 * calls one of the testing methods or it halts execution of the
-	 * testing program.
+	 * testing program. 
+	 *
+	 * We need to receive a scanner because instantiating and closing
+	 * a new local scanner also closes System.in which is not what 
+	 * we want.
 	 * 
 	 * @param 	text		The input to check
+	 * @param	scan		The scanner that receives input
 	 * @return 	boolean		True to exit; false to continue
 	 */
-	private static boolean checkInput(String text) {
+	private static boolean checkInput(String text, Scanner scan) {
 		if(text.equals("EXIT")) {
 			return true;
 		}
@@ -115,8 +127,10 @@ public class AlgorithmTester {
 								alphanumericData
 							);
 							break;
-				case 3: 	
-				case 4:		
+				case 3: 	System.out.println("Enter a title to find.");
+							String toFind = scan.nextLine();
+							printSearchMessages("Search", toFind, allData);
+							break;
 				default:	System.out.println("Invalid number.");
 							return true;
 			}
@@ -165,6 +179,26 @@ public class AlgorithmTester {
 		for(int i = 0; i < length; i++) {
 			System.out.println("Element " + i + ": " + result.get(i) + "");
 		}
+		System.out.println("|--------- END " + testName + "---------|\n");
+	}
+	
+	
+	/**
+	 * This method tests our searching.
+	 * 
+	 * @param testName	The name of the test being performed
+	 * @param toFind	The string we are searching for
+	 * @param data		The data set we are searching through
+	 */
+	private static void printSearchMessages(
+		String testName,
+		String toFind,
+		ArrayList<String> data
+	)
+	{
+		// Print messages
+		System.out.println("|--------- BEGIN " + testName + "---------|");
+		System.out.println("You searched for " + toFind + ".");
 		System.out.println("|--------- END " + testName + "---------|\n");
 	}
 }

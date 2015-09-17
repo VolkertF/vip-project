@@ -137,7 +137,7 @@ public class VipFrame extends JFrame {
 		
 		addComponent(0, 0, 1, 2, 0.0, 0.0, getContentPane(), jpnlExplorer, defaultInsets);
 		addComponent(1, 0, 1, 1, 1.0, 1.0, getContentPane(), jpnlMovie, defaultInsets);
-		addComponent(1, 1, 1, 1, 0.0, 0.0, getContentPane(), jpnlIntel, defaultInsets);
+		addComponent(1, 1, 1, 1, 0.1, 0.1, getContentPane(), jpnlIntel, defaultInsets);
 	}
 	
 	/**

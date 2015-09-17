@@ -249,7 +249,7 @@ public class VipFrame extends JFrame {
 			addURLActionListenerToMenuBarItem(jmiWebsite, new URI("http://cyril-casapao.github.io/vip-project/"));
 			addURLActionListenerToMenuBarItem(jmiMeetTheTeam, new URI("http://cyril-casapao.github.io/vip-project/team.html"));
 			addURLActionListenerToMenuBarItem(jmiWatchCode, new URI("https://github.com/cyril-casapao/vip-project"));
-			addURLActionListenerToMenuBarItem(jmiJournals, new URI("https://github.com/cyril-casapao/vip-project"));
+			addURLActionListenerToMenuBarItem(jmiJournals, new URI("http://cyril-casapao.github.io/vip-project/journals.html"));
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}

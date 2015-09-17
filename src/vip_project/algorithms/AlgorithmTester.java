@@ -57,6 +57,8 @@ public class AlgorithmTester {
 		)
 	);
 	
+	// This is initialized in the main method; it is
+	// a combination of the above two ArrayLists
 	private static ArrayList<String> allData;
 	
 	
@@ -184,7 +186,9 @@ public class AlgorithmTester {
 	
 	
 	/**
-	 * This method tests our searching.
+	 * This method tests out the built-in binary search. It performs
+	 * the search and prints the location at which the search key
+	 * was found.
 	 * 
 	 * @param testName	The name of the test being performed
 	 * @param toFind	The string we are searching for
@@ -196,9 +200,61 @@ public class AlgorithmTester {
 		ArrayList<String> data
 	)
 	{
+		// Perform the search
+		int result = search(toFind);
+		int length = data.size();
+		
 		// Print messages
 		System.out.println("|--------- BEGIN " + testName + "---------|");
-		System.out.println("You searched for " + toFind + ".");
+		System.out.println("Searching this data set for " + toFind + "...");
+		
+		for(int i = 0; i < length; i++){
+			System.out.println("Element " + i + ": " + data.get(i) + "");
+		}
+	
+		if(result >= 0) {
+			System.out.println("\nFound at index " + result + ".");
+		} else {
+			System.out.println(toFind + " was not found in the data set.");
+		}
+		
 		System.out.println("|--------- END " + testName + "---------|\n");
+	}
+	
+	
+	/**
+	 * This method searches an ArrayList for the given string. Instead
+	 * of writing our own specialized search, I think it would be best 
+	 * to simply sort the ArrayList using the sort method and then
+	 * perform a binary search. 
+	 * 
+	 * The built-in search is designed to run in O(n*log(n)) time. 
+	 * Adding a binary search will put our time at O(n*log(n) + log(n))
+	 * which isn't too bad.
+	 * 
+	 * If we want to make the search case insensitive, we will need to
+	 * run the block of code that I commented out. It's a brute force
+	 * loop through the ArrayList that makes all strings lower case.
+	 * This will add an extra running time factor of O(n) but I think
+	 * it would be worth it. Who wants a case sensitive search anyway?
+	 * 
+	 * @param toFind	The string to find
+	 * @return int		The index of the element if found; -1 if not found
+	 */
+	private static int search(String toFind){
+		ArrayList<String> sortedData = new ArrayList<String>();
+		sortedData.addAll(allData);
+		Collections.sort(sortedData);
+		
+		// Uncomment this block of code for case insensitive search
+		/**
+		int length = sortedData.size();
+		for(int i = 0; i < length; i++) {
+			sortedData.set(i, sortedData.get(i).toLowerCase());
+		}
+		*/
+		
+		String[] sortedArray = sortedData.toArray(new String[sortedData.size()]);
+		return Arrays.binarySearch(sortedArray, toFind);	
 	}
 }

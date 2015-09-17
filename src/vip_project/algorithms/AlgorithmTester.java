@@ -203,6 +203,7 @@ public class AlgorithmTester {
 		// Perform the search
 		int result = search(toFind);
 		int length = data.size();
+		System.out.println("Result is " + result);
 		
 		// Print messages
 		System.out.println("|--------- BEGIN " + testName + "---------|");
@@ -211,7 +212,7 @@ public class AlgorithmTester {
 		for(int i = 0; i < length; i++){
 			System.out.println("Element " + i + ": " + data.get(i) + "");
 		}
-	
+		
 		if(result >= 0) {
 			System.out.println("\nFound at index " + result + ".");
 		} else {
@@ -239,7 +240,8 @@ public class AlgorithmTester {
 	 * it would be worth it. Who wants a case sensitive search anyway?
 	 * 
 	 * @param toFind	The string to find
-	 * @return int		The index of the element if found; -1 if not found
+	 * @return int		Index of the element if found; 
+	 * 					A negative number if not found
 	 */
 	private static int search(String toFind){
 		ArrayList<String> sortedData = new ArrayList<String>();

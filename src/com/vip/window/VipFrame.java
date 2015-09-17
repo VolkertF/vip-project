@@ -3,16 +3,28 @@ package com.vip.window;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -32,6 +44,7 @@ public class VipFrame extends JFrame {
 		buildExplorerGUI();
 		buildMovieGUI();
 		buildIntelGUI();
+		buildMenuBar();
 		pack();
 	}
 
@@ -81,6 +94,19 @@ public class VipFrame extends JFrame {
 		gbc.weighty = weighty;
 		gbc.insets = insets;
 		cont.add(comp, gbc);
+	}
+	
+	private static void addURLActionListenerToMenuBarItem(JMenuItem menuItem, final URI url) throws URISyntaxException {
+		ActionListener al = new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					Desktop.getDesktop().browse(url);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		menuItem.addActionListener(al);
 	}
 	
 	/**
@@ -177,6 +203,83 @@ public class VipFrame extends JFrame {
 	private void buildIntelGUI() {
 		//Here some information about the currently selected video file will be stored.
 	}
+	
+	private JMenuBar jmbMenu;
+	private JMenu jmFile;
+	private JMenuItem jmiOpenVLC;
+	private JMenuItem jmiClose;
+	private JMenu jmHelp;
+	private JMenuItem jmiTutorial;
+	private JMenu jmAbout;
+	private JMenuItem jmiWebsite;
+	private JMenuItem jmiMeetTheTeam;
+	private JMenuItem jmiWatchCode;
+	private JMenuItem jmiJournals;
+	
+	private void buildMenuBar() {
+		jmbMenu = new JMenuBar();
+		setJMenuBar(jmbMenu);
+		jmbMenu.setVisible(true);
+		
+		jmFile = new JMenu("File");
+		jmiOpenVLC = new JMenuItem("Open VLC Player");
+		jmiClose = new JMenuItem("Close");
+		jmFile.add(jmiOpenVLC);
+		jmFile.add(jmiClose);
+		
+		jmHelp = new JMenu("Help");
+		jmiTutorial = new JMenuItem("Tutorial");
+		jmHelp.add(jmiTutorial);
+		
+		jmAbout = new JMenu("About");
+		jmiWebsite = new JMenuItem("Website");
+		jmiMeetTheTeam = new JMenuItem("Meet the Team");
+		jmiWatchCode = new JMenuItem("Watch the Code in GitHub");
+		jmiJournals = new JMenuItem("Programming-journals");
+		jmAbout.add(jmiWebsite);
+		jmAbout.add(jmiMeetTheTeam);
+		jmAbout.add(jmiWatchCode);
+		jmAbout.add(jmiJournals);
+		
+		jmbMenu.add(jmFile);
+		jmbMenu.add(jmHelp);
+		jmbMenu.add(jmAbout);
+		
+		try {
+			addURLActionListenerToMenuBarItem(jmiWebsite, new URI("http://cyril-casapao.github.io/vip-project/"));
+			addURLActionListenerToMenuBarItem(jmiMeetTheTeam, new URI("http://cyril-casapao.github.io/vip-project/team.html"));
+			addURLActionListenerToMenuBarItem(jmiWatchCode, new URI("https://github.com/cyril-casapao/vip-project"));
+			addURLActionListenerToMenuBarItem(jmiJournals, new URI("https://github.com/cyril-casapao/vip-project"));
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		
+		jmiClose.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				dispose();
+			}
+		});
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

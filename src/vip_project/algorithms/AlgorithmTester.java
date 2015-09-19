@@ -14,64 +14,75 @@ import java.util.Scanner;
  * use if/when we decide to make custom Movie classes and the like. 
  * 
  * @author Cyril Casapao
+ * 
+ * @TODO I think we may need to use Maps/HashMaps instead of 
+ * 		 ArrayLists. The JSON we receive from OMDb already has
+ * 		 a key-value relationship and we can preserve that using
+ * 		 a Map or HashMap.
  */
 public class AlgorithmTester {
 
 	// Data sets to be used in tests
-	private static ArrayList<String> alphabeticData =
-		new ArrayList<String>(Arrays.asList(
-			"Star Wars",
-			"Indiana Jones",
-			"Harry Potter and the Order of the Phoenix",
-			"Pulp Fiction",
-			"Up",
-			"The Incredibles",
-			"Napoleon Dynamite",
-			"The Lego Movie",
-			"My Neighbor Totoro",
-			"AAA",
-			"AaA",
-			"Monty Python and the Holy Grail"
-		)
-	);
-	
-	private static ArrayList<String> alphanumericData = 
-		new ArrayList<String>(Arrays.asList(
-			"Star Wars Episode 5: The Empire Strikes Back",
-			"Rocky II",
-			"Star Wars Episode 3: Revenge of the Sith",
-			"Rocky VI",
-			"A Hard Day's Night",
-			"Scott Pilgrim vs. the World",
-			"Rocky IV",
-			"Rocky V",
-			"Help!",
-			"Rocky III",
-			"007: James Bond",
-			"Up",
-			"A Question?",
-			"Monty Python and the Holy Grail",
-			"Monty Python & the Holy Grail",
-			"Airplane!",
-			"03: Bames Jond"
-		)
-	);
+	private ArrayList<String> alphabeticData;
+	private ArrayList<String> alphanumericData;
 	
 	// This is initialized in the main method; it is
 	// a combination of the above two ArrayLists
 	private static ArrayList<String> allData;
 	
+	/**
+	 * Constructor. It initializes the test data sets.
+	 */
+	public AlgorithmTester() {
+		alphabeticData = new ArrayList<String>(Arrays.asList(
+						"Star Wars",
+						"Indiana Jones",
+						"Harry Potter and the Order of the Phoenix",
+						"Pulp Fiction",
+						"Up",
+						"The Incredibles",
+						"Napoleon Dynamite",
+						"The Lego Movie",
+						"My Neighbor Totoro",
+						"AAA",
+						"AaA",
+						"Monty Python and the Holy Grail"
+					)
+		);
+		
+		alphanumericData = new ArrayList<String>(Arrays.asList(
+						"Star Wars Episode 5: The Empire Strikes Back",
+						"Rocky II",
+						"Star Wars Episode 3: Revenge of the Sith",
+						"Rocky VI",
+						"A Hard Day's Night",
+						"Scott Pilgrim vs. the World",
+						"Rocky IV",
+						"Rocky V",
+						"Help!",
+						"Rocky III",
+						"007: James Bond",
+						"Up",
+						"A Question?",
+						"Monty Python and the Holy Grail",
+						"Monty Python & the Holy Grail",
+						"Airplane!",
+						"03: Bames Jond"
+				)
+		);
+		
+		allData = new ArrayList<String>();
+		allData.addAll(alphabeticData);
+		allData.addAll(alphanumericData);
+	}
+	
 	
 	/**
 	 * Here is the main method. It runs a looping user dialogue so we
 	 * we can interactively test different search and sorting cases.
-	 * It also initializes an ArrayList of all the test items which
-	 * is used in testing the search functionality.
 	 */
 	public static void main(String[] args) {		
-		allData = new ArrayList<String>();
-		allData.addAll(alphabeticData);
-		allData.addAll(alphanumericData);
+		AlgorithmTester tester = new AlgorithmTester();
 		
 		// Begin dialogue loop
 		Scanner scan = new Scanner(System.in);
@@ -90,7 +101,7 @@ public class AlgorithmTester {
 					"alphanumeric strings.");
 			
 			String input = scan.nextLine();
-			wantToExit = checkInput(input, scan);
+			wantToExit = tester.checkInput(input, scan);
 		}
 		scan.close();
 		System.out.println("Exiting...");
@@ -111,7 +122,7 @@ public class AlgorithmTester {
 	 * @param	scan		The scanner that receives input
 	 * @return 	boolean		True to exit; false to continue
 	 */
-	private static boolean checkInput(String text, Scanner scan) {
+	private boolean checkInput(String text, Scanner scan) {
 		if(text.equals("EXIT")) {
 			return true;
 		}
@@ -152,7 +163,7 @@ public class AlgorithmTester {
 	 * @param toSort		The set of strings to be sorted
 	 * @param result		The result of sorting
 	 */
-	private static void printSortMessages(
+	private  void printSortMessages(
 		String testName,
 		ArrayList<String> dataToSort
 	)
@@ -194,7 +205,7 @@ public class AlgorithmTester {
 	 * @param toFind	The string we are searching for
 	 * @param data		The data set we are searching through
 	 */
-	private static void printSearchMessages(
+	private void printSearchMessages(
 		String testName,
 		String toFind,
 		ArrayList<String> data
@@ -243,7 +254,7 @@ public class AlgorithmTester {
 	 * @return int		Index of the element if found; 
 	 * 					A negative number if not found
 	 */
-	private static int search(String toFind){
+	private int search(String toFind){
 		ArrayList<String> sortedData = new ArrayList<String>();
 		sortedData.addAll(allData);
 		Collections.sort(sortedData);

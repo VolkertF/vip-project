@@ -1,1 +1,112 @@
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs and databases #
+######################
+*.log
+*.sql
+# We may end up wanting to include sqlite files in
+# the future. We'll have to discuss this later.
+#*.sqlite
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Java Artifacts #
+##################
+*.class
+
+# Mobile Tools for Java (J2ME) #
+################################
+.mtj.tmp/
+
+# Package Files #
+#################
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml #
+##########################################################################################
+hs_err_pid*
+
+# Eclipse Artifacts #
+#####################
+*.pydevproject
+.metadata
+.gradle
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+
+# Eclipse Core #
+################
 .project
+
+# External tool builders #
+##########################
+.externalToolBuilders/
+
+# Locally stored "Eclipse launch configurations" #
+##################################################
+*.launch
+
+# CDT-specific #
+###############
+.cproject
+
+# JDT-specific (Eclipse Java Development Tools) #
+#################################################
+.classpath
+
+# Java annotation processor (APT) #
+###################################
+.factorypath
+
+# PDT-specific #
+################
+.buildpath
+
+# sbteclipse plugin #
+#####################
+.target
+
+# TeXlipse plugin #
+###################
+.texlipse
+
+    Status API Training Shop Blog About Pricing 
+
+

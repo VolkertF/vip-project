@@ -240,9 +240,9 @@ public class AlgorithmTester {
 	 * to simply sort the ArrayList using the sort method and then
 	 * perform a binary search. 
 	 * 
-	 * The built-in search is designed to run in O(n*log(n)) time. 
-	 * Adding a binary search will put our time at O(n*log(n) + log(n))
-	 * which isn't too bad.
+	 * The built-in sort is designed to run in O(n*log(n)) time. Adding
+	 * a binary search on top of this  will put our time at 
+	 * O(n*log(n) + log(n)) which isn't too bad.
 	 * 
 	 * If we want to make the search case insensitive, we will need to
 	 * run the block of code that I commented out. It's a brute force

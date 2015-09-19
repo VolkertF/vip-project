@@ -15,7 +15,7 @@
 *.dmg
 *.gz
 *.iso
-*.jar
+#*.jar
 *.rar
 *.tar
 *.zip
@@ -48,7 +48,7 @@ Thumbs.db
 
 # Package Files #
 #################
-*.jar
+#*.jar
 *.war
 *.ear
 

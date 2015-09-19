@@ -62,7 +62,7 @@ public class OMDBConnector {
 				break;
 			}
 			
-			String uri = buildUri(title,year);
+			String uri = connector.buildUri(title,year);
 			connector.makeHttpRequest(uri);
 		}
 		
@@ -133,7 +133,7 @@ public class OMDBConnector {
 	 * 
 	 * @TODO Find a way to get around needing the year parameter.
 	 */
-	private static String buildUri(String title, String year) {
+	private String buildUri(String title, String year) {
 		StringBuilder uri = new StringBuilder("http://www.omdbapi.com/?t=");
 		
 		// Tokenize the title to remove whitespace, then add them to the

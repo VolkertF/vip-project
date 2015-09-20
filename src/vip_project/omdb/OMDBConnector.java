@@ -77,28 +77,6 @@ public class OMDBConnector {
 		System.out.println("Goodbye!");
 	}
 	
-	/**
-	 * This method makes the HTTP request to the API.
-	 * 
-	 * @param uri		The URI string we want to query
-	 */
-	public void makeHttpRequest(String uri) {
-		
-		// Initialize a request with our complete URI
-		System.out.println("Checking " + uri);
-		HttpGet request = new HttpGet(uri);
-		
-		// Make the request to the API and deserialize the response
-		try {
-			HttpResponse response = client.execute(request);
-			String jsonString = EntityUtils.toString(response.getEntity());
-			deserializeJson(jsonString);
-		} catch(IOException e) {
-			System.out.println("Something went wrong.");
-			e.printStackTrace();
-		}
-	}
-	
 	
 	/**
 	 * This method parses the title and year to make them fit the
@@ -134,6 +112,29 @@ public class OMDBConnector {
 		// Add the final parameters to the URI
 		uri.append("&y=").append(year).append("&plot=long&r=json");
 		return uri.toString();
+	}
+	
+	
+	/**
+	 * This method makes the HTTP request to the API.
+	 * 
+	 * @param uri		The URI string we want to query
+	 */
+	public void makeHttpRequest(String uri) {
+		
+		// Initialize a request with our complete URI
+		System.out.println("Checking " + uri);
+		HttpGet request = new HttpGet(uri);
+		
+		// Make the request to the API and deserialize the response
+		try {
+			HttpResponse response = client.execute(request);
+			String jsonString = EntityUtils.toString(response.getEntity());
+			deserializeJson(jsonString);
+		} catch(IOException e) {
+			System.out.println("Something went wrong.");
+			e.printStackTrace();
+		}
 	}
 	
 	

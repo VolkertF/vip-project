@@ -1,4 +1,4 @@
-package vip_project.filechooser;
+package com.vip.filechooser;
 // SimpleFileChooser.java
 // A simple file chooser to see what it takes to make one of these work.
 //

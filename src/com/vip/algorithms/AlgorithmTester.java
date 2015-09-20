@@ -1,4 +1,4 @@
-package vip_project.algorithms;
+package com.vip.algorithms;
 
 import java.util.Arrays;
 import java.util.ArrayList;

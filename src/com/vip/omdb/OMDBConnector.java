@@ -1,4 +1,4 @@
-package vip_project.omdb;
+package com.vip.omdb;
 
 import java.util.Scanner;
 import java.util.Map;

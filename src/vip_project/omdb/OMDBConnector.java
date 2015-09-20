@@ -26,8 +26,9 @@ public class OMDBConnector {
 	private static CloseableHttpClient client;
 	private static Scanner scan;
 	
+	
 	/**
-	 * Constructor, yay let's build can you tell I coded this late at night...
+	 * Constructor.
 	 */
 	public OMDBConnector() {
 		client = HttpClients.createDefault();
@@ -64,9 +65,6 @@ public class OMDBConnector {
 		}
 		
 		scan.close();
-		
-		// This has to go in a try-catch because apparently it's 
-		// possible to fail when you close the CLOSABLE HTTP client.
 		try {
 			client.close();
 		} catch(IOException e) {
@@ -79,9 +77,9 @@ public class OMDBConnector {
 	
 	
 	/**
-	 * This method parses the title and year to make them fit the
-	 * format the OMDb API expects in URIs. Namely, they must
-	 * follow a format like this...
+	 * This method takes the title and year that the user inputs and combines
+	 * them into a format accepted by the OMDb api. Namely, they must follow
+	 * a format like this...
 	 * 
 	 *	  http://www.omdbapi.com/?t=Star+Wars&y=1977&plot=long&r=json
 	 *
@@ -161,7 +159,7 @@ public class OMDBConnector {
 		
 		// Print the map info to make sure we got it
 		for(Map.Entry<String, String> entry : information.entrySet()) {
-			String key = entry.getKey().toString();;
+			String key = entry.getKey().toString();
 			String value = entry.getValue();
 			System.out.println(key + ": " + value);
 		}

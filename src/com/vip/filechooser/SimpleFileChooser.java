@@ -2,14 +2,20 @@ package com.vip.filechooser;
 // SimpleFileChooser.java
 // A simple file chooser to see what it takes to make one of these work.
 //
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import javax.swing.*;
+import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 
+@SuppressWarnings("serial")
 public class SimpleFileChooser extends JFrame {
 
    public SimpleFileChooser() {
@@ -31,7 +37,7 @@ public class SimpleFileChooser extends JFrame {
     JButton selectButton = new JButton("Select");
     JButton unselectButton = new JButton("Unselect");
 
-    JFileChooser chooser = new JFileChooser();
+    final JFileChooser chooser = new JFileChooser();
     chooser.setControlButtonsAreShown(false);
     
     FileNameExtensionFilter filter = new FileNameExtensionFilter("Code","java", "c", "cpp");

@@ -5,8 +5,6 @@ import java.util.Map;
 
 import java.lang.StringBuilder;
 
-//import java.io.BufferedReader;
-//import java.io.InputStreamReader;
 import java.io.IOException;
 
 import org.apache.http.util.EntityUtils;
@@ -22,10 +20,6 @@ import com.google.gson.reflect.TypeToken;
  * This class connects to the OMDb API.
  * 
  * @author Cyril Casapao
- * 
- * @TODO Implement JSON parsing and store it in a data structure. I think
- * 		 a map would be a good choice because it preserves the key-value
- * 		 relationship we receive from the API.
  */
 public class OMDBConnector {
 

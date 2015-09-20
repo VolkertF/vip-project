@@ -1,17 +1,22 @@
 package vip_project.omdb;
 
 import java.util.Scanner;
+import java.util.Map;
 
 import java.lang.StringBuilder;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+//import java.io.BufferedReader;
+//import java.io.InputStreamReader;
 import java.io.IOException;
 
+import org.apache.http.util.EntityUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.HttpResponse;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * This class connects to the OMDb API.
@@ -42,8 +47,6 @@ public class OMDBConnector {
 	 * to interactively query the OMDb API. As an example, try entering
 	 * "star wars" as the title and "1977" as a year. Or maybe "Up" as
 	 * a title and "2009" as a year.
-	 * 
-	 * @param args
 	 */
 	public static void main(String[] args) {
 		OMDBConnector connector = new OMDBConnector();
@@ -84,30 +87,18 @@ public class OMDBConnector {
 	 * This method makes the HTTP request to the API.
 	 * 
 	 * @param uri		The URI string we want to query
-	 * 
-	 * @TODO Eventually, this will return organized info
-	 * 		 about the movie we requested. But not yet.
-	 * 		 Patience...
 	 */
 	public void makeHttpRequest(String uri) {
 		
-		// Initialize a request with our completed URI
+		// Initialize a request with our complete URI
 		System.out.println("Checking " + uri);
 		HttpGet request = new HttpGet(uri);
 		
-		// Make the request to the API and print the info we receive
+		// Make the request to the API and deserialize the response
 		try {
 			HttpResponse response = client.execute(request);
-			BufferedReader inFromAPI = new BufferedReader(
-					new InputStreamReader(
-						response.getEntity().getContent()
-					)
-			);
-			
-			String line = "";
-			while((line = inFromAPI.readLine()) != null) {
-				System.out.println(line);
-			}
+			String jsonString = EntityUtils.toString(response.getEntity());
+			deserializeJson(jsonString);
 		} catch(IOException e) {
 			System.out.println("Something went wrong.");
 			e.printStackTrace();
@@ -149,5 +140,37 @@ public class OMDBConnector {
 		// Add the final parameters to the URI
 		uri.append("&y=").append(year).append("&plot=long&r=json");
 		return uri.toString();
+	}
+	
+	
+	/**
+	 * This method takes the JSON response we receive from OMDb and turns
+	 * it into a Java Map. This allows us to work easily using a native
+	 * Java object while also preserving the useful key-value relationship
+	 * inherent in JSON.
+	 * 
+	 * @param jsonString 	The JSON information we receive from OMDb
+	 * @return Map			A map holding key-value pairs of movie info
+	 */
+	private Map<String, String> deserializeJson(String jsonString) {
+		Gson gson = new Gson();
+		
+		// The fromJson() method takes a JSON string as its first parameter
+		// and a Class as a second. There's no clean simple way to get the
+		// Map type so we have to use the ugly method seen here.
+		Map<String, String> information =
+			gson.fromJson(
+				jsonString,
+				new TypeToken<Map<String, String>>(){}.getType()
+			);
+		
+		// Print the map info to make sure we got it
+		for(Map.Entry<String, String> entry : information.entrySet()) {
+			String key = entry.getKey().toString();;
+			String value = entry.getValue();
+			System.out.println(key + ": " + value);
+		}
+		
+		return information;
 	}
 }

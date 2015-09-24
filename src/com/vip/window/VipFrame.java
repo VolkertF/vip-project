@@ -14,8 +14,10 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -40,15 +42,20 @@ public class VipFrame extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		defaultInsets = new Insets(2, 2, 2, 2);
 
-		VLC.init();
+		//VLC.init();
 		buildPanels();
 		buildExplorerGUI();
 		buildMovieGUI();
 		buildIntelGUI();
 		buildMenuBar();
 		pack();
-		VLC.playMovie();
+		//VLC.playMovie();
 	}
+	
+	/**
+	 * ArrayList<String> to display all movies in a datastructure
+	 */
+	private ArrayList<String> movies;
 
 	/**
 	 * The JPanel that represents the Explorer and do file-searching stuff and
@@ -188,16 +195,26 @@ public class VipFrame extends JFrame {
 	 * Create Sub-sub-panels in the explorer panel
 	 */
 	private void buildExplorerGUI() {
-		String[] fileList = {};
+		//String[] fileList = {};
 		// Fill the filelist String-Array
-		jlstFileList = new JList<String>(fileList);
+		movies = new ArrayList<String>();
+		DefaultListModel<String> defaultJList = new DefaultListModel<String>();
+		jlstFileList = new JList<String>(defaultJList);
+		movies.add("Star Wars: The Revenge of the Sith");
+		movies.add("Fargo");
+		movies.add("Matrix");
+		for(String temp : movies) {
+			defaultJList.addElement(temp);
+		}
 		jlstFileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jlstFileList.setSelectedIndex(0);
 
 		jtfSearch = new JTextField(20);
 
-		String[] searchCategories = { "By Length, increasing", "By length, decreasing", "By rating, increasing",
-		        "By rating, decreasing", };
+		String[] searchCategories = { "By Length, increasing",	//Index 0 
+									  "By length, decreasing",  //Index 1
+									  "By rating, increasing",  //Index 2
+									  "By rating, decreasing", }; //Index 3
 		jcbSearchCategories = new JComboBox<String>(searchCategories);
 		jcbSearchCategories.setEditable(false);
 		jcbSearchCategories.setSelectedIndex(0);
@@ -219,7 +236,7 @@ public class VipFrame extends JFrame {
 	 * volume up/down, fast forward etc.)
 	 */
 	private void buildMovieGUI() {
-		jpnlMovie.add(VLC.getCanvas(), BorderLayout.CENTER);
+		//jpnlMovie.add(VLC.getCanvas(), BorderLayout.CENTER);
 		JPanel movie_control_panel = new JPanel();
 		movie_control_panel.setLayout(new FlowLayout());
 		movie_control_panel.add(new JButton("Play"));
@@ -257,10 +274,19 @@ public class VipFrame extends JFrame {
 	private JMenu jmFile;
 
 	/**
-	 * MenuItem which allows to open the VLC Player apart from the program.
-	 * //Dont know if this thing has a future use?!
+	 * MenuItem which allows to define the Path to VLC.exe manually.
 	 */
-	private JMenuItem jmiOpenVLC;
+	private JMenuItem jmiPathVLC;
+	
+	/**
+	 * MenuItem which allows to add a file to the watchlist of displayed files to play.
+	 */
+	private JMenuItem jmiAddFile;
+	
+	/**
+	 * MenuItem which allows to add a whole directory to the watchlist of displayed files to play.
+	 */
+	private JMenuItem jmiAddDirectory;
 
 	/**
 	 * MenuItem which allows the user to close the program.
@@ -317,9 +343,13 @@ public class VipFrame extends JFrame {
 
 		// MenuFile
 		jmFile = new JMenu("File");
-		jmiOpenVLC = new JMenuItem("Open VLC Player");
+		jmiPathVLC = new JMenuItem("Define VLC.exe Path");
+		jmiAddFile = new JMenuItem("Add File ...");
+		jmiAddDirectory = new JMenuItem("Add Directory ...");
 		jmiClose = new JMenuItem("Close");
-		jmFile.add(jmiOpenVLC);
+		jmFile.add(jmiPathVLC);
+		jmFile.add(jmiAddFile);
+		jmFile.add(jmiAddDirectory);
 		jmFile.add(jmiClose);
 
 		// MenuHelp

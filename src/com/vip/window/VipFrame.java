@@ -30,7 +30,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
-import com.vip.media.VLC;
+//import com.vip.media.VLC;
 
 @SuppressWarnings("serial")
 public class VipFrame extends JFrame {

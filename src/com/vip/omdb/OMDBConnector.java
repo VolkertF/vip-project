@@ -2,9 +2,7 @@ package com.vip.omdb;
 
 import java.util.Scanner;
 import java.util.Map;
-
 import java.lang.StringBuilder;
-
 import java.io.IOException;
 
 import org.apache.http.util.EntityUtils;
@@ -121,6 +119,7 @@ public class OMDBConnector {
 	public void makeHttpRequest(String uri) {
 		
 		// Initialize a request with our complete URI
+		double startTime = System.currentTimeMillis();
 		System.out.println("Checking " + uri);
 		HttpGet request = new HttpGet(uri);
 		
@@ -133,6 +132,9 @@ public class OMDBConnector {
 			System.out.println("Something went wrong.");
 			e.printStackTrace();
 		}
+		double endTime = System.currentTimeMillis();
+		System.out.println("The enquiry took " + (endTime - startTime) + "ms");	//This will took for one about half a second for
+																				//one request. And if the request is cached about 30ms.
 	}
 	
 	

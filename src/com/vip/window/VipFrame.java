@@ -41,6 +41,8 @@ import javax.swing.event.ChangeListener;
 import com.sun.glass.events.KeyEvent;
 import com.vip.media.VLC;
 
+import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
+
 @SuppressWarnings("serial")
 public class VipFrame extends JFrame {
 
@@ -278,7 +280,7 @@ public class VipFrame extends JFrame {
 	 * volume up/down, fast forward etc.)
 	 */
 
-	private class SliderListener implements ChangeListener {
+	private class VolumeSliderListener implements ChangeListener {
 
 		public void stateChanged(ChangeEvent ce) {
 			JSlider source = (JSlider) ce.getSource();
@@ -290,8 +292,33 @@ public class VipFrame extends JFrame {
 		}
 	}
 
+	// TODO Timeline implementieren, Dauer des Films herausfinden, neue Position
+	// setzen, moeglicherweise prozentual?
+	private class TimelineSliderListener implements ChangeListener {
+
+		public void stateChanged(ChangeEvent ce) {
+			JSlider source = (JSlider) ce.getSource();
+			VLC.get_media_player()
+			        .setTime((long) (((float) source.getValue() / 100) * VLC.get_media_player().getLength()));
+			System.out.println(((float) source.getValue() / 100));
+		}
+	}
+
+	/** Indicator of current volume level **/
 	private JLabel Jlabel_volume;
 
+	/** Slider for volume level **/
+	JSlider jSlider_volume;
+
+	/** Indicator of progress of the media file **/
+	JLabel jLabel_movie_timeline;
+
+	/** Slider for movie timeline **/
+	JSlider jSlider_movie_progress;
+
+	/**
+	 * @author Fabian Volkert
+	 */
 	private void buildMovieGUI() {
 		jpnlMovie.add(VLC.get_canvas(), BorderLayout.CENTER);
 		JPanel movie_control_panel = new JPanel();
@@ -333,18 +360,62 @@ public class VipFrame extends JFrame {
 		jB_next_chapter.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
 		movie_control_panel.add(jB_next_chapter);
 
-		JSlider jSlider_volume = new JSlider(JSlider.HORIZONTAL, VLC.get_min_volume(), VLC.get_max_volume(),
+		jSlider_volume = new JSlider(JSlider.HORIZONTAL, VLC.get_min_volume(), VLC.get_max_volume(),
 		        ((VLC.get_min_volume() + VLC.get_max_volume()) / 2));
 		movie_control_panel.add(jSlider_volume);
-		jSlider_volume.addChangeListener(new SliderListener());
+		jSlider_volume.addChangeListener(new VolumeSliderListener());
 
-		int current_volume = 0;
-		if (VLC.get_media_player().getVolume() > 0)
-			current_volume = VLC.get_media_player().getVolume();
-		Jlabel_volume = new JLabel(Integer.toString(current_volume)+"%");
+		Jlabel_volume = new JLabel(Integer.toString(((VLC.get_min_volume() + VLC.get_max_volume()) / 2)) + "%");
 		movie_control_panel.add(Jlabel_volume);
 
 		jpnlMovie.add(movie_control_panel, BorderLayout.SOUTH);
+
+		JPanel jPanel_movie_north = new JPanel();
+		jpnlMovie.add(jPanel_movie_north, BorderLayout.NORTH);
+
+		jSlider_movie_progress = new JSlider(0, 100, 0);
+		jSlider_movie_progress.setMajorTickSpacing(5);
+		jSlider_movie_progress.addChangeListener(new TimelineSliderListener());
+		jPanel_movie_north.add(jSlider_movie_progress, BorderLayout.CENTER);
+
+		jLabel_movie_timeline = new JLabel();
+		jLabel_movie_timeline.setText("0");
+
+		jPanel_movie_north.add(jLabel_movie_timeline, BorderLayout.EAST);
+
+	}
+
+	/**
+	 * Updates the state of the nominator for current volune level
+	 * 
+	 * @author Fabian Volkert
+	 */
+	public void update_volume_label() {
+		//TODO Properly implement Volume slider and update; Label is bugged  right now
+		if (VLC.get_media_player() != null) {
+			if (Jlabel_volume != null) {
+				Jlabel_volume.setText(Integer.toString(VLC.get_media_player().getVolume()) + "%");
+			}
+		}
+	}
+
+	/**
+	 * Updates the state of the nominator for current progress in media file
+	 * 
+	 * @author Fabian Volkert
+	 */
+	public void update_timeline() {
+		//TODO implement timeline bar, bugged now
+		if (VLC.get_media_player() != null) {
+			jLabel_movie_timeline.setText(Long.toString(VLC.get_media_player().getTime() / 1000));
+			EmbeddedMediaPlayer media_player = VLC.get_media_player();
+			double procentual_of_movie = (double) media_player.getTime() / media_player.getLength();
+			System.out.println(procentual_of_movie * 100);
+			if (procentual_of_movie % 0 < 0.3) {
+				System.out.println("got here");
+				jSlider_movie_progress.setValue((int) procentual_of_movie);
+			}
+		}
 	}
 
 	/**

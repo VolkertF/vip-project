@@ -31,9 +31,11 @@ public class Key_parser implements KeyEventDispatcher {
 		if (state == KeyEvent.KEY_PRESSED && id == KeyEvent.VK_SPACE && !(ke.getSource() instanceof JTextField))
 			VLC.toggle_movie_playback();
 		if (state == KeyEvent.KEY_PRESSED && (id == KeyEvent.VK_PLUS || id == KeyEvent.VK_ADD))
-			VLC.volume_up();
+			vip_frame.update_volume_label();
+		VLC.volume_up();
 		if (state == KeyEvent.KEY_PRESSED && (id == KeyEvent.VK_MINUS || id == KeyEvent.VK_SUBTRACT))
-			VLC.volume_down();
+			vip_frame.update_volume_label();
+		VLC.volume_down();
 		// When CTRL+F is pressed, the search textfield will be focussed
 		if (state == pressed && id == KeyEvent.VK_F && (ke.getModifiers() & KeyEvent.CTRL_MASK) != 0)
 			vip_frame.get_jtfSearch().requestFocus();

@@ -10,6 +10,23 @@ public class Main {
 		String loaded_movie_file = "F:\\Dji. Death Sails-HD.mp4";
 		VLC.load_movie(loaded_movie_file);
 		f.setVisible(true);
+
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				try {
+					while (true) {
+						Thread.sleep(10);
+						f.update_timeline();
+					}
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		});
+		t.start();
+
 		return;
 	}
 }

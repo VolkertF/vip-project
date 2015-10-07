@@ -6,8 +6,8 @@ import com.vip.window.VipFrame;
 public class Main {
 	public static void main(String[] args) {
 		System.out.println("Hello World!");
-		VipFrame f = new VipFrame();
-		String loaded_movie_file = "F:\\Dji. Death Sails-HD.mp4";
+		final VipFrame f = new VipFrame();
+		String loaded_movie_file = "G:\\Videos\\Filme\\Fanboys.avi";
 		VLC.load_movie(loaded_movie_file);
 		f.setVisible(true);
 
@@ -15,7 +15,7 @@ public class Main {
 			public void run() {
 				try {
 					while (true) {
-						Thread.sleep(10);
+						Thread.sleep(250);	//Fourth a second is enough for the timeline to update with a visual difference.
 						f.update_timeline();
 					}
 				} catch (InterruptedException e) {

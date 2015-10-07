@@ -16,6 +16,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -28,12 +29,19 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 
-//import com.vip.media.VLC;
+import com.sun.glass.events.KeyEvent;
+import com.vip.media.VLC;
 
 @SuppressWarnings("serial")
 public class VipFrame extends JFrame {
+
+	private final Input_parser input_parser = new Input_parser();
+
 	/**
 	 * Constructor for building the frame and initialize all event handlers.
 	 */
@@ -42,16 +50,28 @@ public class VipFrame extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		defaultInsets = new Insets(2, 2, 2, 2);
 
-		//VLC.init();
+		// Tries to change the look and feel of Java to Nimbus, a
+		// cross-platform GUI that comes with Java 6 update 10
+		try {
+			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+				if ("Nimbus".equals(info.getName())) {
+					UIManager.setLookAndFeel(info.getClassName());
+					break;
+				}
+			}
+		} catch (Exception e) {
+			// If Nimbus is not found, it will be the default look and feel
+		}
+
+		VLC.init();
 		buildPanels();
 		buildExplorerGUI();
 		buildMovieGUI();
 		buildIntelGUI();
 		buildMenuBar();
 		pack();
-		//VLC.playMovie();
 	}
-	
+
 	/**
 	 * ArrayList<String> to display all movies in a datastructure
 	 */
@@ -151,6 +171,7 @@ public class VipFrame extends JFrame {
 		jpnlExplorer.setLayout(new FlowLayout());
 		jpnlExplorer.setBorder(BorderFactory.createTitledBorder("Explorer"));
 		jpnlExplorer.setPreferredSize(new Dimension(250, 800));
+		jpnlExplorer.requestFocus();
 
 		jpnlMovie = new JPanel();
 		jpnlMovie.setLayout(new BorderLayout());
@@ -161,6 +182,8 @@ public class VipFrame extends JFrame {
 		jpnlIntel.setBorder(BorderFactory.createTitledBorder("Intel"));
 		jpnlIntel.setPreferredSize(new Dimension(1200, 150));
 
+		jpnlExplorer.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "Space_pressed");
+		jpnlExplorer.getActionMap().put("Space_pressed", input_parser);
 		getContentPane().setLayout(new GridBagLayout());
 
 		addComponent(0, 0, 1, 2, 0.0, 0.0, getContentPane(), jpnlExplorer, defaultInsets);
@@ -195,7 +218,7 @@ public class VipFrame extends JFrame {
 	 * Create Sub-sub-panels in the explorer panel
 	 */
 	private void buildExplorerGUI() {
-		//String[] fileList = {};
+		// String[] fileList = {};
 		// Fill the filelist String-Array
 		movies = new ArrayList<String>();
 		DefaultListModel<String> defaultJList = new DefaultListModel<String>();
@@ -203,7 +226,7 @@ public class VipFrame extends JFrame {
 		movies.add("Star Wars: The Revenge of the Sith");
 		movies.add("Fargo");
 		movies.add("Matrix");
-		for(String temp : movies) {
+		for (String temp : movies) {
 			defaultJList.addElement(temp);
 		}
 		jlstFileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -211,10 +234,10 @@ public class VipFrame extends JFrame {
 
 		jtfSearch = new JTextField(20);
 
-		String[] searchCategories = { "By Length, increasing",	//Index 0 
-									  "By length, decreasing",  //Index 1
-									  "By rating, increasing",  //Index 2
-									  "By rating, decreasing", }; //Index 3
+		String[] searchCategories = { "By Length, increasing", // Index 0
+		        "By length, decreasing", // Index 1
+		        "By rating, increasing", // Index 2
+		        "By rating, decreasing", }; // Index 3
 		jcbSearchCategories = new JComboBox<String>(searchCategories);
 		jcbSearchCategories.setEditable(false);
 		jcbSearchCategories.setSelectedIndex(0);
@@ -236,20 +259,58 @@ public class VipFrame extends JFrame {
 	 * volume up/down, fast forward etc.)
 	 */
 	private void buildMovieGUI() {
-		//jpnlMovie.add(VLC.getCanvas(), BorderLayout.CENTER);
+		jpnlMovie.add(VLC.get_canvas(), BorderLayout.CENTER);
 		JPanel movie_control_panel = new JPanel();
 		movie_control_panel.setLayout(new FlowLayout());
-		movie_control_panel.add(new JButton("Play"));
-		movie_control_panel.add(new JButton("Pause"));
-		movie_control_panel.add(new JButton("Stop"));
-		
-		movie_control_panel.add(new JButton("<|"));
-		movie_control_panel.add(new JButton(">|"));
-		movie_control_panel.add(new JButton("<<"));
-		movie_control_panel.add(new JButton(">>"));
-		
-		movie_control_panel.add(new JButton("VOL -"));
-		movie_control_panel.add(new JButton("VOL +"));
+
+		JButton jB_play_movie = new JButton("Play/Pause");
+		jB_play_movie.addActionListener(input_parser);
+		jB_play_movie.setActionCommand("jB_toggle_movie_playback");
+		jB_play_movie.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
+		movie_control_panel.add(jB_play_movie);
+
+		JButton jB_stop_movie = new JButton("Stop");
+		jB_stop_movie.addActionListener(input_parser);
+		jB_stop_movie.setActionCommand("jB_stop_movie");
+		jB_stop_movie.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
+		movie_control_panel.add(jB_stop_movie);
+
+		JButton jB_previous_movie = new JButton("|<");
+		jB_previous_movie.addActionListener(input_parser);
+		jB_previous_movie.setActionCommand("jB_previous_movie");
+		jB_previous_movie.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
+		movie_control_panel.add(jB_previous_movie);
+
+		JButton jB_next_movie = new JButton(">|");
+		jB_next_movie.addActionListener(input_parser);
+		jB_next_movie.setActionCommand("jB_next_movie");
+		jB_next_movie.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
+		movie_control_panel.add(jB_next_movie);
+
+		JButton jB_previous_chapter = new JButton("<<");
+		jB_previous_chapter.addActionListener(input_parser);
+		jB_previous_chapter.setActionCommand("jB_previous_chapter");
+		jB_previous_chapter.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
+		movie_control_panel.add(jB_previous_chapter);
+
+		JButton jB_next_chapter = new JButton(">>");
+		jB_next_chapter.addActionListener(input_parser);
+		jB_next_chapter.setActionCommand("jB_next_chapter");
+		jB_next_chapter.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
+		movie_control_panel.add(jB_next_chapter);
+
+		JButton jB_volume_down = new JButton("VOL -");
+		jB_volume_down.addActionListener(input_parser);
+		jB_volume_down.setActionCommand("jB_volume_down");
+		jB_volume_down.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
+		movie_control_panel.add(jB_volume_down);
+
+		JButton jB_volume_up = new JButton("VOL +");
+		jB_volume_up.addActionListener(input_parser);
+		jB_volume_up.setActionCommand("jB_volume_up");
+		jB_volume_up.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
+		movie_control_panel.add(jB_volume_up);
+
 		jpnlMovie.add(movie_control_panel, BorderLayout.SOUTH);
 	}
 
@@ -277,14 +338,16 @@ public class VipFrame extends JFrame {
 	 * MenuItem which allows to define the Path to VLC.exe manually.
 	 */
 	private JMenuItem jmiPathVLC;
-	
+
 	/**
-	 * MenuItem which allows to add a file to the watchlist of displayed files to play.
+	 * MenuItem which allows to add a file to the watchlist of displayed files
+	 * to play.
 	 */
 	private JMenuItem jmiAddFile;
-	
+
 	/**
-	 * MenuItem which allows to add a whole directory to the watchlist of displayed files to play.
+	 * MenuItem which allows to add a whole directory to the watchlist of
+	 * displayed files to play.
 	 */
 	private JMenuItem jmiAddDirectory;
 

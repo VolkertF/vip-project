@@ -16,7 +16,7 @@ import org.apache.http.HttpResponse;
  * 
  * @author Cyril Casapao
  */
-class OMDBConnector {
+public class OMDBConnector {
 
 	private static CloseableHttpClient client;
 	
@@ -29,6 +29,11 @@ class OMDBConnector {
 	}
 	
 	
+	public void close() throws IOException {
+		client.close();
+	}
+	
+	
 	/**
 	 * This method makes the HTTP request to the API. It will throw
 	 * an IOException if the request fails.
@@ -37,8 +42,8 @@ class OMDBConnector {
 	 * @param year 			The year the movie came out
 	 * @return String		The response from the API
 	 */
-	public String makeHttpRequest(String uri, String year) throws IOException {
-		String formattedUri = buildUri(uri, year);
+	public String makeHttpRequest(String title, String year) throws IOException {
+		String formattedUri = buildUri(title, year);
 		HttpGet request = new HttpGet(formattedUri);
 
 		HttpResponse response = client.execute(request);

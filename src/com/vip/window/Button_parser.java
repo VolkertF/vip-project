@@ -3,12 +3,9 @@ package com.vip.window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.AbstractAction;
-
 import com.vip.media.VLC;
 
-@SuppressWarnings("serial")
-public class Button_parser extends AbstractAction implements ActionListener {
+public class Button_parser implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent ae) {

@@ -391,7 +391,8 @@ public class VipFrame extends JFrame {
 	 * @author Fabian Volkert
 	 */
 	public void update_volume_label() {
-		//TODO Properly implement Volume slider and update; Label is bugged  right now
+		// TODO Properly implement Volume slider and update; Label is bugged
+		// right now
 		if (VLC.get_media_player() != null) {
 			if (Jlabel_volume != null) {
 				Jlabel_volume.setText(Integer.toString(VLC.get_media_player().getVolume()) + "%");
@@ -405,7 +406,7 @@ public class VipFrame extends JFrame {
 	 * @author Fabian Volkert
 	 */
 	public void update_timeline() {
-		//TODO implement timeline bar, bugged now
+		// TODO implement timeline bar, bugged now
 		if (VLC.get_media_player() != null) {
 			jLabel_movie_timeline.setText(Long.toString(VLC.get_media_player().getTime() / 1000));
 			EmbeddedMediaPlayer media_player = VLC.get_media_player();

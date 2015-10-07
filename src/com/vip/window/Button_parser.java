@@ -8,8 +8,9 @@ import javax.swing.AbstractAction;
 import com.vip.media.VLC;
 
 @SuppressWarnings("serial")
-public class Input_parser extends AbstractAction implements ActionListener {
+public class Button_parser extends AbstractAction implements ActionListener {
 
+	@Override
 	public void actionPerformed(ActionEvent ae) {
 		String action = ae.getActionCommand();
 		if (("jB_toggle_movie_playback".equals(action)))
@@ -24,8 +25,7 @@ public class Input_parser extends AbstractAction implements ActionListener {
 			VLC.volume_down();
 		if (("jB_volume_up".equals(action)))
 			VLC.volume_up();
-		if("Space_pressed".equals(action))
+		if ("Space_pressed".equals(action))
 			System.out.println("Space pressed");
 	}
-
 }

@@ -9,6 +9,7 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -16,7 +17,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
-import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -40,7 +40,7 @@ import com.vip.media.VLC;
 @SuppressWarnings("serial")
 public class VipFrame extends JFrame {
 
-	private final Input_parser input_parser = new Input_parser();
+	private Button_parser input_parser = new Button_parser();
 
 	/**
 	 * Constructor for building the frame and initialize all event handlers.
@@ -63,6 +63,11 @@ public class VipFrame extends JFrame {
 			// If Nimbus is not found, it will be the default look and feel
 		}
 
+		Key_parser key_parser = new Key_parser();
+		key_parser.set_vip_frame(this);
+		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+		manager.addKeyEventDispatcher(key_parser);
+
 		VLC.init();
 		buildPanels();
 		buildExplorerGUI();
@@ -70,6 +75,7 @@ public class VipFrame extends JFrame {
 		buildIntelGUI();
 		buildMenuBar();
 		pack();
+		requestFocus();
 	}
 
 	/**
@@ -101,6 +107,11 @@ public class VipFrame extends JFrame {
 	 * Standard insets for creating the GridBagLayout
 	 */
 	private Insets defaultInsets;
+
+	/**
+	 * Main JPanel, that holds all the other panels
+	 */
+	JPanel jpnlMain;
 
 	/**
 	 * Helping routine for creating components and adding them to a
@@ -167,11 +178,14 @@ public class VipFrame extends JFrame {
 	 * Create Subpanels Have to be called before any other building-methods
 	 */
 	private void buildPanels() {
+		jpnlMain = new JPanel();
+		jpnlMain.setLayout(new GridBagLayout());
+		add(jpnlMain);
+
 		jpnlExplorer = new JPanel();
 		jpnlExplorer.setLayout(new FlowLayout());
 		jpnlExplorer.setBorder(BorderFactory.createTitledBorder("Explorer"));
 		jpnlExplorer.setPreferredSize(new Dimension(250, 800));
-		jpnlExplorer.requestFocus();
 
 		jpnlMovie = new JPanel();
 		jpnlMovie.setLayout(new BorderLayout());
@@ -182,13 +196,9 @@ public class VipFrame extends JFrame {
 		jpnlIntel.setBorder(BorderFactory.createTitledBorder("Intel"));
 		jpnlIntel.setPreferredSize(new Dimension(1200, 150));
 
-		jpnlExplorer.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "Space_pressed");
-		jpnlExplorer.getActionMap().put("Space_pressed", input_parser);
-		getContentPane().setLayout(new GridBagLayout());
-
-		addComponent(0, 0, 1, 2, 0.0, 0.0, getContentPane(), jpnlExplorer, defaultInsets);
-		addComponent(1, 0, 1, 1, 1.0, 1.0, getContentPane(), jpnlMovie, defaultInsets);
-		addComponent(1, 1, 1, 1, 0.1, 0.1, getContentPane(), jpnlIntel, defaultInsets);
+		addComponent(0, 0, 1, 2, 0.0, 0.0, jpnlMain, jpnlExplorer, defaultInsets);
+		addComponent(1, 0, 1, 1, 1.0, 1.0, jpnlMain, jpnlMovie, defaultInsets);
+		addComponent(1, 1, 1, 1, 0.1, 0.1, jpnlMain, jpnlIntel, defaultInsets);
 	}
 
 	/**
@@ -202,6 +212,10 @@ public class VipFrame extends JFrame {
 	 * textField to search your library for this
 	 */
 	private JTextField jtfSearch;
+
+	public JTextField get_jtfSearch() {
+		return jtfSearch;
+	}
 
 	/**
 	 * This JComboBox is ment for sorting your search by different categories
@@ -245,6 +259,7 @@ public class VipFrame extends JFrame {
 		jspSearchCategories.setPreferredSize(jcbSearchCategories.getSize());
 
 		jbtnSearchExecute = new JButton("Search");
+		jbtnSearchExecute.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
 
 		// x y w h wx wy cont comp insets
 		addComponent(0, 0, 2, 1, 0.0, 0.0, jpnlExplorer, jtfSearch, defaultInsets);

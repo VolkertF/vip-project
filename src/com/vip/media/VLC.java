@@ -33,6 +33,14 @@ public abstract class VLC {
 	public static Canvas get_canvas() {
 		return canvas;
 	}
+	
+	public static int get_max_volume(){
+		return MAX_VOLUME;
+	}
+	
+	public static int get_min_volume(){
+		return MIN_VOLUME;
+	}
 
 	public static EmbeddedMediaPlayer get_media_player() {
 		return mediaPlayerComponent;
@@ -55,11 +63,6 @@ public abstract class VLC {
 		}
 	}
 	
-	@Deprecated 
-	public static void toggle_fullscreen(){
-		mediaPlayerComponent.toggleFullScreen();
-	}
-
 	public static void play_movie() {
 		mediaPlayerComponent.play();
 	}

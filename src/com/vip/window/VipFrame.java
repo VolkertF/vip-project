@@ -22,17 +22,21 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import com.sun.glass.events.KeyEvent;
 import com.vip.media.VLC;
@@ -273,6 +277,21 @@ public class VipFrame extends JFrame {
 	 * to play movies Maybe also a section to control the movie (play, pause,
 	 * volume up/down, fast forward etc.)
 	 */
+
+	private class SliderListener implements ChangeListener {
+
+		public void stateChanged(ChangeEvent ce) {
+			JSlider source = (JSlider) ce.getSource();
+			int new_volume = source.getValue();
+			VLC.get_media_player().setVolume(new_volume);
+			if (Jlabel_volume != null) {
+				Jlabel_volume.setText(Integer.toString(new_volume) + "%");
+			}
+		}
+	}
+
+	private JLabel Jlabel_volume;
+
 	private void buildMovieGUI() {
 		jpnlMovie.add(VLC.get_canvas(), BorderLayout.CENTER);
 		JPanel movie_control_panel = new JPanel();
@@ -314,17 +333,16 @@ public class VipFrame extends JFrame {
 		jB_next_chapter.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
 		movie_control_panel.add(jB_next_chapter);
 
-		JButton jB_volume_down = new JButton("VOL -");
-		jB_volume_down.addActionListener(input_parser);
-		jB_volume_down.setActionCommand("jB_volume_down");
-		jB_volume_down.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
-		movie_control_panel.add(jB_volume_down);
+		JSlider jSlider_volume = new JSlider(JSlider.HORIZONTAL, VLC.get_min_volume(), VLC.get_max_volume(),
+		        ((VLC.get_min_volume() + VLC.get_max_volume()) / 2));
+		movie_control_panel.add(jSlider_volume);
+		jSlider_volume.addChangeListener(new SliderListener());
 
-		JButton jB_volume_up = new JButton("VOL +");
-		jB_volume_up.addActionListener(input_parser);
-		jB_volume_up.setActionCommand("jB_volume_up");
-		jB_volume_up.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
-		movie_control_panel.add(jB_volume_up);
+		int current_volume = 0;
+		if (VLC.get_media_player().getVolume() > 0)
+			current_volume = VLC.get_media_player().getVolume();
+		Jlabel_volume = new JLabel(Integer.toString(current_volume)+"%");
+		movie_control_panel.add(Jlabel_volume);
 
 		jpnlMovie.add(movie_control_panel, BorderLayout.SOUTH);
 	}

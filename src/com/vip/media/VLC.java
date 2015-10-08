@@ -101,15 +101,21 @@ public abstract class VLC {
 			mediaPlayerComponent.prepareMedia(media_path);
 	}
 
+	public static void switchMediaFile(String newFile) {
+		stopMedia();
+		loadMedia(newFile);
+		playMedia();
+	}
+
 	/**
 	 * Toggles movie playback
 	 */
 	public static void toggleMoviePlayback() {
 		if (mediaPlayerComponent != null) {
 			if (VLC.getMediaPlayer().isPlaying()) {
-				VLC.pauseMovie();
+				VLC.pauseMedia();
 			} else {
-				VLC.playMovie();
+				VLC.playMedia();
 			}
 		}
 	}
@@ -117,21 +123,21 @@ public abstract class VLC {
 	/**
 	 * Starts media playback
 	 */
-	public static void playMovie() {
+	public static void playMedia() {
 		mediaPlayerComponent.play();
 	}
 
 	/**
 	 * Pauses media playback
 	 */
-	public static void pauseMovie() {
+	public static void pauseMedia() {
 		mediaPlayerComponent.pause();
 	}
 
 	/**
 	 * Stops media playback
 	 */
-	public static void stopMovie() {
+	public static void stopMedia() {
 		mediaPlayerComponent.stop();
 	}
 
@@ -157,9 +163,12 @@ public abstract class VLC {
 			if (JUMP_PERCENTAGE >= 0 && JUMP_PERCENTAGE <= 1) {
 				int changeRate = (int) (mediaPlayerComponent.getLength() * JUMP_PERCENTAGE);
 				int newTime = (int) (mediaPlayerComponent.getTime() + changeRate);
-				if (newTime >= mediaPlayerComponent.getLength())
-					newTime = (int) mediaPlayerComponent.getLength();
-				mediaPlayerComponent.setTime(newTime);
+				if (newTime >= mediaPlayerComponent.getLength()) {
+					stopMedia();
+				} else {
+					mediaPlayerComponent.setTime(newTime);
+
+				}
 			}
 		}
 	}

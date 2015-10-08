@@ -47,7 +47,7 @@ import com.vip.media.VLC;
 @SuppressWarnings("serial")
 public class VipFrame extends JFrame {
 
-	private ButtonParser button_parser = new ButtonParser();
+	private ButtonParser button_parser = new ButtonParser(this);
 
 	/**
 	 * Constructor for building the frame and initialize all event handlers.
@@ -392,8 +392,6 @@ public class VipFrame extends JFrame {
 	 * @author Fabian Volkert
 	 */
 	public void updateVolume(int newVolume) {
-		// TODO Properly implement Volume slider and update; Label is bugged
-		// right now
 		if (VLC.getMediaPlayer() != null) {
 			if (jsliderVolume != null) {
 				jsliderVolume.setValue(newVolume);
@@ -405,12 +403,19 @@ public class VipFrame extends JFrame {
 	boolean initMovie = true;
 
 	/**
+	 * Makes it so, that on the next timeline update the media will be
+	 * initialized
+	 **/
+	public void initMovie() {
+		initMovie = true;
+	}
+
+	/**
 	 * Updates the state of the nominators for current progress in media file
 	 * 
 	 * @author Fabian Volkert
 	 */
 	public void updateTimeline() {
-		// TODO implement timeline bar, bugged now
 		if (VLC.getMediaPlayer().getLength() != -1) {
 			Double procentualProgress = ((double) VLC.getMediaPlayer().getTime() / VLC.getMediaPlayer().getLength())
 			        * 100;
@@ -424,6 +429,10 @@ public class VipFrame extends JFrame {
 				jsliderMovieProgress.repaint();
 				initMovie = false;
 			} else {
+				// If initialization fails: retry
+				if (jsliderMovieProgress.getMaximum() == 0) {
+					initMovie = true;
+				}
 				int currentMovieTime = (int) VLC.getMediaPlayer().getTime();
 				jsliderMovieProgress.setValue(currentMovieTime);
 			}

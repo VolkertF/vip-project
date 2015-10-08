@@ -35,6 +35,12 @@ public class InfoExtractor {
 		scan = new Scanner(System.in);
 	}
 	
+	
+	/**
+	 * Main method. Right now it is only used for testing.
+	 * 
+	 * @TODO Remove this method later.
+	 */
 	public static void main(String[] args) {
 		InfoExtractor extractor = new InfoExtractor();
 		try {

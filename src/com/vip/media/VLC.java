@@ -17,83 +17,130 @@ import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
  */
 public abstract class VLC {
 
+	/** Rate of volume change when pressing a shortcut **/
 	private static final int VOLUME_STEPS = 10;
+
+	/** Maximum volume supported (200 is VLC max) **/
 	private static final int MAX_VOLUME = 200;
+
+	/** Minimum volume supported (0 is least) **/
 	private static final int MIN_VOLUME = 0;
 
-	private static Canvas canvas;
-
+	/** The mediaplayer that is responsible for playback **/
 	private static EmbeddedMediaPlayer mediaPlayerComponent;
+
+	/** Canvas on which the mediaplayer plays media on **/
+	private static Canvas canvas;
 
 	/**
 	 * Getter method of the class' canvas.
 	 * 
 	 * @return the canvas that displays the Movie
 	 */
-	public static Canvas get_canvas() {
+	public static Canvas getCanvas() {
 		return canvas;
 	}
-	
-	public static int get_max_volume(){
+
+	/**
+	 * Getter method of maximum supported volume
+	 * 
+	 * @return the maximum supported volume
+	 */
+	public static int getMaxVolume() {
 		return MAX_VOLUME;
 	}
-	
-	public static int get_min_volume(){
+
+	/**
+	 * Getter method of minimum supported volume
+	 * 
+	 * @return the minimum supported volume
+	 */
+	public static int getMinVolume() {
 		return MIN_VOLUME;
 	}
 
-	public static EmbeddedMediaPlayer get_media_player() {
+	/**
+	 * Getter method of the mediaplayer
+	 * 
+	 * @return the mediaplayer
+	 */
+	public static EmbeddedMediaPlayer getMediaPlayer() {
 		return mediaPlayerComponent;
 	}
 
 	/**
-	 * Starts video playback
+	 * Loads a media file into the mediaplayer
 	 * 
+	 * @param media_path
+	 *            Path to the media file to be loaded
 	 */
-
-	public static void load_movie(String movie_path) {
-		mediaPlayerComponent.prepareMedia(movie_path);
+	public static void loadMovie(String media_path) {
+		mediaPlayerComponent.prepareMedia(media_path);
 	}
 
-	public static void toggle_movie_playback() {
-		if (VLC.get_media_player().isPlaying()) {
-			VLC.pause_movie();
+	/**
+	 * Toggles movie playback
+	 */
+	public static void toggleMoviePlayback() {
+		if (VLC.getMediaPlayer().isPlaying()) {
+			VLC.pauseMovie();
 		} else {
-			VLC.play_movie();
+			VLC.playMovie();
 		}
 	}
-	
-	public static void play_movie() {
+
+	/**
+	 * Starts media playback
+	 */
+	public static void playMovie() {
 		mediaPlayerComponent.play();
 	}
 
-	public static void pause_movie() {
+	/**
+	 * Pauses media playback
+	 */
+	public static void pauseMovie() {
 		mediaPlayerComponent.pause();
 	}
 
-	public static void stop_movie() {
+	/**
+	 * Stops media playback
+	 */
+	public static void stopMovie() {
 		mediaPlayerComponent.stop();
 	}
 
-	public static void next_chapter() {
+	/**
+	 * Jumps to the next chapter
+	 */
+	public static void nextChapter() {
 		mediaPlayerComponent.nextChapter();
 	}
 
-	public static void previous_chapter() {
+	/**
+	 * Jumps to the previous Chapter
+	 */
+	public static void previousChapter() {
 		mediaPlayerComponent.previousChapter();
 	}
 
-	public static void volume_up() {
-		if(mediaPlayerComponent.getVolume()<=MAX_VOLUME -VOLUME_STEPS){
-				mediaPlayerComponent.setVolume(mediaPlayerComponent.getVolume() + VOLUME_STEPS);
-				System.out.println(mediaPlayerComponent.getVolume());
+	/**
+	 * Increases volume by set rate
+	 */
+	public static void volumeUp() {
+		if (mediaPlayerComponent.getVolume() <= MAX_VOLUME - VOLUME_STEPS) {
+			mediaPlayerComponent.setVolume(mediaPlayerComponent.getVolume() + VOLUME_STEPS);
+			System.out.println(mediaPlayerComponent.getVolume());
 		}
 	}
 
-	public static void volume_down() {
-		if(mediaPlayerComponent.getVolume()>=MIN_VOLUME+VOLUME_STEPS){
-				mediaPlayerComponent.setVolume(mediaPlayerComponent.getVolume() - VOLUME_STEPS);
-				System.out.println(mediaPlayerComponent.getVolume());
+	/**
+	 * Decreases volume by set rate
+	 */
+	public static void volumeDown() {
+		if (mediaPlayerComponent.getVolume() >= MIN_VOLUME + VOLUME_STEPS) {
+			mediaPlayerComponent.setVolume(mediaPlayerComponent.getVolume() - VOLUME_STEPS);
+			System.out.println(mediaPlayerComponent.getVolume());
 		}
 	}
 

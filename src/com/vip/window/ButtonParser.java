@@ -5,24 +5,22 @@ import java.awt.event.ActionListener;
 
 import com.vip.media.VLC;
 
-public class Button_parser implements ActionListener {
+public class ButtonParser implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		String action = ae.getActionCommand();
 		if (("jB_toggle_movie_playback".equals(action)))
-			VLC.toggle_movie_playback();
+			VLC.toggleMoviePlayback();
 		if (("jB_stop_movie".equals(action)))
-			VLC.stop_movie();
+			VLC.stopMovie();
 		if (("jB_previous_chapter".equals(action)))
-			VLC.previous_chapter();
+			VLC.previousChapter();
 		if (("jB_next_chapter".equals(action)))
-			VLC.next_chapter();
+			VLC.nextChapter();
 		if (("jB_volume_down".equals(action)))
-			VLC.volume_down();
+			VLC.volumeDown();
 		if (("jB_volume_up".equals(action)))
-			VLC.volume_up();
-		if ("Space_pressed".equals(action))
-			System.out.println("Space pressed");
+			VLC.volumeUp();
 	}
 }

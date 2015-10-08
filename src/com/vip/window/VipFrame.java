@@ -46,7 +46,7 @@ import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 @SuppressWarnings("serial")
 public class VipFrame extends JFrame {
 
-	private Button_parser input_parser = new Button_parser();
+	private ButtonParser button_parser = new ButtonParser();
 
 	/**
 	 * Constructor for building the frame and initialize all event handlers.
@@ -69,10 +69,10 @@ public class VipFrame extends JFrame {
 			// If Nimbus is not found, it will be the default look and feel
 		}
 
-		Key_parser key_parser = new Key_parser();
-		key_parser.set_vip_frame(this);
+		KeyParser keyParser = new KeyParser();
+		keyParser.set_vip_frame(this);
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-		manager.addKeyEventDispatcher(key_parser);
+		manager.addKeyEventDispatcher(keyParser);
 
 		VLC.init();
 		buildPanels();
@@ -284,10 +284,10 @@ public class VipFrame extends JFrame {
 
 		public void stateChanged(ChangeEvent ce) {
 			JSlider source = (JSlider) ce.getSource();
-			int new_volume = source.getValue();
-			VLC.get_media_player().setVolume(new_volume);
-			if (Jlabel_volume != null) {
-				Jlabel_volume.setText(Integer.toString(new_volume) + "%");
+			int newVolume = source.getValue();
+			VLC.getMediaPlayer().setVolume(newVolume);
+			if (JlabelVolume != null) {
+				JlabelVolume.setText(Integer.toString(newVolume) + "%");
 			}
 		}
 	}
@@ -298,90 +298,89 @@ public class VipFrame extends JFrame {
 
 		public void stateChanged(ChangeEvent ce) {
 			JSlider source = (JSlider) ce.getSource();
-			VLC.get_media_player()
-			        .setTime((long) (((float) source.getValue() / 100) * VLC.get_media_player().getLength()));
+			VLC.getMediaPlayer().setTime((long) (((float) source.getValue() / 100) * VLC.getMediaPlayer().getLength()));
 			System.out.println(((float) source.getValue() / 100));
 		}
 	}
 
 	/** Indicator of current volume level **/
-	private JLabel Jlabel_volume;
+	private JLabel JlabelVolume;
 
 	/** Slider for volume level **/
-	JSlider jSlider_volume;
+	private JSlider jsliderVolume;
 
 	/** Indicator of progress of the media file **/
-	JLabel jLabel_movie_timeline;
+	private JLabel jlabelMovieTimeline;
 
 	/** Slider for movie timeline **/
-	JSlider jSlider_movie_progress;
+	private JSlider jsliderMovieProgress;
 
 	/**
 	 * @author Fabian Volkert
 	 */
 	private void buildMovieGUI() {
-		jpnlMovie.add(VLC.get_canvas(), BorderLayout.CENTER);
-		JPanel movie_control_panel = new JPanel();
-		movie_control_panel.setLayout(new FlowLayout());
+		jpnlMovie.add(VLC.getCanvas(), BorderLayout.CENTER);
+		JPanel jpnlMovieControl = new JPanel();
+		jpnlMovieControl.setLayout(new FlowLayout());
 
-		JButton jB_play_movie = new JButton("Play/Pause");
-		jB_play_movie.addActionListener(input_parser);
-		jB_play_movie.setActionCommand("jB_toggle_movie_playback");
-		jB_play_movie.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
-		movie_control_panel.add(jB_play_movie);
+		JButton jbtnPlayMovie = new JButton("Play/Pause");
+		jbtnPlayMovie.addActionListener(button_parser);
+		jbtnPlayMovie.setActionCommand("jB_toggle_movie_playback");
+		jbtnPlayMovie.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
+		jpnlMovieControl.add(jbtnPlayMovie);
 
-		JButton jB_stop_movie = new JButton("Stop");
-		jB_stop_movie.addActionListener(input_parser);
-		jB_stop_movie.setActionCommand("jB_stop_movie");
-		jB_stop_movie.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
-		movie_control_panel.add(jB_stop_movie);
+		JButton jbtnStopMovie = new JButton("Stop");
+		jbtnStopMovie.addActionListener(button_parser);
+		jbtnStopMovie.setActionCommand("jB_stop_movie");
+		jbtnStopMovie.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
+		jpnlMovieControl.add(jbtnStopMovie);
 
-		JButton jB_previous_movie = new JButton("|<");
-		jB_previous_movie.addActionListener(input_parser);
-		jB_previous_movie.setActionCommand("jB_previous_movie");
-		jB_previous_movie.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
-		movie_control_panel.add(jB_previous_movie);
+		JButton jbtnPreviousMovie = new JButton("|<");
+		jbtnPreviousMovie.addActionListener(button_parser);
+		jbtnPreviousMovie.setActionCommand("jB_previous_movie");
+		jbtnPreviousMovie.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
+		jpnlMovieControl.add(jbtnPreviousMovie);
 
-		JButton jB_next_movie = new JButton(">|");
-		jB_next_movie.addActionListener(input_parser);
-		jB_next_movie.setActionCommand("jB_next_movie");
-		jB_next_movie.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
-		movie_control_panel.add(jB_next_movie);
+		JButton jbtnNextMovie = new JButton(">|");
+		jbtnNextMovie.addActionListener(button_parser);
+		jbtnNextMovie.setActionCommand("jB_next_movie");
+		jbtnNextMovie.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
+		jpnlMovieControl.add(jbtnNextMovie);
 
-		JButton jB_previous_chapter = new JButton("<<");
-		jB_previous_chapter.addActionListener(input_parser);
-		jB_previous_chapter.setActionCommand("jB_previous_chapter");
-		jB_previous_chapter.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
-		movie_control_panel.add(jB_previous_chapter);
+		JButton jbtnPreviousChapter = new JButton("<<");
+		jbtnPreviousChapter.addActionListener(button_parser);
+		jbtnPreviousChapter.setActionCommand("jB_previous_chapter");
+		jbtnPreviousChapter.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
+		jpnlMovieControl.add(jbtnPreviousChapter);
 
-		JButton jB_next_chapter = new JButton(">>");
-		jB_next_chapter.addActionListener(input_parser);
-		jB_next_chapter.setActionCommand("jB_next_chapter");
-		jB_next_chapter.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
-		movie_control_panel.add(jB_next_chapter);
+		JButton jbtnNextChapter = new JButton(">>");
+		jbtnNextChapter.addActionListener(button_parser);
+		jbtnNextChapter.setActionCommand("jB_next_chapter");
+		jbtnNextChapter.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
+		jpnlMovieControl.add(jbtnNextChapter);
 
-		jSlider_volume = new JSlider(JSlider.HORIZONTAL, VLC.get_min_volume(), VLC.get_max_volume(),
-		        ((VLC.get_min_volume() + VLC.get_max_volume()) / 2));
-		movie_control_panel.add(jSlider_volume);
-		jSlider_volume.addChangeListener(new VolumeSliderListener());
+		jsliderVolume = new JSlider(JSlider.HORIZONTAL, VLC.getMinVolume(), VLC.getMaxVolume(),
+		        ((VLC.getMinVolume() + VLC.getMaxVolume()) / 2));
+		jpnlMovieControl.add(jsliderVolume);
+		jsliderVolume.addChangeListener(new VolumeSliderListener());
 
-		Jlabel_volume = new JLabel(Integer.toString(((VLC.get_min_volume() + VLC.get_max_volume()) / 2)) + "%");
-		movie_control_panel.add(Jlabel_volume);
+		JlabelVolume = new JLabel(Integer.toString(((VLC.getMinVolume() + VLC.getMaxVolume()) / 2)) + "%");
+		jpnlMovieControl.add(JlabelVolume);
 
-		jpnlMovie.add(movie_control_panel, BorderLayout.SOUTH);
+		jpnlMovie.add(jpnlMovieControl, BorderLayout.SOUTH);
 
 		JPanel jPanel_movie_north = new JPanel();
 		jpnlMovie.add(jPanel_movie_north, BorderLayout.NORTH);
 
-		jSlider_movie_progress = new JSlider(0, 100, 0);
-		jSlider_movie_progress.setMajorTickSpacing(5);
-		jSlider_movie_progress.addChangeListener(new TimelineSliderListener());
-		jPanel_movie_north.add(jSlider_movie_progress, BorderLayout.CENTER);
+		jsliderMovieProgress = new JSlider(0, 100, 0);
+		jsliderMovieProgress.setMajorTickSpacing(5);
+		jsliderMovieProgress.addChangeListener(new TimelineSliderListener());
+		jPanel_movie_north.add(jsliderMovieProgress, BorderLayout.CENTER);
 
-		jLabel_movie_timeline = new JLabel();
-		jLabel_movie_timeline.setText("0");
+		jlabelMovieTimeline = new JLabel();
+		jlabelMovieTimeline.setText("0");
 
-		jPanel_movie_north.add(jLabel_movie_timeline, BorderLayout.EAST);
+		jPanel_movie_north.add(jlabelMovieTimeline, BorderLayout.EAST);
 
 	}
 
@@ -393,9 +392,9 @@ public class VipFrame extends JFrame {
 	public void update_volume_label() {
 		// TODO Properly implement Volume slider and update; Label is bugged
 		// right now
-		if (VLC.get_media_player() != null) {
-			if (Jlabel_volume != null) {
-				Jlabel_volume.setText(Integer.toString(VLC.get_media_player().getVolume()) + "%");
+		if (VLC.getMediaPlayer() != null) {
+			if (JlabelVolume != null) {
+				JlabelVolume.setText(Integer.toString(VLC.getMediaPlayer().getVolume()) + "%");
 			}
 		}
 	}
@@ -407,14 +406,14 @@ public class VipFrame extends JFrame {
 	 */
 	public void update_timeline() {
 		// TODO implement timeline bar, bugged now
-		if (VLC.get_media_player() != null) {
-			jLabel_movie_timeline.setText(Long.toString(VLC.get_media_player().getTime() / 1000));
-			EmbeddedMediaPlayer media_player = VLC.get_media_player();
+		if (VLC.getMediaPlayer() != null) {
+			jlabelMovieTimeline.setText(Long.toString(VLC.getMediaPlayer().getTime() / 1000));
+			EmbeddedMediaPlayer media_player = VLC.getMediaPlayer();
 			double procentual_of_movie = (double) media_player.getTime() / media_player.getLength();
 			System.out.println(procentual_of_movie * 100);
 			if (procentual_of_movie % 0 < 0.3) {
 				System.out.println("got here");
-				jSlider_movie_progress.setValue((int) procentual_of_movie);
+				jsliderMovieProgress.setValue((int) procentual_of_movie);
 			}
 		}
 	}

@@ -7,15 +7,18 @@ public class Main {
 	public static void main(String[] args) {
 		System.out.println("Hello World!");
 		final VipFrame f = new VipFrame();
-		String loaded_movie_file = "G:\\Videos\\Filme\\Fanboys.avi";
-		VLC.load_movie(loaded_movie_file);
+		// String loaded_movie_file = "G:\\Videos\\Filme\\Fanboys.avi";
+		String loaded_movie_file = "F:\\Dji. Death Sails-HD.mp4";
+		VLC.loadMovie(loaded_movie_file);
 		f.setVisible(true);
 
 		Thread t = new Thread(new Runnable() {
 			public void run() {
 				try {
 					while (true) {
-						Thread.sleep(250);	//Fourth a second is enough for the timeline to update with a visual difference.
+						Thread.sleep(250); // Fourth a second is enough for the
+		                                   // timeline to update with a visual
+		                                   // difference.
 						f.update_timeline();
 					}
 				} catch (InterruptedException e) {

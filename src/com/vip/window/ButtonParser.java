@@ -25,6 +25,10 @@ public class ButtonParser implements ActionListener {
 			VLC.previousChapter();
 		if (("jbtnNextChapter".equals(action)))
 			VLC.nextChapter();
+		if (("jbtnJumpBack".equals(action)))
+			VLC.jumpBack();
+		if (("jbtnJumpForward".equals(action)))
+			VLC.jumpForward();
 		if (("jbtnVolumeDown".equals(action)))
 			VLC.volumeDown();
 		if (("jbtnVolumeUp".equals(action)))

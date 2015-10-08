@@ -26,11 +26,33 @@ public abstract class VLC {
 	/** Minimum volume supported (0 is least) **/
 	private static final int MIN_VOLUME = 0;
 
+	/**
+	 * Percentage of how far a jump in the movie will proceed, must be between 0
+	 * and 1
+	 **/
+	private static final double JUMP_PERCENTAGE = 0.05;
+
 	/** The mediaplayer that is responsible for playback **/
 	private static EmbeddedMediaPlayer mediaPlayerComponent;
 
 	/** Canvas on which the mediaplayer plays media on **/
 	private static Canvas canvas;
+
+	/**
+	 * Initializes vlc plugin,finds vlc installation, sets canvas up.
+	 */
+	public static void init() {
+		boolean found = new NativeDiscovery().discover();
+		System.out.println(found);
+		System.out.println(LibVlc.INSTANCE.libvlc_get_version());
+
+		canvas = new Canvas();
+		canvas.setBackground(Color.BLACK);
+
+		MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory();
+		mediaPlayerComponent = mediaPlayerFactory.newEmbeddedMediaPlayer();
+		mediaPlayerComponent.setVideoSurface(mediaPlayerFactory.newVideoSurface(canvas));
+	}
 
 	/**
 	 * Getter method of the class' canvas.
@@ -128,10 +150,40 @@ public abstract class VLC {
 	}
 
 	/**
+	 * Jumps forward in the media file a given percentage
+	 */
+	public static void jumpForward() {
+		if (mediaPlayerComponent != null && mediaPlayerComponent.getLength() != -1) {
+			if (JUMP_PERCENTAGE >= 0 && JUMP_PERCENTAGE <= 1) {
+				int changeRate = (int) (mediaPlayerComponent.getLength() * JUMP_PERCENTAGE);
+				int newTime = (int) (mediaPlayerComponent.getTime() + changeRate);
+				if (newTime >= mediaPlayerComponent.getLength())
+					newTime = (int) mediaPlayerComponent.getLength();
+				mediaPlayerComponent.setTime(newTime);
+			}
+		}
+	}
+
+	/**
+	 * Jumps back in the media file a given percentage
+	 */
+	public static void jumpBack() {
+		if (mediaPlayerComponent != null && mediaPlayerComponent.getLength() != -1) {
+			if (JUMP_PERCENTAGE >= 0 && JUMP_PERCENTAGE <= 1) {
+				int changeRate = (int) (mediaPlayerComponent.getLength() * JUMP_PERCENTAGE);
+				int newTime = (int) (mediaPlayerComponent.getTime() - changeRate);
+				if (newTime < 0)
+					newTime = 0;
+				mediaPlayerComponent.setTime(newTime);
+			}
+		}
+	}
+
+	/**
 	 * Increases volume by set rate
 	 */
 	public static void volumeUp() {
-		if (mediaPlayerComponent != null|| mediaPlayerComponent.getLength() ==-1) {
+		if (mediaPlayerComponent != null && mediaPlayerComponent.getLength() != -1) {
 			if (mediaPlayerComponent.getVolume() <= MAX_VOLUME - VOLUME_STEPS) {
 				mediaPlayerComponent.setVolume(mediaPlayerComponent.getVolume() + VOLUME_STEPS);
 				System.out.println(mediaPlayerComponent.getVolume());
@@ -146,7 +198,7 @@ public abstract class VLC {
 	 * Decreases volume by set rate
 	 */
 	public static void volumeDown() {
-		if (mediaPlayerComponent != null|| mediaPlayerComponent.getLength() ==-1) {
+		if (mediaPlayerComponent != null && mediaPlayerComponent.getLength() != -1) {
 			if (mediaPlayerComponent.getVolume() >= MIN_VOLUME + VOLUME_STEPS) {
 				mediaPlayerComponent.setVolume(mediaPlayerComponent.getVolume() - VOLUME_STEPS);
 				System.out.println(mediaPlayerComponent.getVolume());
@@ -164,7 +216,7 @@ public abstract class VLC {
 	 */
 	public static int getIncreasedVolume() {
 		int newVolume = (MAX_VOLUME + MIN_VOLUME) / 2;
-		if (mediaPlayerComponent != null || mediaPlayerComponent.getLength() ==-1) {
+		if (mediaPlayerComponent != null && mediaPlayerComponent.getLength() != -1) {
 			if (mediaPlayerComponent.getVolume() <= MAX_VOLUME - VOLUME_STEPS) {
 				newVolume = mediaPlayerComponent.getVolume() + VOLUME_STEPS;
 			} else {
@@ -181,7 +233,7 @@ public abstract class VLC {
 	 */
 	public static int getDecreasedVolume() {
 		int newVolume = (MAX_VOLUME + MIN_VOLUME) / 2;
-		if (mediaPlayerComponent != null|| mediaPlayerComponent.getLength() ==-1) {
+		if (mediaPlayerComponent != null && mediaPlayerComponent.getLength() != -1) {
 			if (mediaPlayerComponent.getVolume() >= MIN_VOLUME + VOLUME_STEPS) {
 				newVolume = mediaPlayerComponent.getVolume() - VOLUME_STEPS;
 			} else {
@@ -189,21 +241,5 @@ public abstract class VLC {
 			}
 		}
 		return newVolume;
-	}
-
-	/**
-	 * Initializes vlc plugin,finds vlc installation, sets canvas up.
-	 */
-	public static void init() {
-		boolean found = new NativeDiscovery().discover();
-		System.out.println(found);
-		System.out.println(LibVlc.INSTANCE.libvlc_get_version());
-
-		canvas = new Canvas();
-		canvas.setBackground(Color.BLACK);
-
-		MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory();
-		mediaPlayerComponent = mediaPlayerFactory.newEmbeddedMediaPlayer();
-		mediaPlayerComponent.setVideoSurface(mediaPlayerFactory.newVideoSurface(canvas));
 	}
 }

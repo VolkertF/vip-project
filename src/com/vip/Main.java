@@ -4,6 +4,10 @@ import com.vip.media.VLC;
 import com.vip.window.VipFrame;
 
 public class Main {
+
+	/** ms rate on which the timeline is updated **/
+	private static final int UPDATE_RATE = 250;
+
 	public static void main(String[] args) {
 		System.out.println("Hello World!");
 		final VipFrame f = new VipFrame();
@@ -17,10 +21,7 @@ public class Main {
 			public void run() {
 				try {
 					while (true) {
-						Thread.sleep(250); // Fourth a second is enough for
-						// the
-		                // timeline to update with a visual
-		                // difference.
+						Thread.sleep(UPDATE_RATE);
 						if (VLC.getMediaPlayer().getLength() != -1) {
 							f.updateTimeline();
 						}

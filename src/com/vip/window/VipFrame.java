@@ -343,13 +343,13 @@ public class VipFrame extends JFrame {
 
 		JButton jbtnPreviousChapter = new JButton("<<");
 		jbtnPreviousChapter.addActionListener(button_parser);
-		jbtnPreviousChapter.setActionCommand("jbtnPreviousChapter");
+		jbtnPreviousChapter.setActionCommand("jbtnJumpBack");
 		jbtnPreviousChapter.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
 		jpnlMovieControl.add(jbtnPreviousChapter);
 
 		JButton jbtnNextChapter = new JButton(">>");
 		jbtnNextChapter.addActionListener(button_parser);
-		jbtnNextChapter.setActionCommand("jbtnNextChapter");
+		jbtnNextChapter.setActionCommand("jbtnJumpForward");
 		jbtnNextChapter.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
 		jpnlMovieControl.add(jbtnNextChapter);
 
@@ -412,14 +412,16 @@ public class VipFrame extends JFrame {
 	public void updateTimeline() {
 		// TODO implement timeline bar, bugged now
 		if (VLC.getMediaPlayer().getLength() != -1) {
-			jlabelMovieTimeline.setText(Long.toString(VLC.getMediaPlayer().getTime() / 1000));
+			Double procentualProgress = ((double) VLC.getMediaPlayer().getTime() / VLC.getMediaPlayer().getLength())
+			        * 100;
+			String newTime = String.format("%4.1f", procentualProgress);
+			jlabelMovieTimeline.setText(newTime + " %");
 			if (initMovie) {
 				int movieLength = (int) VLC.getMediaPlayer().getLength();
 				jsliderMovieProgress.setMaximum(movieLength);
 				jsliderMovieProgress.setMinimum(0);
-				this.revalidate();
+				revalidate();
 				jsliderMovieProgress.repaint();
-				System.out.println((int) VLC.getMediaPlayer().getTime() + " aktuelle Zeit");
 				initMovie = false;
 			} else {
 				int currentMovieTime = (int) VLC.getMediaPlayer().getTime();

@@ -131,20 +131,30 @@ public abstract class VLC {
 	 * Increases volume by set rate
 	 */
 	public static void volumeUp() {
-		if (mediaPlayerComponent.getVolume() <= MAX_VOLUME - VOLUME_STEPS) {
-			mediaPlayerComponent.setVolume(mediaPlayerComponent.getVolume() + VOLUME_STEPS);
-			System.out.println(mediaPlayerComponent.getVolume());
+		if (mediaPlayerComponent != null|| mediaPlayerComponent.getLength() ==-1) {
+			if (mediaPlayerComponent.getVolume() <= MAX_VOLUME - VOLUME_STEPS) {
+				mediaPlayerComponent.setVolume(mediaPlayerComponent.getVolume() + VOLUME_STEPS);
+				System.out.println(mediaPlayerComponent.getVolume());
+			} else {
+				mediaPlayerComponent.setVolume(MAX_VOLUME);
+			}
 		}
+
 	}
 
 	/**
 	 * Decreases volume by set rate
 	 */
 	public static void volumeDown() {
-		if (mediaPlayerComponent.getVolume() >= MIN_VOLUME + VOLUME_STEPS) {
-			mediaPlayerComponent.setVolume(mediaPlayerComponent.getVolume() - VOLUME_STEPS);
-			System.out.println(mediaPlayerComponent.getVolume());
+		if (mediaPlayerComponent != null|| mediaPlayerComponent.getLength() ==-1) {
+			if (mediaPlayerComponent.getVolume() >= MIN_VOLUME + VOLUME_STEPS) {
+				mediaPlayerComponent.setVolume(mediaPlayerComponent.getVolume() - VOLUME_STEPS);
+				System.out.println(mediaPlayerComponent.getVolume());
+			} else {
+				mediaPlayerComponent.setVolume(MIN_VOLUME);
+			}
 		}
+
 	}
 
 	/**
@@ -154,11 +164,11 @@ public abstract class VLC {
 	 */
 	public static int getIncreasedVolume() {
 		int newVolume = (MAX_VOLUME + MIN_VOLUME) / 2;
-		if (mediaPlayerComponent != null) {
+		if (mediaPlayerComponent != null || mediaPlayerComponent.getLength() ==-1) {
 			if (mediaPlayerComponent.getVolume() <= MAX_VOLUME - VOLUME_STEPS) {
 				newVolume = mediaPlayerComponent.getVolume() + VOLUME_STEPS;
 			} else {
-				newVolume = mediaPlayerComponent.getVolume();
+				newVolume = MAX_VOLUME;
 			}
 		}
 		return newVolume;
@@ -171,11 +181,11 @@ public abstract class VLC {
 	 */
 	public static int getDecreasedVolume() {
 		int newVolume = (MAX_VOLUME + MIN_VOLUME) / 2;
-		if (mediaPlayerComponent != null) {
+		if (mediaPlayerComponent != null|| mediaPlayerComponent.getLength() ==-1) {
 			if (mediaPlayerComponent.getVolume() >= MIN_VOLUME + VOLUME_STEPS) {
 				newVolume = mediaPlayerComponent.getVolume() - VOLUME_STEPS;
 			} else {
-				newVolume = mediaPlayerComponent.getVolume();
+				newVolume = MIN_VOLUME;
 			}
 		}
 		return newVolume;

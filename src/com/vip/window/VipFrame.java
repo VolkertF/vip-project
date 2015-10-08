@@ -370,7 +370,7 @@ public class VipFrame extends JFrame {
 		jsliderMovieProgress = new JSlider(0, 100, 0);
 		jsliderMovieProgress.setMajorTickSpacing(5);
 		jsliderMovieProgress.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent me) {
+			public void mouseReleased(MouseEvent me) {
 				JSlider jslider = (JSlider) me.getSource();
 				BasicSliderUI ui = (BasicSliderUI) jslider.getUI();
 				int value = ui.valueForXPosition(me.getX());

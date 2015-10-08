@@ -12,6 +12,8 @@ import java.awt.Insets;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -37,11 +39,10 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.plaf.basic.BasicSliderUI;
 
 import com.sun.glass.events.KeyEvent;
 import com.vip.media.VLC;
-
-import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 @SuppressWarnings("serial")
 public class VipFrame extends JFrame {
@@ -70,7 +71,7 @@ public class VipFrame extends JFrame {
 		}
 
 		KeyParser keyParser = new KeyParser();
-		keyParser.set_vip_frame(this);
+		keyParser.setVipFrame(this);
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		manager.addKeyEventDispatcher(keyParser);
 
@@ -275,11 +276,11 @@ public class VipFrame extends JFrame {
 	}
 
 	/**
-	 * Create Sub-sub- components in the movie panel including the JVLC plugin
-	 * to play movies Maybe also a section to control the movie (play, pause,
-	 * volume up/down, fast forward etc.)
+	 * Class listens to volume slider changes and processes them
+	 * 
+	 * @author Fabian Volkert
+	 *
 	 */
-
 	private class VolumeSliderListener implements ChangeListener {
 
 		public void stateChanged(ChangeEvent ce) {
@@ -289,17 +290,6 @@ public class VipFrame extends JFrame {
 			if (JlabelVolume != null) {
 				JlabelVolume.setText(Integer.toString(newVolume) + "%");
 			}
-		}
-	}
-
-	// TODO Timeline implementieren, Dauer des Films herausfinden, neue Position
-	// setzen, moeglicherweise prozentual?
-	private class TimelineSliderListener implements ChangeListener {
-
-		public void stateChanged(ChangeEvent ce) {
-			JSlider source = (JSlider) ce.getSource();
-			VLC.getMediaPlayer().setTime((long) (((float) source.getValue() / 100) * VLC.getMediaPlayer().getLength()));
-			System.out.println(((float) source.getValue() / 100));
 		}
 	}
 
@@ -316,6 +306,10 @@ public class VipFrame extends JFrame {
 	private JSlider jsliderMovieProgress;
 
 	/**
+	 * Create Sub-sub- components in the movie panel including the JVLC plugin
+	 * to play movies Maybe also a section to control the movie (play, pause,
+	 * volume up/down, fast forward etc.)
+	 * 
 	 * @author Fabian Volkert
 	 */
 	private void buildMovieGUI() {
@@ -325,37 +319,37 @@ public class VipFrame extends JFrame {
 
 		JButton jbtnPlayMovie = new JButton("Play/Pause");
 		jbtnPlayMovie.addActionListener(button_parser);
-		jbtnPlayMovie.setActionCommand("jB_toggle_movie_playback");
+		jbtnPlayMovie.setActionCommand("jbtnToggleMoviePlayback");
 		jbtnPlayMovie.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
 		jpnlMovieControl.add(jbtnPlayMovie);
 
 		JButton jbtnStopMovie = new JButton("Stop");
 		jbtnStopMovie.addActionListener(button_parser);
-		jbtnStopMovie.setActionCommand("jB_stop_movie");
+		jbtnStopMovie.setActionCommand("jbtnStopMovie");
 		jbtnStopMovie.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
 		jpnlMovieControl.add(jbtnStopMovie);
 
 		JButton jbtnPreviousMovie = new JButton("|<");
 		jbtnPreviousMovie.addActionListener(button_parser);
-		jbtnPreviousMovie.setActionCommand("jB_previous_movie");
+		jbtnPreviousMovie.setActionCommand("jbtnPreviousMovie");
 		jbtnPreviousMovie.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
 		jpnlMovieControl.add(jbtnPreviousMovie);
 
 		JButton jbtnNextMovie = new JButton(">|");
 		jbtnNextMovie.addActionListener(button_parser);
-		jbtnNextMovie.setActionCommand("jB_next_movie");
+		jbtnNextMovie.setActionCommand("jbtnNextMovie");
 		jbtnNextMovie.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
 		jpnlMovieControl.add(jbtnNextMovie);
 
 		JButton jbtnPreviousChapter = new JButton("<<");
 		jbtnPreviousChapter.addActionListener(button_parser);
-		jbtnPreviousChapter.setActionCommand("jB_previous_chapter");
+		jbtnPreviousChapter.setActionCommand("jbtnPreviousChapter");
 		jbtnPreviousChapter.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
 		jpnlMovieControl.add(jbtnPreviousChapter);
 
 		JButton jbtnNextChapter = new JButton(">>");
 		jbtnNextChapter.addActionListener(button_parser);
-		jbtnNextChapter.setActionCommand("jB_next_chapter");
+		jbtnNextChapter.setActionCommand("jbtnNextChapter");
 		jbtnNextChapter.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
 		jpnlMovieControl.add(jbtnNextChapter);
 
@@ -369,52 +363,70 @@ public class VipFrame extends JFrame {
 
 		jpnlMovie.add(jpnlMovieControl, BorderLayout.SOUTH);
 
-		JPanel jPanel_movie_north = new JPanel();
-		jpnlMovie.add(jPanel_movie_north, BorderLayout.NORTH);
+		JPanel jpnlMovieNorth = new JPanel();
+		jpnlMovie.add(jpnlMovieNorth, BorderLayout.NORTH);
+		jpnlMovieNorth.setLayout(new GridBagLayout());
 
 		jsliderMovieProgress = new JSlider(0, 100, 0);
 		jsliderMovieProgress.setMajorTickSpacing(5);
-		jsliderMovieProgress.addChangeListener(new TimelineSliderListener());
-		jPanel_movie_north.add(jsliderMovieProgress, BorderLayout.CENTER);
+		jsliderMovieProgress.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent me) {
+				JSlider jslider = (JSlider) me.getSource();
+				BasicSliderUI ui = (BasicSliderUI) jslider.getUI();
+				int value = ui.valueForXPosition(me.getX());
+				VLC.getMediaPlayer().setTime(value);
+			}
+		});
 
 		jlabelMovieTimeline = new JLabel();
 		jlabelMovieTimeline.setText("0");
 
-		jPanel_movie_north.add(jlabelMovieTimeline, BorderLayout.EAST);
+		addComponent(0, 0, 1, 1, 1.0, 1.0, jpnlMovieNorth, jsliderMovieProgress, defaultInsets);
+		addComponent(1, 0, 1, 1, 0.1, 0.1, jpnlMovieNorth, jlabelMovieTimeline, defaultInsets);
 
 	}
 
 	/**
-	 * Updates the state of the nominator for current volune level
+	 * Updates the state of the nominators for current volume level
 	 * 
 	 * @author Fabian Volkert
 	 */
-	public void update_volume_label() {
+	public void updateVolume(int newVolume) {
 		// TODO Properly implement Volume slider and update; Label is bugged
 		// right now
 		if (VLC.getMediaPlayer() != null) {
-			if (JlabelVolume != null) {
-				JlabelVolume.setText(Integer.toString(VLC.getMediaPlayer().getVolume()) + "%");
+			if (jsliderVolume != null) {
+				jsliderVolume.setValue(newVolume);
 			}
 		}
 	}
 
+	/** True on Initialization of a Movie **/
+	boolean initMovie = true;
+
 	/**
-	 * Updates the state of the nominator for current progress in media file
+	 * Updates the state of the nominators for current progress in media file
 	 * 
 	 * @author Fabian Volkert
 	 */
-	public void update_timeline() {
+	public void updateTimeline() {
 		// TODO implement timeline bar, bugged now
-		if (VLC.getMediaPlayer() != null) {
+		if (VLC.getMediaPlayer().getLength() != -1) {
 			jlabelMovieTimeline.setText(Long.toString(VLC.getMediaPlayer().getTime() / 1000));
-			EmbeddedMediaPlayer media_player = VLC.getMediaPlayer();
-			double procentual_of_movie = (double) media_player.getTime() / media_player.getLength();
-			System.out.println(procentual_of_movie * 100);
-			if (procentual_of_movie % 0 < 0.3) {
-				System.out.println("got here");
-				jsliderMovieProgress.setValue((int) procentual_of_movie);
+			if (initMovie) {
+				int movieLength = (int) VLC.getMediaPlayer().getLength();
+				jsliderMovieProgress.setMaximum(movieLength);
+				jsliderMovieProgress.setMinimum(0);
+				this.revalidate();
+				jsliderMovieProgress.repaint();
+				System.out.println((int) VLC.getMediaPlayer().getTime() + " aktuelle Zeit");
+				initMovie = false;
+			} else {
+				int currentMovieTime = (int) VLC.getMediaPlayer().getTime();
+				jsliderMovieProgress.setValue(currentMovieTime);
 			}
+		} else {
+			jlabelMovieTimeline.setText("0");
 		}
 	}
 

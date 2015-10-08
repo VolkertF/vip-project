@@ -15,10 +15,10 @@ import com.vip.media.VLC;
  */
 public class KeyParser implements KeyEventDispatcher {
 
-	private VipFrame vip_frame;
+	private VipFrame vipFrame;
 
-	public void set_vip_frame(VipFrame new_vip_frame) {
-		vip_frame = new_vip_frame;
+	public void setVipFrame(VipFrame newVipFrame) {
+		vipFrame = newVipFrame;
 	}
 
 	@Override
@@ -26,20 +26,20 @@ public class KeyParser implements KeyEventDispatcher {
 		int state = ke.getID();
 		int pressed = KeyEvent.KEY_PRESSED;
 		int id = ke.getKeyCode();
-		// When space is pressed and no textfield is focussed, movie playback
-		// will be toggled
-		if (state == KeyEvent.KEY_PRESSED && id == KeyEvent.VK_SPACE && !(ke.getSource() instanceof JTextField))
-			VLC.toggleMoviePlayback();
-		if (state == KeyEvent.KEY_PRESSED && (id == KeyEvent.VK_PLUS || id == KeyEvent.VK_ADD))
-			vip_frame.update_volume_label();
-		VLC.volumeUp();
-		if (state == KeyEvent.KEY_PRESSED && (id == KeyEvent.VK_MINUS || id == KeyEvent.VK_SUBTRACT))
-			vip_frame.update_volume_label();
-		VLC.volumeDown();
-		// When CTRL+F is pressed, the search textfield will be focussed
-		if (state == pressed && id == KeyEvent.VK_F && (ke.getModifiers() & KeyEvent.CTRL_MASK) != 0)
-			vip_frame.get_jtfSearch().requestFocus();
-
+		// When no textfield is focused, input will be processed
+		if (!(ke.getSource() instanceof JTextField)) {
+			if (state == KeyEvent.KEY_PRESSED && id == KeyEvent.VK_SPACE)
+				VLC.toggleMoviePlayback();
+			if (state == KeyEvent.KEY_PRESSED && (id == KeyEvent.VK_PLUS || id == KeyEvent.VK_ADD)) {
+				vipFrame.updateVolume(VLC.getIncreasedVolume());
+			}
+			if (state == KeyEvent.KEY_PRESSED && (id == KeyEvent.VK_MINUS || id == KeyEvent.VK_SUBTRACT)) {
+				vipFrame.updateVolume(VLC.getDecreasedVolume());
+			}
+			// When CTRL+F is pressed, the search textfield will be focussed
+			if (state == pressed && id == KeyEvent.VK_F && (ke.getModifiers() & KeyEvent.CTRL_MASK) != 0)
+				vipFrame.get_jtfSearch().requestFocus();
+		}
 		return false;
 	}
 

@@ -74,18 +74,21 @@ public abstract class VLC {
 	 * @param media_path
 	 *            Path to the media file to be loaded
 	 */
-	public static void loadMovie(String media_path) {
-		mediaPlayerComponent.prepareMedia(media_path);
+	public static void loadMedia(String media_path) {
+		if (mediaPlayerComponent != null)
+			mediaPlayerComponent.prepareMedia(media_path);
 	}
 
 	/**
 	 * Toggles movie playback
 	 */
 	public static void toggleMoviePlayback() {
-		if (VLC.getMediaPlayer().isPlaying()) {
-			VLC.pauseMovie();
-		} else {
-			VLC.playMovie();
+		if (mediaPlayerComponent != null) {
+			if (VLC.getMediaPlayer().isPlaying()) {
+				VLC.pauseMovie();
+			} else {
+				VLC.playMovie();
+			}
 		}
 	}
 
@@ -142,6 +145,40 @@ public abstract class VLC {
 			mediaPlayerComponent.setVolume(mediaPlayerComponent.getVolume() - VOLUME_STEPS);
 			System.out.println(mediaPlayerComponent.getVolume());
 		}
+	}
+
+	/**
+	 * Increases volume by set rate and returns it new value
+	 * 
+	 * @return the new volume level
+	 */
+	public static int getIncreasedVolume() {
+		int newVolume = (MAX_VOLUME + MIN_VOLUME) / 2;
+		if (mediaPlayerComponent != null) {
+			if (mediaPlayerComponent.getVolume() <= MAX_VOLUME - VOLUME_STEPS) {
+				newVolume = mediaPlayerComponent.getVolume() + VOLUME_STEPS;
+			} else {
+				newVolume = mediaPlayerComponent.getVolume();
+			}
+		}
+		return newVolume;
+	}
+
+	/**
+	 * Decreases volume by set rate and returns it new value
+	 * 
+	 * @return the new volume level
+	 */
+	public static int getDecreasedVolume() {
+		int newVolume = (MAX_VOLUME + MIN_VOLUME) / 2;
+		if (mediaPlayerComponent != null) {
+			if (mediaPlayerComponent.getVolume() >= MIN_VOLUME + VOLUME_STEPS) {
+				newVolume = mediaPlayerComponent.getVolume() - VOLUME_STEPS;
+			} else {
+				newVolume = mediaPlayerComponent.getVolume();
+			}
+		}
+		return newVolume;
 	}
 
 	/**

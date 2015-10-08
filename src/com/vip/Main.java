@@ -9,17 +9,21 @@ public class Main {
 		final VipFrame f = new VipFrame();
 		// String loaded_movie_file = "G:\\Videos\\Filme\\Fanboys.avi";
 		String loaded_movie_file = "F:\\Dji. Death Sails-HD.mp4";
-		VLC.loadMovie(loaded_movie_file);
+		VLC.loadMedia(loaded_movie_file);
+		// f.setTimelineMaximum(VLC.getMediaPlayer().getLength());
 		f.setVisible(true);
 
 		Thread t = new Thread(new Runnable() {
 			public void run() {
 				try {
 					while (true) {
-						Thread.sleep(250); // Fourth a second is enough for the
-		                                   // timeline to update with a visual
-		                                   // difference.
-						f.update_timeline();
+						Thread.sleep(250); // Fourth a second is enough for
+						// the
+		                // timeline to update with a visual
+		                // difference.
+						if (VLC.getMediaPlayer().getLength() != -1) {
+							f.updateTimeline();
+						}
 					}
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block

@@ -1,13 +1,14 @@
 package com.extractor;
 
-import com.vip.attributes.*;
+//import com.vip.attributes.*;
 import com.vip.omdb.OMDBConnector;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.ArrayList;
 import java.io.IOException;
 
 
@@ -57,14 +58,72 @@ public class InfoExtractor {
 	 * and creates a new Movie object.
 	 * 
 	 * @param Map		The Map holding the information from a request
+	 * 
+	 * @TODO We will need to change how Movie objects store information.
+	 * 		 In addition, we'll need to remove these print statements.
 	 */
 	public void extract(Map<String, String> infoMap) {
-		Movie movie = new Movie();
 		
-		movie.setYearReleased(Integer.parseInt(infoMap.get("Year")));
-		movie.setDirector(infoMap.get("Director"));
+		int yearReleased = Integer.parseInt(infoMap.get("Year"));
+		
+		ArrayList<String> directors = this.toArrayList(infoMap.get("Director"));
+		ArrayList<String> writers = this.toArrayList(infoMap.get("Writer"));
+		ArrayList<String> genres = this.toArrayList(infoMap.get("Genre"));
+		
+		//---------------------------------------------------------------|
+		// TODO: Remove these statements later.
+		//---------------------------------------------------------------|
+		System.out.println("-----------------------------------------------------------------");
+		System.out.println("InfoExtractor.extract(): This movie was released in " + yearReleased);
+		
+		System.out.println("");
+		System.out.println("InfoExtractor.extract(): Directors...");
+		for(String entity : directors){
+			System.out.println(entity);
+		}
+
+		System.out.println("");
+		System.out.println("InfoExtractor.extract(): Writers...");
+		for(String entity : writers){
+			System.out.println(entity);
+		}
+		
+		System.out.println("");
+		System.out.println("InfoExtractor.extract: Genres...");
+		for(String entity : genres){
+			System.out.println(entity);
+		}
+		//---------------------------------------------------------------|
+		// TODO: End of section to remove.
+		//---------------------------------------------------------------|
+		
+//		Movie movie = new Movie();
+		
+//		movie.setYearReleased(Integer.parseInt(infoMap.get("Year")));
+//		movie.setDirector(infoMap.get("Director"));
 //		movie.setWriter(infoMap.get("Writer"));
-		movie.setGenre(infoMap.get("Genre"));
+//		movie.setGenre(infoMap.get("Genre"));
+	}
+	
+	
+	/**
+	 * This method converts a String representing comma-separated
+	 * entities into an ArrayList holding each entity.
+	 * 
+	 * For example, if the genre information is held in the String
+	 * "Action, Adventure, Comedy" we need to split it into 
+	 * "Action", "Adventure", and "Comedy". This way our movie
+	 * object can have multiple genres instead of one list of
+	 * genres.
+	 * 
+	 * @param info			The String to convert
+	 * @return ArrayList	An ArrayList containing the information
+	 * 						in separated Strings
+	 */
+	private ArrayList<String> toArrayList(String info) {
+		String[] splitString = info.split(", ");
+		ArrayList<String> entities = new ArrayList<String>(Arrays.asList(splitString));
+		return entities;
 	}
 	
 	
@@ -118,7 +177,8 @@ public class InfoExtractor {
 			
 			String response = connector.makeHttpRequest(title, year);
 			Map<String, String> information = deserializeJson(response);
-			printJson(information);
+			this.printJson(information);
+			this.extract(information);
 		}
 		
 		connector.close();

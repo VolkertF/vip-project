@@ -175,7 +175,7 @@ public class InfoExtractor {
 				break;
 			}
 			
-			String response = connector.makeHttpRequest(title, year);
+			String response = connector.makeApiRequest(title, year);
 			Map<String, String> information = deserializeJson(response);
 			this.printJson(information);
 			this.extract(information);

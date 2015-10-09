@@ -20,7 +20,6 @@ public class OMDBConnector {
 
 	private static CloseableHttpClient client;
 	
-	
 	/**
 	 * Constructor that initializes the HTTP client.
 	 */
@@ -29,6 +28,12 @@ public class OMDBConnector {
 	}
 	
 	
+	/**
+	 * This method closes the connection to the OMDb API. It should
+	 * always be called when the request is finished. It will throw
+	 * an IOException if something goes wrong when closing the
+	 * connection.
+	 */
 	public void close() throws IOException {
 		client.close();
 	}
@@ -42,7 +47,7 @@ public class OMDBConnector {
 	 * @param year 			The year the movie came out
 	 * @return String		The response from the API
 	 */
-	public String makeHttpRequest(String title, String year) throws IOException {
+	public String makeApiRequest(String title, String year) throws IOException {
 		String formattedUri = buildUri(title, year);
 		HttpGet request = new HttpGet(formattedUri);
 

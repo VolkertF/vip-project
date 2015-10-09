@@ -80,7 +80,8 @@ public class InfoExtractor {
 		// Split the string using the string ", " as a delimiter
 		// then return the information as an ArrayList.
 		String[] separatedString = infoMap.get(category).split(", ");
-		ArrayList<String> categoryInfo = new ArrayList<String>(Arrays.asList(separatedString));
+		ArrayList<String> categoryInfo = 
+				new ArrayList<String>(Arrays.asList(separatedString));
 		
 		//---------------------------------------------------------------|
 		// TODO: Remove these statements later.

@@ -1,7 +1,8 @@
-package com.extractor;
+package com.vip.extractor;
 
 //import com.vip.attributes.*;
 import com.vip.omdb.OMDBConnector;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -13,16 +14,16 @@ import java.io.IOException;
 
 
 /**
- * This class extracts information from an OMDb request.
- * 
- * @author Cyril Casapao
- * 
- * @TODO 	Currently, this class uses terminal input and print
- * 			statements to make API requests. Eventually, this code
- * 			will be used within a GUI so the user can look up info
- * 			about a specified movie. When we implement that, we will
- * 			need to remove the terminal-style interaction here.
- */
+* This class extracts information from an OMDb request.
+* 
+* @author Cyril Casapao
+* 
+* @TODO 	Currently, this class uses terminal input and print
+* 			statements to make API requests. Eventually, this code
+* 			will be used within a GUI so the user can look up info
+* 			about a specified movie. When we implement that, we will
+* 			need to remove the terminal-style interaction here.
+*/
 public class InfoExtractor {
 	
 	Scanner scan;
@@ -180,3 +181,4 @@ public class InfoExtractor {
 		}
 	}
 }
+

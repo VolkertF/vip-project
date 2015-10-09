@@ -17,13 +17,11 @@ import java.io.IOException;
  * 
  * @author Cyril Casapao
  * 
- * @TODO 	Remember that genre, writers, and other information fields
- * 			could have multiple pieces of info. For instance, Up's genre
- * 			consists of the string "Animation, Adventure, Comedy" meaning
- * 			we should have separate values for each of these. We still need
- * 			to write code to parse this information and put it into (probably)
- * 			an ArrayList.
- * 		
+ * @TODO 	Currently, this class uses terminal input and print
+ * 			statements to make API requests. Eventually, this code
+ * 			will be used within a GUI so the user can look up info
+ * 			about a specified movie. When we implement that, we will
+ * 			need to remove the terminal-style interaction here.
  */
 public class InfoExtractor {
 	
@@ -55,75 +53,46 @@ public class InfoExtractor {
 	
 	/**
 	 * This method takes the information received from an OMDb request
-	 * and creates a new Movie object.
+	 * and parses it to separate entries that fall under the same
+	 * category.
 	 * 
-	 * @param Map		The Map holding the information from a request
+	 * For example, an API response will hold genre information in a
+	 * String that looks like "Action, Adventure, Comedy". However,
+	 * we want to split it into "Action", "Adventure", and "Comedy". 
+	 * This way our Movie object can have a list of multiple genres 
+	 * instead of one String that contains several genres.
+	 * 
+	 * @param Map			The Map holding the information from a request
+	 * @param category		The type of information to extract from the API
+	 * 						response (e.g., genre, director, cast, etc.)
+	 * @return ArrayList	An ArrayList holding each piece of information
+	 * 						in a separate index.
 	 * 
 	 * @TODO We will need to change how Movie objects store information.
 	 * 		 In addition, we'll need to remove these print statements.
 	 */
-	public void extract(Map<String, String> infoMap) {
+	public ArrayList<String> splitCategoryInfo(
+			Map<String, String> infoMap, 
+			String category
+	)
+	{
 		
-		int yearReleased = Integer.parseInt(infoMap.get("Year"));
-		
-		ArrayList<String> directors = this.toArrayList(infoMap.get("Director"));
-		ArrayList<String> writers = this.toArrayList(infoMap.get("Writer"));
-		ArrayList<String> genres = this.toArrayList(infoMap.get("Genre"));
+		// Split the string using the string ", " as a delimiter
+		// then return the information as an ArrayList.
+		String[] separatedString = infoMap.get(category).split(", ");
+		ArrayList<String> categoryInfo = new ArrayList<String>(Arrays.asList(separatedString));
 		
 		//---------------------------------------------------------------|
 		// TODO: Remove these statements later.
 		//---------------------------------------------------------------|
 		System.out.println("-----------------------------------------------------------------");
-		System.out.println("InfoExtractor.extract(): This movie was released in " + yearReleased);
-		
-		System.out.println("");
-		System.out.println("InfoExtractor.extract(): Directors...");
-		for(String entity : directors){
+		System.out.println("InfoExtractor.splitCategoryInfo(): " + category + "...");
+		for(String entity : categoryInfo){
 			System.out.println(entity);
 		}
-
 		System.out.println("");
-		System.out.println("InfoExtractor.extract(): Writers...");
-		for(String entity : writers){
-			System.out.println(entity);
-		}
 		
-		System.out.println("");
-		System.out.println("InfoExtractor.extract: Genres...");
-		for(String entity : genres){
-			System.out.println(entity);
-		}
-		//---------------------------------------------------------------|
-		// TODO: End of section to remove.
-		//---------------------------------------------------------------|
-		
-//		Movie movie = new Movie();
-		
-//		movie.setYearReleased(Integer.parseInt(infoMap.get("Year")));
-//		movie.setDirector(infoMap.get("Director"));
-//		movie.setWriter(infoMap.get("Writer"));
-//		movie.setGenre(infoMap.get("Genre"));
-	}
-	
-	
-	/**
-	 * This method converts a String representing comma-separated
-	 * entities into an ArrayList holding each entity.
-	 * 
-	 * For example, if the genre information is held in the String
-	 * "Action, Adventure, Comedy" we need to split it into 
-	 * "Action", "Adventure", and "Comedy". This way our movie
-	 * object can have multiple genres instead of one list of
-	 * genres.
-	 * 
-	 * @param info			The String to convert
-	 * @return ArrayList	An ArrayList containing the information
-	 * 						in separated Strings
-	 */
-	private ArrayList<String> toArrayList(String info) {
-		String[] splitString = info.split(", ");
-		ArrayList<String> entities = new ArrayList<String>(Arrays.asList(splitString));
-		return entities;
+		return categoryInfo;
 	}
 	
 	
@@ -176,9 +145,16 @@ public class InfoExtractor {
 			}
 			
 			String response = connector.makeApiRequest(title, year);
-			Map<String, String> information = deserializeJson(response);
-			this.printJson(information);
-			this.extract(information);
+			Map<String, String> infoMap = deserializeJson(response);
+			this.printJson(infoMap);
+			
+			this.splitCategoryInfo(infoMap, "Genre");
+			this.splitCategoryInfo(infoMap, "Director");
+			this.splitCategoryInfo(infoMap, "Writer");
+			this.splitCategoryInfo(infoMap, "Actors");
+
+			int yearReleased = Integer.parseInt(infoMap.get("Year"));
+			System.out.println("This movie was released in " + yearReleased);
 		}
 		
 		connector.close();

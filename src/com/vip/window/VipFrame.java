@@ -233,10 +233,6 @@ public class VipFrame extends JFrame {
 	 */
 	private JTextField jtfSearch;
 
-	public JTextField get_jtfSearch() {
-		return jtfSearch;
-	}
-
 	/**
 	 * This JComboBox is ment for sorting your search by different categories
 	 */

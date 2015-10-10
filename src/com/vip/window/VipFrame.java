@@ -73,11 +73,6 @@ public class VipFrame extends JFrame {
 	}
 	
 	/**
-	 * Temporary path variable to play the movie file selected.
-	 */
-	private String tempPath;
-	
-	/**
 	 * TODO: Add Comment (you're welcome Fabian)
 	 */
 	private ButtonParser button_parser = new ButtonParser(this);
@@ -623,7 +618,6 @@ public class VipFrame extends JFrame {
 			@Override
 			public void valueChanged(ListSelectionEvent arg0) {
 				VLC.loadMedia(movies.get(jlstFileList.getSelectedIndex()).getPath());
-				VLC.toggleMoviePlayback();
 			}
 		});
 	}

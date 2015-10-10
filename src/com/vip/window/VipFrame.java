@@ -46,9 +46,6 @@ import com.vip.media.VLC;
 
 @SuppressWarnings("serial")
 public class VipFrame extends JFrame {
-
-	private ButtonParser button_parser = new ButtonParser(this);
-
 	/**
 	 * Constructor for building the frame and initialize all event handlers.
 	 */
@@ -56,25 +53,9 @@ public class VipFrame extends JFrame {
 		super("VipFrame");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		defaultInsets = new Insets(2, 2, 2, 2);
-
-		// Tries to change the look and feel of Java to Nimbus, a
-		// cross-platform GUI that comes with Java 6 update 10
-		try {
-			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					UIManager.setLookAndFeel(info.getClassName());
-					break;
-				}
-			}
-		} catch (Exception e) {
-			// If Nimbus is not found, it will be the default look and feel
-		}
-
-		KeyParser keyParser = new KeyParser();
-		keyParser.setVipFrame(this);
-		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-		manager.addKeyEventDispatcher(keyParser);
-
+		
+		changeGUILook();
+		initKeyParser();
 		VLC.init();
 		buildPanels();
 		buildExplorerGUI();
@@ -84,6 +65,11 @@ public class VipFrame extends JFrame {
 		pack();
 		requestFocus();
 	}
+	
+	/**
+	 * TODO: Add Comment (you're welcome Fabian)
+	 */
+	private ButtonParser button_parser = new ButtonParser(this);
 
 	/**
 	 * ArrayList<String> to display all movies in a datastructure
@@ -179,6 +165,33 @@ public class VipFrame extends JFrame {
 			}
 		};
 		menuItem.addActionListener(al);
+	}
+	
+	/**
+	 * Private method for initializing the KeyParser
+	 */
+	private void initKeyParser() {
+		KeyParser keyParser = new KeyParser();
+		keyParser.setVipFrame(this);
+		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+		manager.addKeyEventDispatcher(keyParser);
+	}
+	
+	/**
+	 * Tries to change the look and feel of Java to Nimbus, a cross-platform GUI that comes with Java 6 update 10
+	 */
+	public void changeGUILook() {
+		try {
+			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+				if ("Nimbus".equals(info.getName())) {
+					UIManager.setLookAndFeel(info.getClassName());
+					break;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			// If Nimbus is not found, it will be the default look and feel
+		}
 	}
 
 	/**
@@ -277,12 +290,8 @@ public class VipFrame extends JFrame {
 
 	/**
 	 * Class listens to volume slider changes and processes them
-	 * 
-	 * @author Fabian Volkert
-	 *
 	 */
 	private class VolumeSliderListener implements ChangeListener {
-
 		public void stateChanged(ChangeEvent ce) {
 			JSlider source = (JSlider) ce.getSource();
 			int newVolume = source.getValue();
@@ -293,16 +302,24 @@ public class VipFrame extends JFrame {
 		}
 	}
 
-	/** Indicator of current volume level **/
+	/** 
+	 * Indicator of current volume level 
+	 */
 	private JLabel JlabelVolume;
 
-	/** Slider for volume level **/
+	/**
+	 * Slider for volume level
+	 */
 	private JSlider jsliderVolume;
 
-	/** Indicator of progress of the media file **/
+	/**
+	 * Indicator of progress of the media file
+	 */
 	private JLabel jlabelMovieTimeline;
 
-	/** Slider for movie timeline **/
+	/**
+	 * Slider for movie timeline
+	 */
 	private JSlider jsliderMovieProgress;
 
 	/**
@@ -388,8 +405,6 @@ public class VipFrame extends JFrame {
 
 	/**
 	 * Updates the state of the nominators for current volume level
-	 * 
-	 * @author Fabian Volkert
 	 */
 	public void updateVolume(int newVolume) {
 		if (VLC.getMediaPlayer() != null) {
@@ -399,21 +414,20 @@ public class VipFrame extends JFrame {
 		}
 	}
 
-	/** True on Initialization of a Movie **/
+	/**
+	 * True on Initialization of a Movie
+	 */
 	boolean initMovie = true;
 
 	/**
-	 * Makes it so, that on the next timeline update the media will be
-	 * initialized
-	 **/
+	 * Makes it so, that on the next timeline update the media will be initialized
+	 */
 	public void initMovie() {
 		initMovie = true;
 	}
 
 	/**
 	 * Updates the state of the nominators for current progress in media file
-	 * 
-	 * @author Fabian Volkert
 	 */
 	public void updateTimeline() {
 		if (VLC.getMediaPlayer().getLength() != -1) {

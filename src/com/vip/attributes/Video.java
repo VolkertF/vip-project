@@ -4,7 +4,13 @@ import java.util.ArrayList;
 
 public class Video {
 
-
+	public Video(String path, String title) {
+		this.setPath(path);
+		this.title = title;
+	}
+	
+	private String path;
+	
 	private String title;
 	
 	private String rating;
@@ -21,12 +27,12 @@ public class Video {
 	
 	private String personalRating;
 
-	public String getName() {
+	public String getTitle() {
 		return title;
 	}
 
-	public void setName(String name) {
-		this.title = name;
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	public String getRating() {
@@ -83,6 +89,14 @@ public class Video {
 
 	public void setPersonalRating(String personalRating) {
 		this.personalRating = personalRating;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
 	}
 	
 	

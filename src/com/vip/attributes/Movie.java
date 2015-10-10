@@ -4,6 +4,10 @@ import java.util.ArrayList;
 
 public class Movie extends Video{
 
+	public Movie(String path, String title) {
+		super(path, title);
+	}
+
 	private int yearReleased;
 	
 	private String director;

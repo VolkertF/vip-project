@@ -11,9 +11,6 @@ import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 /**
  * VLC Class. Holds a canvas to display on the movie panel and controls video
  * playback.
- * 
- * @author Fabian Volkert
- *
  */
 public abstract class VLC {
 

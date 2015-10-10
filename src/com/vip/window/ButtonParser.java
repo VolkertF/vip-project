@@ -8,9 +8,6 @@ import com.vip.media.VLC;
 /**
  * Class is responsible for ActionCommand parsing and delegating to the specific
  * task.
- * 
- * @author Fabian Volkert
- *
  */
 public class ButtonParser implements ActionListener {
 

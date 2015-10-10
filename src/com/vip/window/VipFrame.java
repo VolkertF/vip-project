@@ -23,6 +23,7 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -39,9 +40,13 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.basic.BasicSliderUI;
 
 import com.sun.glass.events.KeyEvent;
+import com.vip.attributes.Movie;
+import com.vip.attributes.Video;
 import com.vip.media.VLC;
 
 @SuppressWarnings("serial")
@@ -62,9 +67,15 @@ public class VipFrame extends JFrame {
 		buildMovieGUI();
 		buildIntelGUI();
 		buildMenuBar();
+		addFileListActionListener();
 		pack();
 		requestFocus();
 	}
+	
+	/**
+	 * Temporary path variable to play the movie file selected.
+	 */
+	private String tempPath;
 	
 	/**
 	 * TODO: Add Comment (you're welcome Fabian)
@@ -74,7 +85,7 @@ public class VipFrame extends JFrame {
 	/**
 	 * ArrayList<String> to display all movies in a datastructure
 	 */
-	private ArrayList<String> movies;
+	private ArrayList<Video> movies;
 
 	/**
 	 * The JPanel that represents the Explorer and do file-searching stuff and
@@ -245,19 +256,23 @@ public class VipFrame extends JFrame {
 	private JButton jbtnSearchExecute; // Button for executing the search
 
 	/**
+	 * JListModel for displaying all movies in the internal list
+	 */
+	private DefaultListModel<String> defaultJList;
+	
+	/**
 	 * Create Sub-sub-panels in the explorer panel
 	 */
 	private void buildExplorerGUI() {
-		// String[] fileList = {};
-		// Fill the filelist String-Array
-		movies = new ArrayList<String>();
-		DefaultListModel<String> defaultJList = new DefaultListModel<String>();
+		movies = new ArrayList<Video>();
+		defaultJList = new DefaultListModel<String>(); //Do all search and sort stuff with this thing
 		jlstFileList = new JList<String>(defaultJList);
-		movies.add("Star Wars: The Revenge of the Sith");
-		movies.add("Fargo");
-		movies.add("Matrix");
-		for (String temp : movies) {
-			defaultJList.addElement(temp);
+		Movie born2die = new Movie("G:\\Videos\\Filme\\Born2Die.avi", "Born to Die");
+		Movie fanboys = new Movie("G:\\Videos\\Filme\\Fanboys.avi", "Fanboys");
+		movies.add(born2die);
+		movies.add(fanboys);
+		for (Video temp : movies) {
+			defaultJList.addElement(temp.getTitle());
 		}
 		jlstFileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jlstFileList.setSelectedIndex(0);
@@ -408,6 +423,13 @@ public class VipFrame extends JFrame {
 				jsliderVolume.setValue(newVolume);
 			}
 		}
+	}
+
+	/**
+	 * Method for delivering KeyParser the search TextField
+	 */
+	public JComponent get_jtfSearch() {
+		return jtfSearch;
 	}
 
 	/**
@@ -592,5 +614,30 @@ public class VipFrame extends JFrame {
 			}
 		});
 	}
-
+	
+	/**
+	 * Add ActionListener to the FileList, so a movie will be played if double-clicked
+	 */
+	private void addFileListActionListener() {
+		jlstFileList.addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent arg0) {
+				VLC.loadMedia(movies.get(jlstFileList.getSelectedIndex()).getPath());
+				VLC.toggleMoviePlayback();
+			}
+		});
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

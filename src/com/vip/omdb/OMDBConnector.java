@@ -43,11 +43,11 @@ public class OMDBConnector {
 	 * constants.
 	 */
 	public OMDBConnector() {
-		this.client = HttpClients.createDefault();
-		this.uriBuilder = new StringBuilder();
+		client = HttpClients.createDefault();
+		uriBuilder = new StringBuilder();
 		
-		this.MOVIE_REQUEST = "movie";
-		this.SEARCH_REQUEST = "search";
+		MOVIE_REQUEST = "movie";
+		SEARCH_REQUEST = "search";
 	}
 	
 	
@@ -58,7 +58,7 @@ public class OMDBConnector {
 	 * connection.
 	 */
 	public void close() throws IOException {
-		this.client.close();
+		client.close();
 	}
 	
 	
@@ -72,7 +72,7 @@ public class OMDBConnector {
 	 */
 	public String requestMovie(String title, String year) throws IOException {
 		String formattedUri = buildUri(title, year, MOVIE_REQUEST);
-		String apiResponse = this.makeRequest(formattedUri);
+		String apiResponse = makeRequest(formattedUri);
 		return apiResponse;
 	}
 	
@@ -86,7 +86,7 @@ public class OMDBConnector {
 	 */
 	public String requestSearch(String title, String year) throws IOException {
 		String formattedUri = buildUri(title, year, SEARCH_REQUEST);
-		String apiResponse = this.makeRequest(formattedUri);
+		String apiResponse = makeRequest(formattedUri);
 		return apiResponse;
 	}
 	
@@ -107,32 +107,32 @@ public class OMDBConnector {
 	) 
 	{
 		// Reinitialize the StringBuilder
-		this.uriBuilder.delete(0, uriBuilder.length());
-		this.uriBuilder.append("http://www.omdbapi.com/");
+		uriBuilder.delete(0, uriBuilder.length());
+		uriBuilder.append("http://www.omdbapi.com/");
 		
 		// Check if the user requested a specific movie. Otherwise, conduct
 		// a general search using the supplied parameters.
 		if(requestType.equals(MOVIE_REQUEST)) {
-			this.uriBuilder.append("?t=");
+			uriBuilder.append("?t=");
 		} else {
-			this.uriBuilder.append("?s=");
+			uriBuilder.append("?s=");
 		}
 		
 		// Tokenize the title to remove whitespace, then add them to the
 		// URI string with pluses in between each token.
-		this.removeWhitespace(title);
+		removeWhitespace(title);
 		
 		// Add the final parameters to the URI based on the request
 		if(year != null && !year.isEmpty()) {
-			this.uriBuilder.append("&y=").append(year);
+			uriBuilder.append("&y=").append(year);
 		}
 		
 		if(requestType.equals(MOVIE_REQUEST)) {
-			this.uriBuilder.append("&plot=long");
+			uriBuilder.append("&plot=long");
 		}
 		
-		this.uriBuilder.append("&r=json");
-		return this.uriBuilder.toString();
+		uriBuilder.append("&r=json");
+		return uriBuilder.toString();
 	}
 	
 	
@@ -146,9 +146,9 @@ public class OMDBConnector {
 		String[] tokens = toModify.split("\\s");
 		for(int i = 0; i < tokens.length; i++) {
 			if(i != 0) {
-				this.uriBuilder.append("+");
+				uriBuilder.append("+");
 			}
-			this.uriBuilder.append(tokens[i]);
+			uriBuilder.append(tokens[i]);
 		}
 	}
 	

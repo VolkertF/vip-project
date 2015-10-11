@@ -264,6 +264,8 @@ public class VipFrame extends JFrame {
 		jlstFileList = new JList<String>(defaultJList);
 		Movie born2die = new Movie("G:\\Videos\\Filme\\Born2Die.avi", "Born to Die");
 		Movie fanboys = new Movie("G:\\Videos\\Filme\\Fanboys.avi", "Fanboys");
+		movies.add(new Movie("F:\\Dji. Death Sails-HD.mp4", "Dji - Death Sails"));
+		movies.add(new Movie("F:\\The Saga Of Bjorn-HD.mp4", "The Saga of Bjorn"));
 		movies.add(born2die);
 		movies.add(fanboys);
 		for (Video temp : movies) {
@@ -285,7 +287,6 @@ public class VipFrame extends JFrame {
 		jspSearchCategories.setPreferredSize(jcbSearchCategories.getSize());
 
 		jbtnSearchExecute = new JButton("Search");
-		jbtnSearchExecute.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
 
 		// x y w h wx wy cont comp insets
 		addComponent(0, 0, 2, 1, 0.0, 0.0, jpnlExplorer, jtfSearch, defaultInsets);
@@ -343,37 +344,31 @@ public class VipFrame extends JFrame {
 		JButton jbtnPlayMovie = new JButton("Play/Pause");
 		jbtnPlayMovie.addActionListener(button_parser);
 		jbtnPlayMovie.setActionCommand("jbtnToggleMoviePlayback");
-		jbtnPlayMovie.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
 		jpnlMovieControl.add(jbtnPlayMovie);
 
 		JButton jbtnStopMovie = new JButton("Stop");
 		jbtnStopMovie.addActionListener(button_parser);
 		jbtnStopMovie.setActionCommand("jbtnStopMovie");
-		jbtnStopMovie.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
 		jpnlMovieControl.add(jbtnStopMovie);
 
 		JButton jbtnPreviousMovie = new JButton("|<");
 		jbtnPreviousMovie.addActionListener(button_parser);
 		jbtnPreviousMovie.setActionCommand("jbtnPreviousMovie");
-		jbtnPreviousMovie.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
 		jpnlMovieControl.add(jbtnPreviousMovie);
 
 		JButton jbtnNextMovie = new JButton(">|");
 		jbtnNextMovie.addActionListener(button_parser);
 		jbtnNextMovie.setActionCommand("jbtnNextMovie");
-		jbtnNextMovie.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
 		jpnlMovieControl.add(jbtnNextMovie);
 
 		JButton jbtnPreviousChapter = new JButton("<<");
 		jbtnPreviousChapter.addActionListener(button_parser);
 		jbtnPreviousChapter.setActionCommand("jbtnJumpBack");
-		jbtnPreviousChapter.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
 		jpnlMovieControl.add(jbtnPreviousChapter);
 
 		JButton jbtnNextChapter = new JButton(">>");
 		jbtnNextChapter.addActionListener(button_parser);
 		jbtnNextChapter.setActionCommand("jbtnJumpForward");
-		jbtnNextChapter.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
 		jpnlMovieControl.add(jbtnNextChapter);
 
 		jsliderVolume = new JSlider(JSlider.HORIZONTAL, VLC.getMinVolume(), VLC.getMaxVolume(),

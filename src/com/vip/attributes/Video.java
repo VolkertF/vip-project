@@ -1,6 +1,9 @@
 package com.vip.attributes;
 
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+
+import com.vip.window.ContextVideoMenu;
 
 public class Video {
 
@@ -8,6 +11,8 @@ public class Video {
 		this.setPath(path);
 		this.title = title;
 	}
+	
+	private ContextVideoMenu contVideoMenu = new ContextVideoMenu(this);
 	
 	private String path;
 	
@@ -99,6 +104,9 @@ public class Video {
 		this.path = path;
 	}
 	
-	
+	public void setContextVideoMenu(MouseEvent ev) {
+		this.contVideoMenu.setLocation(ev.getLocationOnScreen());
+		this.contVideoMenu.setVisible(true);
+	}
 
 }

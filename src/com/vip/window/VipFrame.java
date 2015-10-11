@@ -37,6 +37,7 @@ import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.ChangeEvent;
@@ -615,7 +616,6 @@ public class VipFrame extends JFrame {
 	private void addFileListActionListener() {
 		jlstFileList.addMouseListener(new MouseListener() {
 			@Override public void mouseReleased(MouseEvent arg0) {}
-			@Override public void mousePressed(MouseEvent arg0) {}
 			@Override public void mouseExited(MouseEvent arg0) {}
 			@Override public void mouseEntered(MouseEvent arg0) {}			
 			@Override
@@ -625,17 +625,13 @@ public class VipFrame extends JFrame {
 					VLC.toggleMoviePlayback();
 				}
 			}
-		});
-		
-		/**jlstFileList.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent arg0) {
-				if(isDoubleClicked) {
-					VLC.loadMedia(movies.get(jlstFileList.getSelectedIndex()).getPath());
-					VLC.toggleMoviePlayback();
+			@Override 
+			public void mousePressed(MouseEvent ev) {
+				if(SwingUtilities.isRightMouseButton(ev)) {
+					//movies.get(jlstFileList.getSelectedIndex()).setContextVideoMenu(ev);					
 				}
 			}
-		});*/
+		});
 	}
 	
 	

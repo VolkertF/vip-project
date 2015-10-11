@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -40,8 +41,6 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.basic.BasicSliderUI;
 
 import com.sun.glass.events.KeyEvent;
@@ -614,12 +613,29 @@ public class VipFrame extends JFrame {
 	 * Add ActionListener to the FileList, so a movie will be played if double-clicked
 	 */
 	private void addFileListActionListener() {
-		jlstFileList.addListSelectionListener(new ListSelectionListener() {
+		jlstFileList.addMouseListener(new MouseListener() {
+			@Override public void mouseReleased(MouseEvent arg0) {}
+			@Override public void mousePressed(MouseEvent arg0) {}
+			@Override public void mouseExited(MouseEvent arg0) {}
+			@Override public void mouseEntered(MouseEvent arg0) {}			
 			@Override
-			public void valueChanged(ListSelectionEvent arg0) {
-				VLC.loadMedia(movies.get(jlstFileList.getSelectedIndex()).getPath());
+			public void mouseClicked(MouseEvent ev) {
+				if(ev.getClickCount() == 2) {
+					VLC.loadMedia(movies.get(jlstFileList.getSelectedIndex()).getPath());
+					VLC.toggleMoviePlayback();
+				}
 			}
 		});
+		
+		/**jlstFileList.addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent arg0) {
+				if(isDoubleClicked) {
+					VLC.loadMedia(movies.get(jlstFileList.getSelectedIndex()).getPath());
+					VLC.toggleMoviePlayback();
+				}
+			}
+		});*/
 	}
 	
 	

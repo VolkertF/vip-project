@@ -2,8 +2,10 @@ package com.vip.extractor;
 
 //import com.vip.attributes.*;
 import com.vip.omdb.OMDBConnector;
-
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.Arrays;
@@ -47,6 +49,9 @@ public class InfoExtractor {
 			extractor.runTest();
 		} catch (IOException e) {
 			System.out.println("Encountered problem with the API.");
+			e.printStackTrace();
+		} catch (NullPointerException e) {
+			System.out.println("Bad input.");
 			e.printStackTrace();
 		}
 	}
@@ -99,15 +104,15 @@ public class InfoExtractor {
 	
 	
 	/**
-	 * This method takes the JSON response we receive from OMDb and turns
-	 * it into a Java Map. This allows us to work easily using a native
-	 * Java object while also preserving the useful key-value relationship
-	 * inherent in JSON.
+	 * This method takes the JSON response we receive from a specific movie
+	 * request and turns it into a Java Map. This allows us to work easily 
+	 * using a native Java object while also preserving the useful key-value
+	 * relationship inherent in JSON.
 	 * 
 	 * @param jsonString 	The JSON information we receive from OMDb
 	 * @return Map			A map holding key-value pairs of movie info
 	 */
-	public Map<String, String> deserializeJson(String jsonString) {
+	public Map<String, String> extractMovieInfo(String apiResponse) {
 		Gson gson = new Gson();
 		
 		// The fromJson() method takes a JSON string as its first parameter
@@ -115,11 +120,44 @@ public class InfoExtractor {
 		// Map type so we have to use the ugly method seen here.
 		Map<String, String> information =
 			gson.fromJson(
-				jsonString,
+				apiResponse,
 				new TypeToken<Map<String, String>>(){}.getType()
 			);
 		
 		return information;
+	}
+	
+	
+	/**
+	 * This method deals with search results. It converts the results we
+	 * get from the API into an array of JSON objects that we can further
+	 * parse to get information about each result.
+	 * 
+	 * @param apiResponse	The JSON information we receive from OMDb
+	 * @return ArrayList	An ArrayList of SearchResult objects
+	 */
+	public ArrayList<SearchResult> extractSearchResults(String apiResponse) {
+		JsonParser parser = new JsonParser();
+		JsonObject object = parser.parse(apiResponse).getAsJsonObject();
+		JsonArray results = object.get("Search").getAsJsonArray();
+		
+		int numResults = results.size();
+		
+		ArrayList<SearchResult> listResults = new ArrayList<SearchResult>();
+		
+		for(int i = 0; i < numResults; i++) {
+			JsonObject thisResult = results.get(i).getAsJsonObject();
+			
+			String title = thisResult.get("Title").toString();
+			String year = thisResult.get("Year").toString();
+			String id = thisResult.get("imdbID").toString();
+			String poster = thisResult.get("Poster").toString();
+			
+			SearchResult result = new SearchResult(title, year, id, poster);
+			listResults.add(result);
+		}
+		
+		return listResults;
 	}
 	
 	
@@ -132,31 +170,51 @@ public class InfoExtractor {
 	public void runTest() throws IOException {
 		OMDBConnector connector = new OMDBConnector();
 		
-		System.out.println("Welcome to the OMDb API tester! To quit, " +
-				"type EXIT when prompted for a year.");
+		System.out.println("Welcome to the OMDb API tester!");
 		
 		while(true) {
+			System.out.println("Type MOVIE to search for a specific movie. " +
+					"Type anything else to perform a search. Enter nothing " +
+					"to quit.");
+			String requestType = scan.nextLine();
+			if(requestType.isEmpty()){
+				break;
+			}
+			
 			System.out.println("Enter a movie title: ");
 			String title = scan.nextLine();
+			
+			if(title.isEmpty()){
+				break;
+			}
 			
 			System.out.println("Enter the year the movie came out: ");
 			String year = scan.nextLine();
 			
-			if(year.equals("EXIT")) {
-				break;
+			String response = "";
+			if(requestType.equalsIgnoreCase("movie")) {
+				response = connector.requestMovie(title, year);
+				Map<String, String> infoMap = extractMovieInfo(response);
+				printJson(infoMap);
+				
+				splitCategoryInfo(infoMap, "Genre");
+				splitCategoryInfo(infoMap, "Director");
+				splitCategoryInfo(infoMap, "Writer");
+				splitCategoryInfo(infoMap, "Actors");
+			} else {
+				response = connector.requestSearch(title, year);
+				ArrayList<SearchResult> results = extractSearchResults(response);
+				
+				// TODO: Remove this later.
+				for(SearchResult result : results) {
+					System.out.println("");
+					System.out.println("Title: " + result.getTitle());
+					System.out.println("Year: " + result.getYear());
+					System.out.println("IMDB ID: " + result.getId());
+					System.out.println("Poster: " + result.getPoster());
+				}
 			}
-			
-			String response = connector.makeApiRequest(title, year);
-			Map<String, String> infoMap = deserializeJson(response);
-			this.printJson(infoMap);
-			
-			this.splitCategoryInfo(infoMap, "Genre");
-			this.splitCategoryInfo(infoMap, "Director");
-			this.splitCategoryInfo(infoMap, "Writer");
-			this.splitCategoryInfo(infoMap, "Actors");
 
-			int yearReleased = Integer.parseInt(infoMap.get("Year"));
-			System.out.println("This movie was released in " + yearReleased);
 		}
 		
 		connector.close();

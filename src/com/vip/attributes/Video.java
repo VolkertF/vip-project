@@ -10,9 +10,10 @@ public class Video {
 	public Video(String path, String title) {
 		this.setPath(path);
 		this.title = title;
+		this.contVideoMenu = new ContextVideoMenu(this);
 	}
 	
-	private ContextVideoMenu contVideoMenu = new ContextVideoMenu(this);
+	private ContextVideoMenu contVideoMenu;
 	
 	private String path;
 	

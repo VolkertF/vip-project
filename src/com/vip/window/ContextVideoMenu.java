@@ -20,7 +20,7 @@ public class ContextVideoMenu extends JPopupMenu {
 		addMenuItems();
 	}
 	
-	private void init(Video vid) {
+	private void init(final Video vid) {
 		final String vidPath = vid.getPath();
 		
 		jmiPlay = new JMenuItem("Play " + vid.getTitle());
@@ -29,6 +29,7 @@ public class ContextVideoMenu extends JPopupMenu {
 			public void actionPerformed(ActionEvent arg0) {
 				VLC.loadMedia(vidPath);
 				VLC.toggleMoviePlayback();
+				vid.deactivateContextVideoMenu();
 			}
 		});
 		
@@ -38,7 +39,7 @@ public class ContextVideoMenu extends JPopupMenu {
 		jmiInfo.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				
+				vid.deactivateContextVideoMenu();
 				JOptionPane.showMessageDialog(getRootPane(), info);
 			}
 		});

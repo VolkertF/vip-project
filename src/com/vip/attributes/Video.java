@@ -105,9 +105,15 @@ public class Video {
 		this.path = path;
 	}
 	
-	public void setContextVideoMenu(MouseEvent ev) {
+	public void activateContextVideoMenu(MouseEvent ev) {
 		this.contVideoMenu.setLocation(ev.getLocationOnScreen());
 		this.contVideoMenu.setVisible(true);
+		this.contVideoMenu.setEnabled(true);
+	}
+	
+	public void deactivateContextVideoMenu() {
+		this.contVideoMenu.setEnabled(false);
+		this.contVideoMenu.setVisible(false);
 	}
 
 }

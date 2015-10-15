@@ -621,7 +621,7 @@ public class VipFrame extends JFrame {
 			@Override 
 			public void mousePressed(MouseEvent ev) {
 				if(SwingUtilities.isRightMouseButton(ev)) {
-					movies.get(jlstFileList.getSelectedIndex()).setContextVideoMenu(ev);					
+					movies.get(jlstFileList.getSelectedIndex()).activateContextVideoMenu(ev);					
 				}
 			}
 		});

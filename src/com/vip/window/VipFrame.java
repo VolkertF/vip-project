@@ -31,6 +31,7 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
@@ -583,6 +584,17 @@ public class VipFrame extends JFrame {
 		jmbMenu.add(jmHelp);
 		jmbMenu.add(jmAbout);
 
+		//Adding ActionListener to VLC-Path MenuItem which say, that it is recommended that you
+		//have installed the 64-Bit version of VLC in order to run VIP smoothly.
+		jmiPathVLC.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JOptionPane.showMessageDialog(rootPane, "In order to run the 'Video Information Program' smoothly " +
+			                                            "you have to install the 64-Bit Version of Video Lan Player! " +
+														"\n It can be found on the Website: http://www.videolan.org/vlc/download-windows.html");
+			}
+		});
+		
 		// Adding ActionListeners with URLs
 		try {
 			addURLActionListenerToMenuBarItem(jmiWebsite, new URI("http://cyril-casapao.github.io/vip-project/"));

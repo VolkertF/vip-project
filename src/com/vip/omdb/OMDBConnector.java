@@ -1,8 +1,7 @@
 package com.vip.omdb;
 
-import java.util.Scanner;
-import java.util.Map;
 import java.lang.StringBuilder;
+
 import java.io.IOException;
 
 import org.apache.http.util.EntityUtils;
@@ -11,161 +10,162 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.HttpResponse;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 /**
- * This class connects to the OMDb API.
+ * This class handles communication with the OMDb API. As such, it
+ * only contains methods to connect to and make requests to the API.
+ * 
+ * The API takes requests in the form of HTTP GET requests. The URI
+ * supplied must also follow a certain format that looks like this...
+ * 
+ *	  http://www.omdbapi.com/?t=Star+Wars&y=1977&plot=long&r=json
+ *
+ * ...where t denotes the title and y denotes the year. In addition,
+ * we can perform a search by using different parameters in our URI.
+ * This class contains methods to do both kinds of requests.
  * 
  * @author Cyril Casapao
  */
 public class OMDBConnector {
 
-	private static CloseableHttpClient client;
-	private static Scanner scan;
+	// The client that makes our API requests
+	private CloseableHttpClient client;
+	
+	// The StringBuilder used to create API requests
+	private StringBuilder uriBuilder;
+	
+	// Constants used to specify request type
+	private final String MOVIE_REQUEST;
+	private final String SEARCH_REQUEST;
 	
 	
 	/**
-	 * Constructor.
+	 * Constructor that initializes the HTTP client and request type
+	 * constants.
 	 */
 	public OMDBConnector() {
 		client = HttpClients.createDefault();
-		scan = new Scanner(System.in);
-
+		uriBuilder = new StringBuilder();
+		
+		MOVIE_REQUEST = "movie";
+		SEARCH_REQUEST = "search";
 	}
 	
 	
 	/**
-	 * Here is the main method. It runs a dialogue loop that allows us
-	 * to interactively query the OMDb API. As an example, try entering
-	 * "star wars" as the title and "1977" as a year. Or maybe "Up" as
-	 * a title and "2009" as a year.
+	 * This method closes the connection to the OMDb API. It should
+	 * always be called when the request is finished. It will throw
+	 * an IOException if something goes wrong when closing the
+	 * connection.
 	 */
-	public static void main(String[] args) {
-		OMDBConnector connector = new OMDBConnector();
-		
-		System.out.println("Welcome to the OMDb API tester! To quit, " +
-				"type EXIT when prompted for a year.");
-		
-		while(true) {
-			System.out.println("Enter a movie title: ");
-			String title = scan.nextLine();
-			
-			System.out.println("Enter the year the movie came out: ");
-			String year = scan.nextLine();
-			
-			if(year.equals("EXIT")) {
-				break;
-			}
-			
-			String uri = connector.buildUri(title,year);
-			connector.makeHttpRequest(uri);
-		}
-		
-		scan.close();
-		try {
-			client.close();
-		} catch(IOException e) {
-			System.out.println("Error closing HTTP client.");
-			e.printStackTrace();
-		}
-		
-		System.out.println("Goodbye!");
+	public void close() throws IOException {
+		client.close();
 	}
 	
 	
 	/**
-	 * This method takes the title and year that the user inputs and combines
-	 * them into a format accepted by the OMDb api. Namely, they must follow
-	 * a format like this...
+	 * This method tries to get information about a specified movie from
+	 * the API. It will throw an IOException if something goes wrong.
 	 * 
-	 *	  http://www.omdbapi.com/?t=Star+Wars&y=1977&plot=long&r=json
-	 *
-	 * ...where t denotes the title and y denotes the year. For some
-	 * reason, some movies seem to return incomplete information if
-	 * a year isn't specified. There is probably a way around this
-	 * but this will do for the feasibility study.
-	 * 
-	 * @param title 	The title of the movie to find
-	 * @param year 		The year the movie came out
-	 * @return String 	A string representing the API request
-	 * 
-	 * @TODO Find a way to get around needing the year parameter.
+	 * @param title			The name of the movie
+	 * @param year 			The year the movie came out
+	 * @return String		The response from the API
 	 */
-	private String buildUri(String title, String year) {
-		StringBuilder uri = new StringBuilder("http://www.omdbapi.com/?t=");
+	public String requestMovie(String title, String year) throws IOException {
+		String formattedUri = buildUri(title, year, MOVIE_REQUEST);
+		String apiResponse = makeRequest(formattedUri);
+		return apiResponse;
+	}
+	
+	
+	/**
+	 * This method searches the API for the requested information. It 
+	 * 
+	 * @param title			The name of the movie
+	 * @param year 			The year the movie came out
+	 * @return String		The response from the API
+	 */
+	public String requestSearch(String title, String year) throws IOException {
+		String formattedUri = buildUri(title, year, SEARCH_REQUEST);
+		String apiResponse = makeRequest(formattedUri);
+		return apiResponse;
+	}
+	
+	
+	/**
+	 * This method takes a user-specified request and converts it into
+	 * the format accepted by the OMDb API.
+	 * 
+	 * @param title 		The title of the movie to find
+	 * @param year 			The year the movie came out
+	 * @param requestType	The type of request to make
+	 * @return String 		A string representing the API request
+	 */
+	private String buildUri(
+			String title,
+			String year,
+			String requestType
+	) 
+	{
+		// Reinitialize the StringBuilder
+		uriBuilder.delete(0, uriBuilder.length());
+		uriBuilder.append("http://www.omdbapi.com/");
+		
+		// Check if the user requested a specific movie. Otherwise, conduct
+		// a general search using the supplied parameters.
+		if(requestType.equals(MOVIE_REQUEST)) {
+			uriBuilder.append("?t=");
+		} else {
+			uriBuilder.append("?s=");
+		}
 		
 		// Tokenize the title to remove whitespace, then add them to the
 		// URI string with pluses in between each token.
-		String[] titleTokens = title.split("\\s");
-		for(int i = 0; i < titleTokens.length; i++) {
+		removeWhitespace(title);
+		
+		// Add the final parameters to the URI based on the request
+		if(year != null && !year.isEmpty()) {
+			uriBuilder.append("&y=").append(year);
+		}
+		
+		if(requestType.equals(MOVIE_REQUEST)) {
+			uriBuilder.append("&plot=long");
+		}
+		
+		uriBuilder.append("&r=json");
+		return uriBuilder.toString();
+	}
+	
+	
+	/**
+	 * This method removes whitespace from the given String and 
+	 * replaces them with plus signs so the API accepts it.
+	 * 
+	 * @param toModify	The  String to remove whitespace from
+	 */
+	private void removeWhitespace(String toModify) {
+		String[] tokens = toModify.split("\\s");
+		for(int i = 0; i < tokens.length; i++) {
 			if(i != 0) {
-				uri.append("+");
+				uriBuilder.append("+");
 			}
-			uri.append(titleTokens[i]);
-		}
-		
-		// Add the final parameters to the URI
-		uri.append("&y=").append(year).append("&plot=long&r=json");
-		return uri.toString();
+			uriBuilder.append(tokens[i]);
+		}																	//one request. And if the request is cached about 30ms.
 	}
 	
 	
 	/**
-	 * This method makes the HTTP request to the API.
+	 * This method sends the request to the API. It throws an
+	 * IOException if something went wrong with the request.
 	 * 
-	 * @param uri		The URI string we want to query
+	 * @param uri		The URI of the API request
+	 * @return String	The String representing the JSON response
+	 * 					received from the API
 	 */
-	public void makeHttpRequest(String uri) {
-		
-		// Initialize a request with our complete URI
-		double startTime = System.currentTimeMillis();
-		System.out.println("Checking " + uri);
+	private String makeRequest(String uri) throws IOException {
+		System.out.println("CONNECTOR: asking " + uri);
 		HttpGet request = new HttpGet(uri);
-		
-		// Make the request to the API and deserialize the response
-		try {
-			HttpResponse response = client.execute(request);
-			String jsonString = EntityUtils.toString(response.getEntity());
-			deserializeJson(jsonString);
-		} catch(IOException e) {
-			System.out.println("Something went wrong.");
-			e.printStackTrace();
-		}
-		double endTime = System.currentTimeMillis();
-		System.out.println("The enquiry took " + (endTime - startTime) + "ms");	//This will took for one about half a second for
-																				//one request. And if the request is cached about 30ms.
-	}
-	
-	
-	/**
-	 * This method takes the JSON response we receive from OMDb and turns
-	 * it into a Java Map. This allows us to work easily using a native
-	 * Java object while also preserving the useful key-value relationship
-	 * inherent in JSON.
-	 * 
-	 * @param jsonString 	The JSON information we receive from OMDb
-	 * @return Map			A map holding key-value pairs of movie info
-	 */
-	private Map<String, String> deserializeJson(String jsonString) {
-		Gson gson = new Gson();
-		
-		// The fromJson() method takes a JSON string as its first parameter
-		// and a Class as a second. There's no clean simple way to get the
-		// Map type so we have to use the ugly method seen here.
-		Map<String, String> information =
-			gson.fromJson(
-				jsonString,
-				new TypeToken<Map<String, String>>(){}.getType()
-			);
-		
-		// Print the map info to make sure we got it
-		for(Map.Entry<String, String> entry : information.entrySet()) {
-			String key = entry.getKey().toString();
-			String value = entry.getValue();
-			System.out.println(key + ": " + value);
-		}
-		
-		return information;
+		HttpResponse response = client.execute(request);
+		String jsonResponse = EntityUtils.toString(response.getEntity());
+		return jsonResponse;		
 	}
 }

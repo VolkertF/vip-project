@@ -1,36 +1,22 @@
 package com.vip.extractor;
 
 /**
- * This class is used to hold information about API search results.
- * Search results may be a movie or a series.
+ * This class holds information shared between all kinds of search results.
+ * Different search types have different fields. For instance, a general
+ * search (like searching for Star Wars) will have a poster property
+ * but a search for a list of episodes will not have that property.
  * 
  * @author Cyril Casapao
  */
 public class SearchResult {
 	
-	private String title;
-	private String year;
-	private String id;
-	private String poster;
+	protected String title;
+	protected String imdbId;
 	
-	
-	/**
-	 * Constructor method.
-	 * 
-	 * @param title		The title of the movie/series
-	 * @param year		The year the movie came out or the years the
-	 * 					series was active
-	 * @param id		The IMDB ID that can be used for a more
-	 * 					specific query
-	 * @param poster	The URL of an image of the movie/series poster
-	 */
-	public SearchResult(String title, String year, String id, String poster) {
+	public SearchResult(String title, String imdbId) {
 		this.title = title;
-		this.year = year;
-		this.id = id;
-		this.poster = poster;
+		this.imdbId = imdbId;
 	}
-	
 	
 	/**
 	 * Getter methods.
@@ -38,16 +24,9 @@ public class SearchResult {
 	public String getTitle() {
 		return title;
 	}
+
 	
-	public String getYear() {
-		return year;
-	}
-	
-	public String getId() {
-		return id;
-	}
-	
-	public String getPoster() {
-		return poster;
+	public String getImdbId() {
+		return imdbId;
 	}
 }

@@ -36,6 +36,7 @@ public class OMDBConnector {
 	// Constants used to specify request type
 	private final String MOVIE_REQUEST;
 	private final String SEARCH_REQUEST;
+	private final String EPISODE_LIST_REQUEST;
 	
 	
 	/**
@@ -48,6 +49,7 @@ public class OMDBConnector {
 		
 		MOVIE_REQUEST = "movie";
 		SEARCH_REQUEST = "search";
+		EPISODE_LIST_REQUEST = "episode list";
 	}
 	
 	
@@ -71,7 +73,7 @@ public class OMDBConnector {
 	 * @return String		The response from the API
 	 */
 	public String requestMovie(String title, String year) throws IOException {
-		String formattedUri = buildUri(title, year, MOVIE_REQUEST);
+		String formattedUri = buildUri(title, year, "", MOVIE_REQUEST);
 		String apiResponse = makeRequest(formattedUri);
 		return apiResponse;
 	}
@@ -85,7 +87,21 @@ public class OMDBConnector {
 	 * @return String		The response from the API
 	 */
 	public String requestSearch(String title, String year) throws IOException {
-		String formattedUri = buildUri(title, year, SEARCH_REQUEST);
+		String formattedUri = buildUri(title, year, "", SEARCH_REQUEST);
+		String apiResponse = makeRequest(formattedUri);
+		return apiResponse;
+	}
+	
+	
+	/**
+	 * This method requests an episode list for the given season.
+	 * 
+	 * @param title			The title of the series
+	 * @param seasonNumber	The season to get an episode list for
+	 * @return String		The response from the API
+	 */
+	public String requestEpisodeList(String title, String seasonNumber) throws IOException {
+		String formattedUri = buildUri(title, "", seasonNumber, EPISODE_LIST_REQUEST);
 		String apiResponse = makeRequest(formattedUri);
 		return apiResponse;
 	}
@@ -96,13 +112,17 @@ public class OMDBConnector {
 	 * the format accepted by the OMDb API.
 	 * 
 	 * @param title 		The title of the movie to find
-	 * @param year 			The year the movie came out
+	 * @param year 			The year the movie came out (optional)
+	 * @param seasonNumber	The season to search through when requesting
+	 * 						an episode list (NECESARY WHEN MAKING AN
+	 * 						EPISODE LIST REQUEST!)
 	 * @param requestType	The type of request to make
 	 * @return String 		A string representing the API request
 	 */
 	private String buildUri(
 			String title,
 			String year,
+			String seasonNumber,
 			String requestType
 	) 
 	{
@@ -110,11 +130,15 @@ public class OMDBConnector {
 		uriBuilder.delete(0, uriBuilder.length());
 		uriBuilder.append("http://www.omdbapi.com/");
 		
+		boolean isMovieRequest = requestType.equals(MOVIE_REQUEST);
+		boolean isEpisodeListRequest = requestType.equals(EPISODE_LIST_REQUEST);
+		boolean isSearchRequest = requestType.equals(SEARCH_REQUEST);
+		
 		// Check if the user requested a specific movie. Otherwise, conduct
 		// a general search using the supplied parameters.
-		if(requestType.equals(MOVIE_REQUEST)) {
+		if(isMovieRequest || isEpisodeListRequest) {
 			uriBuilder.append("?t=");
-		} else {
+		} else if(isSearchRequest) {
 			uriBuilder.append("?s=");
 		}
 		
@@ -127,7 +151,11 @@ public class OMDBConnector {
 			uriBuilder.append("&y=").append(year);
 		}
 		
-		if(requestType.equals(MOVIE_REQUEST)) {
+		if(isEpisodeListRequest) {
+			uriBuilder.append("&season=" + seasonNumber);
+		}
+		
+		if(isMovieRequest) {
 			uriBuilder.append("&plot=long");
 		}
 		
@@ -149,7 +177,7 @@ public class OMDBConnector {
 				uriBuilder.append("+");
 			}
 			uriBuilder.append(tokens[i]);
-		}																	//one request. And if the request is cached about 30ms.
+		}
 	}
 	
 	

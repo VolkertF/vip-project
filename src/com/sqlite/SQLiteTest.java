@@ -1,6 +1,9 @@
 package com.sqlite;
 
 import java.sql.*;
+import java.util.ArrayList;
+
+import com.vip.attributes.*;
 
 public class SQLiteTest {
 
@@ -14,11 +17,11 @@ public class SQLiteTest {
 
 		try {
 			stmt = c.createStatement();
-			String sql = "CREATE TABLE IF NOT EXISTS COMPANY "
-					+ "(ID INT PRIMARY KEY     NOT NULL,"
-					+ " NAME           TEXT    NOT NULL, "
-					+ " AGE            INT     NOT NULL, "
-					+ " ADDRESS        CHAR(50), " + " SALARY         REAL)";
+			String sql = "CREATE TABLE IF NOT EXISTS VIDEO "
+					+ "(PATH STRING 	PRIMARY KEY     NOT NULL,"
+					+ " TITLE           STRING 			NOT NULL,"
+					+ " DIRECTOR        STRING,"
+					+ " PLOT        	STRING)" ;
 			stmt.executeUpdate(sql);
 			stmt.close();
 		} catch (Exception e) {
@@ -29,28 +32,30 @@ public class SQLiteTest {
 	}
 
 	public void fillTable(Connection c) {
-		Statement stmt;
 
 		try {
-			stmt = c.createStatement();
-			String sql = "INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY) "
-					+ "VALUES (1, 'Paul', 32, 'California', 20000.00 );";
-			stmt.executeUpdate(sql);
 
-			sql = "INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY) "
-					+ "VALUES (2, 'Allen', 25, 'Texas', 15000.00 );";
-			stmt.executeUpdate(sql);
-
-			sql = "INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY) "
-					+ "VALUES (3, 'Teddy', 23, 'Norway', 20000.00 );";
-			stmt.executeUpdate(sql);
-
-			sql = "INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY) "
-					+ "VALUES (4, 'Mark', 25, 'Rich-Mond ', 65000.00 );";
-			stmt.executeUpdate(sql);
-
+			
+			Video testMovie = new Video();
+			testMovie.setFilePath("/turbiaka/videos/Matrix.mkv");
+			testMovie.setTitle("The Matrix");
+			testMovie.setDirector("The Wachowskis");
+			testMovie.setPlotSummary("The world is a computer.");
+			
+			String insertString = 	"INSERT INTO VIDEO (PATH,TITLE,DIRECTOR,PLOT) " +
+									"VALUES (?,?,?,?)";
+			
+			PreparedStatement statement = c.prepareStatement(insertString);
+			
+			statement.setString(1, testMovie.getFilePath());
+			statement.setString(2, testMovie.getTitle());
+			statement.setString(3, testMovie.getDirector());
+			statement.setString(4, testMovie.getPlotSummary());
+			
+			statement.execute();
+			
 			c.commit();
-			stmt.close();
+			statement.close();
 		} catch (Exception e) {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 			System.exit(0);
@@ -63,18 +68,16 @@ public class SQLiteTest {
 	    Statement stmt = null;
 	    try {
 	      stmt = c.createStatement();
-	      ResultSet rs = stmt.executeQuery( "SELECT * FROM COMPANY;" );
+	      ResultSet rs = stmt.executeQuery( "SELECT * FROM VIDEO " );
 	      while ( rs.next() ) {
-	         int id = rs.getInt("id");
-	         String  name = rs.getString("name");
-	         int age  = rs.getInt("age");
-	         String  address = rs.getString("address");
-	         float salary = rs.getFloat("salary");
-	         System.out.println( "ID = " + id );
-	         System.out.println( "NAME = " + name );
-	         System.out.println( "AGE = " + age );
-	         System.out.println( "ADDRESS = " + address );
-	         System.out.println( "SALARY = " + salary );
+	         String path = rs.getString("PATH");
+	         String  title  = rs.getString("TITLE");
+	         String director = rs.getString("DIRECTOR");
+	         String  plot = rs.getString("PLOT");
+	         System.out.println( "Path: " + path );
+	         System.out.println( "Title: " + title );
+	         System.out.println( "Director: " + director );
+	         System.out.println( "Plot: " + plot );
 	         System.out.println();
 	      }
 	      rs.close();
@@ -100,9 +103,14 @@ public class SQLiteTest {
 			c.setAutoCommit(false);
 			System.out.println("Opened database successfully");
 
-			test.createTable(c);
-			test.fillTable(c);
-			test.printTable(c);
+			ArrayList<String> testing = new ArrayList<String>();
+			
+			testing.add("How");
+			testing.add("does");
+			testing.add("this");
+			testing.add("work?");
+			
+			System.out.println(testing);
 			
 			c.close();
 
@@ -110,6 +118,5 @@ public class SQLiteTest {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 			System.exit(0);
 		}
-		System.out.println("Table created successfully");
 	}
 }

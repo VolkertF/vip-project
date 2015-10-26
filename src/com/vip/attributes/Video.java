@@ -1,37 +1,56 @@
 package com.vip.attributes;
 
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-import com.vip.window.ContextVideoMenu;
+import org.joda.time.DateTime;
 
 public class Video {
+	
+	private int ID;
 
-	public Video(String path, String title) {
-		this.setPath(path);
-		this.title = title;
-		this.contVideoMenu = new ContextVideoMenu(this);
-	}
-	
-	private ContextVideoMenu contVideoMenu;
-	
-	private String path;
+	private String filePath;
 	
 	private String title;
 	
-	private String rating;
+	private DateTime releaseDate;
+	
+	private ArrayList<String> genre;
 	
 	private String director;
 	
 	private ArrayList<String> cast;
 	
+	private ArrayList<String> writers;
+	
 	private String plotSummary;
 	
 	private String country;
 	
-	private String imdbRating;
+	private double imdbRating;
 	
-	private String personalRating;
+	private double personalRating;
+	
+	private int season;
+	
+	private int episode;
+	
+	
+	
+	public int getID() {
+		return ID;
+	}
+
+	public void setID(int iD) {
+		ID = iD;
+	}
+
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
 
 	public String getTitle() {
 		return title;
@@ -41,12 +60,21 @@ public class Video {
 		this.title = title;
 	}
 
-	public String getRating() {
-		return rating;
+	public DateTime getReleaseDate() {
+		return releaseDate;
 	}
 
-	public void setRating(String rating) {
-		this.rating = rating;
+	public void setReleaseDate(DateTime releaseDate) {
+		this.releaseDate = releaseDate;
+	}
+
+
+	public ArrayList<String> getGenre() {
+		return genre;
+	}
+
+	public void setGenre(ArrayList<String> genre) {
+		this.genre = genre;
 	}
 
 	public String getDirector() {
@@ -65,6 +93,14 @@ public class Video {
 		this.cast = cast;
 	}
 
+	public ArrayList<String> getWriters() {
+		return writers;
+	}
+
+	public void setWriters(ArrayList<String> writers) {
+		this.writers = writers;
+	}
+
 	public String getPlotSummary() {
 		return plotSummary;
 	}
@@ -81,39 +117,36 @@ public class Video {
 		this.country = country;
 	}
 
-	public String getImdbRating() {
+	public double getImdbRating() {
 		return imdbRating;
 	}
 
-	public void setImdbRating(String imdbRating) {
+	public void setImdbRating(double imdbRating) {
 		this.imdbRating = imdbRating;
 	}
 
-	public String getPersonalRating() {
+	public double getPersonalRating() {
 		return personalRating;
 	}
 
-	public void setPersonalRating(String personalRating) {
+	public void setPersonalRating(double personalRating) {
 		this.personalRating = personalRating;
 	}
-
-	public String getPath() {
-		return path;
+	
+	public int getSeason() {
+		return season;
 	}
 
-	public void setPath(String path) {
-		this.path = path;
+	public void setSeason(int season) {
+		this.season = season;
+	}
+
+	public int getEpisode() {
+		return episode;
+	}
+
+	public void setEpisode(int episode) {
+		this.episode = episode;
 	}
 	
-	public void activateContextVideoMenu(MouseEvent ev) {
-		this.contVideoMenu.setLocation(ev.getLocationOnScreen());
-		this.contVideoMenu.setVisible(true);
-		this.contVideoMenu.setEnabled(true);
-	}
-	
-	public void deactivateContextVideoMenu() {
-		this.contVideoMenu.setEnabled(false);
-		this.contVideoMenu.setVisible(false);
-	}
-
 }

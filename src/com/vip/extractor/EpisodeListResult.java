@@ -17,13 +17,16 @@ public class EpisodeListResult extends SearchResult {
 	/**
 	 * Constructor method.
 	 * 
-	 * @param title				The title of the series
-	 * @param episodeNumber		The number of this episode in the season
-	 * 							it came out
-	 * @param releaseDate		The date this episode first aired
-	 * @param imdbId			The IMDB ID that can be used for a more
-	 * 							specific query
-	 * @param imdbRating		The rating IMDB gave this episode
+	 * @param title
+	 * 		The title of the series
+	 * @param episodeNumber
+	 * 		The number of this episode in the season it came out
+	 * @param releaseDate
+	 * 		The date this episode first aired
+	 * @param imdbId
+	 * 		The IMDB ID that can be used for a more specific query
+	 * @param imdbRating
+	 * 		The rating IMDB gave this episode
 	 */
 	public EpisodeListResult(
 			String title, 
@@ -57,5 +60,7 @@ public class EpisodeListResult extends SearchResult {
 	public double getImdbRating() {
 		return imdbRating;
 	}
+	
+	
 
 }

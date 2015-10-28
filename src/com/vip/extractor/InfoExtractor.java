@@ -19,11 +19,11 @@ import java.io.IOException;
 * 
 * @author Cyril Casapao
 * 
-* @TODO 	Currently, this class uses terminal input and print
-* 			statements to make API requests. Eventually, this code
-* 			will be used within a GUI so the user can look up info
-* 			about a specified movie. When we implement that, we will
-* 			need to remove the terminal-style interaction here.
+* @TODO
+* Currently, this class uses terminal input and print statements to make
+* API requests. Eventually, this code will be used within a GUI so the 
+* user can look up info about a specified movie. When we implement that,
+* we will need to remove the terminal-style interaction here.
 */
 public class InfoExtractor {
 	
@@ -75,14 +75,19 @@ public class InfoExtractor {
 	 * This way our Movie object can have a list of multiple genres 
 	 * instead of one String that contains several genres.
 	 * 
-	 * @param Map			The Map holding the information from a request
-	 * @param category		The type of information to extract from the API
-	 * 						response (e.g., genre, director, cast, etc.)
-	 * @return ArrayList	An ArrayList holding each piece of information
-	 * 						in a separate index.
+	 * @param Map
+	 * 		The Map holding the information from a request
+	 * @param category
+	 * 		The type of information to extract from the API response 
+	 * 		(e.g., genre, director, cast, etc.)
 	 * 
-	 * @TODO We will need to change how Movie objects store information.
-	 * 		 In addition, we'll need to remove these print statements.
+	 * @return ArrayList
+	 * 		An ArrayList holding each piece of information
+	 * 		in a separate index.
+	 * 
+	 * @TODO
+	 * We will need to change how Movie objects store information.
+	 * 	In addition, we'll need to remove these print statements.
 	 */
 	public ArrayList<String> splitCategoryInfoString(
 			String categoryInfo, 
@@ -99,8 +104,9 @@ public class InfoExtractor {
 		//---------------------------------------------------------------|
 		// TODO: Remove these statements later.
 		//---------------------------------------------------------------|
-		System.out.println("-----------------------------------------------------------------");
-		System.out.println("InfoExtractor.splitCategoryInfoString(): " + category + "...");
+		System.out.println("---------------------------------------------");
+		System.out.println("InfoExtractor.splitCategoryInfoString(): " +
+				category + "...");
 		for(String entity : categoryInfoList){
 			System.out.println(entity);
 		}
@@ -116,8 +122,11 @@ public class InfoExtractor {
 	 * using a native Java object while also preserving the useful key-value
 	 * relationship inherent in JSON.
 	 * 
-	 * @param jsonString 	The JSON information we receive from OMDb
-	 * @return Map			A map holding key-value pairs of movie info
+	 * @param jsonString
+	 * 		The JSON information we receive from OMDb
+	 * 
+	 * @return Map
+	 * 		A map holding key-value pairs of movie info
 	 */
 	public Map<String, String> extractMovieInfo(String apiResponse) {
 		Gson gson = new Gson();
@@ -134,78 +143,118 @@ public class InfoExtractor {
 		return information;
 	}
 	
-	
 	/**
-	 * This method deals with search results. It converts the results we
-	 * get from the API into an array of JSON objects that we can further
-	 * parse to get information about each result.
+	 * This method gets information from a search result. A search result
+	 * includes a general search (searching OMDb for Star Wars) and an
+	 * episode list request (getting a list of episodes for season 2 of
+	 * Gravity Falls).
 	 * 
-	 * @param apiResponse	The JSON information we receive from OMDb
-	 * @return ArrayList	An ArrayList of SearchResult objects
+	 * We handle these with the same method because OMDb treats an episode
+	 * list request as a search. 
+	 * 
+	 * @param apiResponse
+	 * 		A string representing the response from OMDb
+	 * @return ArrayList
+	 * 		The list of SearchResult objects
 	 */
-	public ArrayList<GeneralSearchResult> extractGeneralSearchResults(String apiResponse) {
+	public ArrayList<SearchResult> extractSearchResults(String apiResponse) {
 		JsonParser parser = new JsonParser();
 		JsonObject object = parser.parse(apiResponse).getAsJsonObject();
-		JsonArray results = object.get("Search").getAsJsonArray();
+		JsonArray results;
 		
-		int numResults = results.size();
+		ArrayList<SearchResult> listOfResults = new ArrayList<SearchResult>();
+		String searchType = "";
 		
-		ArrayList<GeneralSearchResult> listResults = 
-				new ArrayList<GeneralSearchResult>();
-		
-		for(int i = 0; i < numResults; i++) {
-			JsonObject thisResult = results.get(i).getAsJsonObject();
-			
-			String title = thisResult.get("Title").toString();
-			String year = thisResult.get("Year").toString();
-			String imdbId = thisResult.get("imdbID").toString();
-			String poster = thisResult.get("Poster").toString();
-			
-			GeneralSearchResult result =
-					new GeneralSearchResult(title, year, imdbId, poster);
-			listResults.add(result);
+		// Find out what kind of search we're dealing with
+		if(object.has("Search")) {
+			searchType = SEARCH_REQUEST;
+			results = object.get("Search").getAsJsonArray();
+		} else if(object.has("Episodes")) {
+			searchType = EPISODE_LIST_REQUEST;
+			results = object.get("Episodes").getAsJsonArray();
+		} else {
+			System.out.println("Bad request type.");
+			return listOfResults;
 		}
 		
-		return listResults;
+		// Create the proper object for each result in the search
+		int numResults = results.size();
+		for(int i = 0; i < numResults; i++) {
+			if(searchType.equals(SEARCH_REQUEST)) {
+				JsonObject thisResult = results.get(i).getAsJsonObject();
+				MediaSearchResult mediaObject = 
+						toMediaSearchResultObject(thisResult);
+				listOfResults.add(mediaObject);
+			} else if(searchType.equals(EPISODE_LIST_REQUEST)) {
+				JsonObject thisResult = results.get(i).getAsJsonObject();
+				EpisodeListResult episodeObject
+					= toEpisodeListResultObject(thisResult);
+				listOfResults.add(episodeObject);
+				
+			} else {
+				System.out.println("Bad request type.");
+				break;
+			}
+		}
+		
+		return listOfResults;
+	}
+	
+
+	/**
+	 * This method creates a MediaSearchResult object representing one
+	 * result from a general search.
+	 * 
+	 * @param thisResult
+	 * 		A JsonObject containing fields describing a search result
+	 * 
+	 * @return MediaSearchResult
+	 * 		An object describing a search result
+	 */
+	private MediaSearchResult toMediaSearchResultObject(JsonObject thisResult) {
+		String title = thisResult.get("Title").toString();
+		String year = thisResult.get("Year").toString();
+		String imdbId = thisResult.get("imdbID").toString();
+		String poster = thisResult.get("Poster").toString();
+		
+		MediaSearchResult result =
+				new MediaSearchResult(title, year, imdbId, poster);
+		
+		return result;
 	}
 	
 	
 	/**
-	 * This method deals with episode list results. It converts the results we
-	 * get from the API into an array of JSON objects that we can further
-	 * parse to get information about each result.
+	 * This method creates an EpisodeListResult object representing one
+	 * result from an episode list request.
 	 * 
-	 * @param apiResponse	The JSON information we receive from OMDb
-	 * @return ArrayList	An ArrayList of SearchResult objects
+	 * @param thisResult
+	 * 		A JsonObject containing fields describing a search result
+	 * 
+	 * @return EpisodeListResult
+	 * 		An object describing a search result
 	 */
-	public ArrayList<EpisodeListResult> extractEpisodeListResults(String apiResponse) {
-		JsonParser parser = new JsonParser();
-		JsonObject object = parser.parse(apiResponse).getAsJsonObject();
-		JsonArray results = object.get("Episodes").getAsJsonArray();
+	public EpisodeListResult toEpisodeListResultObject(JsonObject thisResult) {
 		
-		int numResults = results.size();
+		String title = thisResult.get("Title").toString();
 		
-		ArrayList<EpisodeListResult> listResults = 
-				new ArrayList<EpisodeListResult>();
+		int episodeNumber = 
+				Integer.parseInt(
+						thisResult.get("Episode").toString().replace("\"", "")
+		);
+		String releaseDate = thisResult.get("Released").toString();
+		String imdbId = thisResult.get("imdbID").toString();
+		double imdbRating = 
+				Double.parseDouble(
+						thisResult.get("imdbRating").toString().replace("\"", "")
+		);
 		
-		for(int i = 0; i < numResults; i++) {
-			JsonObject thisResult = results.get(i).getAsJsonObject();
-			
-			String title = thisResult.get("Title").toString();
-			int episodeNumber = 
-					Integer.parseInt(thisResult.get("Episode").toString().replace("\"", ""));
-			String releaseDate = thisResult.get("Released").toString();
-			String imdbId = thisResult.get("imdbID").toString();
-			double imdbRating = 
-					Double.parseDouble(thisResult.get("imdbRating").toString().replace("\"", ""));
-			
-			EpisodeListResult result =
-					new EpisodeListResult(title, episodeNumber, releaseDate, imdbId, imdbRating);
-			
-			listResults.add(result);
-		}
+		EpisodeListResult result =
+				new EpisodeListResult(
+						title, episodeNumber, releaseDate, imdbId, imdbRating
+		);
 		
-		return listResults;
+		return result;
 	}
 	
 	
@@ -223,16 +272,20 @@ public class InfoExtractor {
 		while(true) {
 			
 			System.out.println("Type MOVIE to search for a specific movie. " +
-					"Type SEARCH to perform a search. Type EPISODE LIST to get a list of "
-					+ "episodes. Enter nothing to quit.");
+					"Type SEARCH to perform a search. Type EPISODE LIST to " +
+					" get a list of episodes. Enter nothing to quit.");
 			
 			String requestType = scan.nextLine();
 			if(requestType.isEmpty()){
 				break;
 			}
-			boolean isMovieRequest = requestType.equals(MOVIE_REQUEST);
-			boolean isEpisodeListRequest = requestType.equals(EPISODE_LIST_REQUEST);
-			boolean isSearchRequest = requestType.equals(SEARCH_REQUEST);
+			
+			boolean isMovieRequest =
+					requestType.equals(MOVIE_REQUEST);
+			boolean isEpisodeListRequest =
+					requestType.equals(EPISODE_LIST_REQUEST);
+			boolean isSearchRequest =
+					requestType.equals(SEARCH_REQUEST);
 			
 			System.out.println("Enter a title: ");
 			String title = scan.nextLine();
@@ -260,16 +313,18 @@ public class InfoExtractor {
 			} else if(isSearchRequest){
 				
 				response = connector.requestSearch(title, year);
-				ArrayList<GeneralSearchResult> results = 
-						extractGeneralSearchResults(response);
+				ArrayList<SearchResult> results = 
+						extractSearchResults(response);
 				
 				// TODO: Remove this later.
-				for(GeneralSearchResult result : results) {
+				for(SearchResult result : results) {
+					MediaSearchResult mediaResult = (MediaSearchResult) result;
+					
 					System.out.println("");
-					System.out.println("Title: " + result.getTitle());
-					System.out.println("Year: " + result.getYear());
-					System.out.println("Poster: " + result.getPoster());
-					System.out.println("IMDB ID: " + result.getImdbId());
+					System.out.println("Title: " + mediaResult.getTitle());
+					System.out.println("Year: " + mediaResult.getYear());
+					System.out.println("Poster: " + mediaResult.getPoster());
+					System.out.println("IMDB ID: " + mediaResult.getImdbId());
 				}
 				
 			} else if(isEpisodeListRequest) {
@@ -277,17 +332,19 @@ public class InfoExtractor {
 				String seasonNumber = scan.nextLine();
 				
 				response = connector.requestEpisodeList(title, seasonNumber);
-				ArrayList<EpisodeListResult> results = 
-						extractEpisodeListResults(response);
+				ArrayList<SearchResult> results = 
+						extractSearchResults(response);
 				
 				// TODO: Remove this later.
-				for(EpisodeListResult result : results) {
+				for(SearchResult result : results) {
+					EpisodeListResult episodeResult = (EpisodeListResult) result;
+					
 					System.out.println("");
-					System.out.println("Title: " + result.getTitle());
-					System.out.println("Release date: " + result.getReleaseDate());
-					System.out.println("Episode number: " + result.getEpisodeNumber());
-					System.out.println("IMDB Rating: " + result.getImdbId());
-					System.out.println("IMDB ID: " + result.getImdbId());
+					System.out.println("Title: " + episodeResult.getTitle());
+					System.out.println("Release date: " + episodeResult.getReleaseDate());
+					System.out.println("Episode number: " + episodeResult.getEpisodeNumber());
+					System.out.println("IMDB Rating: " + episodeResult.getImdbId());
+					System.out.println("IMDB ID: " + episodeResult.getImdbId());
 				}
 				
 			} else {
@@ -307,9 +364,10 @@ public class InfoExtractor {
 	/**
 	 * Print the deserialized JSON response. This method is for testing.
 	 * 
-	 * @param information	The map representing the JSON response
+	 * @param information
+	 * 		The map representing the JSON response
 	 * 
-	 * @TODO: Remove this method when we implement user OMDb queries
+	 * @TODO Remove this method when we implement user OMDb queries
 	 */
 	public void printJson(Map<String, String> information) {
 		for(Map.Entry<String, String> entry : information.entrySet()) {

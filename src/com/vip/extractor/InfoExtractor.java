@@ -87,7 +87,7 @@ public class InfoExtractor {
 	 * 
 	 * @TODO
 	 * We will need to change how Movie objects store information.
-	 * 	In addition, we'll need to remove these print statements.
+	 * In addition, we'll need to remove these print statements.
 	 */
 	public ArrayList<String> splitCategoryInfoString(
 			String categoryInfo, 

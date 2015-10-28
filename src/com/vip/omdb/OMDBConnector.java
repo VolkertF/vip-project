@@ -68,9 +68,13 @@ public class OMDBConnector {
 	 * This method tries to get information about a specified movie from
 	 * the API. It will throw an IOException if something goes wrong.
 	 * 
-	 * @param title			The name of the movie
-	 * @param year 			The year the movie came out
-	 * @return String		The response from the API
+	 * @param title
+	 * 		The name of the movie
+	 * @param year
+	 * 		The year the movie came out
+	 * 
+	 * @return String
+	 * 		The response from the API
 	 */
 	public String requestMovie(String title, String year) throws IOException {
 		String formattedUri = buildUri(title, year, "", MOVIE_REQUEST);
@@ -82,9 +86,13 @@ public class OMDBConnector {
 	/**
 	 * This method searches the API for the requested information. It 
 	 * 
-	 * @param title			The name of the movie
-	 * @param year 			The year the movie came out
-	 * @return String		The response from the API
+	 * @param title
+	 * 		The name of the movie
+	 * @param year
+	 * 		The year the movie came out
+	 * 
+	 * @return String
+	 * 		The response from the API
 	 */
 	public String requestSearch(String title, String year) throws IOException {
 		String formattedUri = buildUri(title, year, "", SEARCH_REQUEST);
@@ -96,9 +104,13 @@ public class OMDBConnector {
 	/**
 	 * This method requests an episode list for the given season.
 	 * 
-	 * @param title			The title of the series
-	 * @param seasonNumber	The season to get an episode list for
-	 * @return String		The response from the API
+	 * @param title
+	 * 		The title of the series
+	 * @param seasonNumber
+	 * 		The season to get an episode list for
+	 * 
+	 * @return String
+	 * 		The response from the API
 	 */
 	public String requestEpisodeList(String title, String seasonNumber) throws IOException {
 		String formattedUri = buildUri(title, "", seasonNumber, EPISODE_LIST_REQUEST);
@@ -111,13 +123,18 @@ public class OMDBConnector {
 	 * This method takes a user-specified request and converts it into
 	 * the format accepted by the OMDb API.
 	 * 
-	 * @param title 		The title of the movie to find
-	 * @param year 			The year the movie came out (optional)
-	 * @param seasonNumber	The season to search through when requesting
-	 * 						an episode list (NECESARY WHEN MAKING AN
-	 * 						EPISODE LIST REQUEST!)
-	 * @param requestType	The type of request to make
-	 * @return String 		A string representing the API request
+	 * @param title
+	 * 		The title of the movie to find
+	 * @param year
+	 * 		The year the movie came out (optional)
+	 * @param seasonNumber
+	 * 		The season to search through when requesting an episode 
+	 * 		list (NECESARY WHEN MAKING AN EPISODE LIST REQUEST!)
+	 * @param requestType
+	 * 		The type of request to make
+	 * 
+	 * @return String
+	 * 		A string representing the API request
 	 */
 	private String buildUri(
 			String title,
@@ -168,7 +185,8 @@ public class OMDBConnector {
 	 * This method removes whitespace from the given String and 
 	 * replaces them with plus signs so the API accepts it.
 	 * 
-	 * @param toModify	The  String to remove whitespace from
+	 * @param toModify
+	 * 		The  String to remove whitespace from
 	 */
 	private void removeWhitespace(String toModify) {
 		String[] tokens = toModify.split("\\s");
@@ -182,12 +200,14 @@ public class OMDBConnector {
 	
 	
 	/**
-	 * This method sends the request to the API. It throws an
-	 * IOException if something went wrong with the request.
+	 * This method sends the request to the API. It throws an IOException
+	 * if something went wrong with the request.
 	 * 
-	 * @param uri		The URI of the API request
-	 * @return String	The String representing the JSON response
-	 * 					received from the API
+	 * @param uri
+	 * 		The URI of the API request
+	 * 
+	 * @return String
+	 * 		The String representing the JSON response received from the API
 	 */
 	private String makeRequest(String uri) throws IOException {
 		System.out.println("CONNECTOR: asking " + uri);

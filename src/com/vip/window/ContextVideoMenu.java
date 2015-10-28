@@ -21,7 +21,7 @@ public class ContextVideoMenu extends JPopupMenu {
 	}
 	
 	private void init(final Video vid) {
-		final String vidPath = vid.getPath();
+		final String vidPath = vid.getFilePath();
 		
 		jmiPlay = new JMenuItem("Play " + vid.getTitle());
 		jmiPlay.addActionListener(new ActionListener() {
@@ -36,7 +36,7 @@ public class ContextVideoMenu extends JPopupMenu {
 		
 		jmiInfo = new JMenuItem("Get Video Information");
 		final String info = "You have selected information about " + vid.getTitle() +
-				            "\nThe Movie is situated at: " + vid.getPath();
+				            "\nThe Movie is situated at: " + vid.getFilePath();
 		jmiInfo.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {

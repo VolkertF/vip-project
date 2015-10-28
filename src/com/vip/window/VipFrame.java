@@ -44,7 +44,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicSliderUI;
 
-import com.vip.attributes.Movie;
 import com.vip.attributes.Video;
 import com.vip.media.VLC;
 
@@ -260,10 +259,10 @@ public class VipFrame extends JFrame {
 		movies = new ArrayList<Video>();
 		defaultJList = new DefaultListModel<String>(); //Do all search and sort stuff with this thing
 		jlstFileList = new JList<String>(defaultJList);
-		Movie born2die = new Movie("G:\\Videos\\Filme\\Born2Die.avi", "Born to Die");
-		Movie fanboys = new Movie("G:\\Videos\\Filme\\Fanboys.avi", "Fanboys");
-		movies.add(new Movie("F:\\Dji. Death Sails-HD.mp4", "Dji - Death Sails"));
-		movies.add(new Movie("F:\\The Saga Of Bjorn-HD.mp4", "The Saga of Bjorn"));
+		Video born2die = new Video("G:\\Videos\\Filme\\Born2Die.avi", "Born to Die");
+		Video fanboys = new Video("G:\\Videos\\Filme\\Fanboys.avi", "Fanboys");
+		movies.add(new Video("F:\\Dji. Death Sails-HD.mp4", "Dji - Death Sails"));
+		movies.add(new Video("F:\\The Saga Of Bjorn-HD.mp4", "The Saga of Bjorn"));
 		movies.add(born2die);
 		movies.add(fanboys);
 		for (Video temp : movies) {
@@ -627,14 +626,14 @@ public class VipFrame extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent ev) {
 				if(ev.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(ev)) {
-					VLC.loadMedia(movies.get(jlstFileList.getSelectedIndex()).getPath());
+					VLC.loadMedia(movies.get(jlstFileList.getSelectedIndex()).getFilePath());
 					VLC.toggleMoviePlayback();
 				}
 			}
 			@Override 
 			public void mousePressed(MouseEvent ev) {
 				if(SwingUtilities.isRightMouseButton(ev)) {
-					movies.get(jlstFileList.getSelectedIndex()).activateContextVideoMenu(ev);					
+					//movies.get(jlstFileList.getSelectedIndex()).activateContextVideoMenu(ev);					
 				}
 			}
 		});

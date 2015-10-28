@@ -93,7 +93,7 @@ public class SQLiteTest {
 	
 	public static void main(String args[]) {
 
-		SQLiteTest test = new SQLiteTest();
+		//SQLiteTest test = new SQLiteTest();
 
 		Connection c = null;
 

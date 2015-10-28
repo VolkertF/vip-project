@@ -10,9 +10,6 @@ public class Main {
 
 	public static void main(String[] args) {
 		final VipFrame f = new VipFrame();
-		// String loaded_movie_file = "G:\\Videos\\Filme\\Fanboys.avi";
-		//String loaded_movie_file = "F:\\Dji. Death Sails-HD.mp4";
-		//VLC.loadMedia(loaded_movie_file);
 		f.setVisible(true);
 
 		Thread t = new Thread(new Runnable() {
@@ -25,7 +22,8 @@ public class Main {
 						}
 					}
 				} catch (InterruptedException e) {
-					// TODO Restart Thread, maybe outsource code snippet into new method
+					// TODO Restart Thread, maybe outsource code snippet into
+		            // new method
 					e.printStackTrace();
 				}
 
@@ -33,4 +31,5 @@ public class Main {
 		});
 		t.start();
 	}
+
 }

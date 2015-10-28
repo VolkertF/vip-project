@@ -15,6 +15,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -44,6 +47,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicSliderUI;
 
+import com.vip.Main;
 import com.vip.attributes.Video;
 import com.vip.media.VLC;
 
@@ -57,8 +61,7 @@ public class VipFrame extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		defaultInsets = new Insets(2, 2, 2, 2);
 		changeGUILook();
-		initKeyParser();
-		VLC.init();
+		initConfig();
 		buildPanels();
 		buildExplorerGUI();
 		buildMovieGUI();
@@ -68,11 +71,30 @@ public class VipFrame extends JFrame {
 		pack();
 		requestFocus();
 	}
-	
+
+	private void initConfig() {
+		// locate expected path of config.ini
+		String configPath = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		configPath = configPath.concat("config.ini");
+		File configFile = new File(configPath);
+
+		// Initialize shortcuts
+		keyParser.initShortcuts(configFile);
+		keyParser.setVipFrame(this);
+		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+		manager.addKeyEventDispatcher(keyParser);
+
+		// Initialize mediaplayer
+		VLC.init();
+	}
+
 	/**
-	 * TODO: Add Comment (you're welcome Fabian)
+	 * Responsible for parsing button input into actions
 	 */
-	private ButtonParser button_parser = new ButtonParser(this);
+	private ButtonParser buttonParser = new ButtonParser(this);
+
+	/** Responsible for parsing keyboard input into actions **/
+	private KeyParser keyParser = new KeyParser();
 
 	/**
 	 * ArrayList<String> to display all movies in a datastructure
@@ -169,19 +191,10 @@ public class VipFrame extends JFrame {
 		};
 		menuItem.addActionListener(al);
 	}
-	
+
 	/**
-	 * Private method for initializing the KeyParser
-	 */
-	private void initKeyParser() {
-		KeyParser keyParser = new KeyParser();
-		keyParser.setVipFrame(this);
-		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-		manager.addKeyEventDispatcher(keyParser);
-	}
-	
-	/**
-	 * Tries to change the look and feel of Java to Nimbus, a cross-platform GUI that comes with Java 6 update 10
+	 * Tries to change the look and feel of Java to Nimbus, a cross-platform GUI
+	 * that comes with Java 6 update 10
 	 */
 	public void changeGUILook() {
 		try {
@@ -251,13 +264,14 @@ public class VipFrame extends JFrame {
 	 * JListModel for displaying all movies in the internal list
 	 */
 	private DefaultListModel<String> defaultJList;
-	
+
 	/**
 	 * Create Sub-sub-panels in the explorer panel
 	 */
 	private void buildExplorerGUI() {
 		movies = new ArrayList<Video>();
-		defaultJList = new DefaultListModel<String>(); //Do all search and sort stuff with this thing
+		defaultJList = new DefaultListModel<String>(); // Do all search and sort
+		                                               // stuff with this thing
 		jlstFileList = new JList<String>(defaultJList);
 		Video born2die = new Video("G:\\Videos\\Filme\\Born2Die.avi", "Born to Die");
 		Video fanboys = new Video("G:\\Videos\\Filme\\Fanboys.avi", "Fanboys");
@@ -307,8 +321,8 @@ public class VipFrame extends JFrame {
 		}
 	}
 
-	/** 
-	 * Indicator of current volume level 
+	/**
+	 * Indicator of current volume level
 	 */
 	private JLabel JlabelVolume;
 
@@ -340,32 +354,32 @@ public class VipFrame extends JFrame {
 		jpnlMovieControl.setLayout(new FlowLayout());
 
 		JButton jbtnPlayMovie = new JButton("Play/Pause");
-		jbtnPlayMovie.addActionListener(button_parser);
+		jbtnPlayMovie.addActionListener(buttonParser);
 		jbtnPlayMovie.setActionCommand("jbtnToggleMoviePlayback");
 		jpnlMovieControl.add(jbtnPlayMovie);
 
 		JButton jbtnStopMovie = new JButton("Stop");
-		jbtnStopMovie.addActionListener(button_parser);
+		jbtnStopMovie.addActionListener(buttonParser);
 		jbtnStopMovie.setActionCommand("jbtnStopMovie");
 		jpnlMovieControl.add(jbtnStopMovie);
 
 		JButton jbtnPreviousMovie = new JButton("|<");
-		jbtnPreviousMovie.addActionListener(button_parser);
+		jbtnPreviousMovie.addActionListener(buttonParser);
 		jbtnPreviousMovie.setActionCommand("jbtnPreviousMovie");
 		jpnlMovieControl.add(jbtnPreviousMovie);
 
 		JButton jbtnNextMovie = new JButton(">|");
-		jbtnNextMovie.addActionListener(button_parser);
+		jbtnNextMovie.addActionListener(buttonParser);
 		jbtnNextMovie.setActionCommand("jbtnNextMovie");
 		jpnlMovieControl.add(jbtnNextMovie);
 
 		JButton jbtnPreviousChapter = new JButton("<<");
-		jbtnPreviousChapter.addActionListener(button_parser);
+		jbtnPreviousChapter.addActionListener(buttonParser);
 		jbtnPreviousChapter.setActionCommand("jbtnJumpBack");
 		jpnlMovieControl.add(jbtnPreviousChapter);
 
 		JButton jbtnNextChapter = new JButton(">>");
-		jbtnNextChapter.addActionListener(button_parser);
+		jbtnNextChapter.addActionListener(buttonParser);
 		jbtnNextChapter.setActionCommand("jbtnJumpForward");
 		jpnlMovieControl.add(jbtnNextChapter);
 
@@ -426,7 +440,8 @@ public class VipFrame extends JFrame {
 	boolean initMovie = true;
 
 	/**
-	 * Makes it so, that on the next timeline update the media will be initialized
+	 * Makes it so, that on the next timeline update the media will be
+	 * initialized
 	 */
 	public void initMovie() {
 		initMovie = true;
@@ -495,7 +510,7 @@ public class VipFrame extends JFrame {
 	/**
 	 * MenuItem which allows to add a whole directory to the watchlist of
 	 * displayed files to play.
-
+	 * 
 	 */
 	private JMenuItem jmiAddDirectory;
 
@@ -584,17 +599,19 @@ public class VipFrame extends JFrame {
 		jmbMenu.add(jmHelp);
 		jmbMenu.add(jmAbout);
 
-		//Adding ActionListener to VLC-Path MenuItem which say, that it is recommended that you
-		//have installed the 64-Bit version of VLC in order to run VIP smoothly.
+		// Adding ActionListener to VLC-Path MenuItem which say, that it is
+		// recommended that you
+		// have installed the 64-Bit version of VLC in order to run VIP
+		// smoothly.
 		jmiPathVLC.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				JOptionPane.showMessageDialog(rootPane, "In order to run the 'Video Information Program' smoothly " +
-			                                            "you have to install the 64-Bit Version of Video Lan Player! " +
-														"\n It can be found on the Website: http://www.videolan.org/vlc/download-windows.html");
+				JOptionPane.showMessageDialog(rootPane, "In order to run the 'Video Information Program' smoothly "
+		                + "you have to install the 64-Bit Version of Video Lan Player! "
+		                + "\n It can be found on the Website: http://www.videolan.org/vlc/download-windows.html");
 			}
 		});
-		
+
 		// Adding ActionListeners with URLs
 		try {
 			addURLActionListenerToMenuBarItem(jmiWebsite, new URI("http://cyril-casapao.github.io/vip-project/"));
@@ -614,41 +631,40 @@ public class VipFrame extends JFrame {
 			}
 		});
 	}
-	
+
 	/**
-	 * Add ActionListener to the FileList, so a movie will be played if double-clicked
+	 * Add ActionListener to the FileList, so a movie will be played if
+	 * double-clicked
 	 */
 	private void addFileListActionListener() {
 		jlstFileList.addMouseListener(new MouseListener() {
-			@Override public void mouseReleased(MouseEvent arg0) {}
-			@Override public void mouseExited(MouseEvent arg0) {}
-			@Override public void mouseEntered(MouseEvent arg0) {}			
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+			}
+
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+			}
+
 			@Override
 			public void mouseClicked(MouseEvent ev) {
-				if(ev.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(ev)) {
+				if (ev.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(ev)) {
 					VLC.loadMedia(movies.get(jlstFileList.getSelectedIndex()).getFilePath());
 					VLC.toggleMoviePlayback();
 				}
 			}
-			@Override 
+
+			@Override
 			public void mousePressed(MouseEvent ev) {
-				if(SwingUtilities.isRightMouseButton(ev)) {
-					//movies.get(jlstFileList.getSelectedIndex()).activateContextVideoMenu(ev);					
+				if (SwingUtilities.isRightMouseButton(ev)) {
+					// movies.get(jlstFileList.getSelectedIndex()).activateContextVideoMenu(ev);
 				}
 			}
 		});
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 }

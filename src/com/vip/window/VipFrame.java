@@ -16,9 +16,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -43,8 +47,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicSliderUI;
 
 import com.vip.Main;
@@ -73,13 +75,18 @@ public class VipFrame extends JFrame {
 	}
 
 	/**
-	 * TODO @author Fabian Volkert
+	 * Method tries to read the config file and load its data into the
+	 * application. On failure it will fall back on a default configuration and
+	 * create a config file with those.
 	 */
 	private void initConfig() {
 		// locate expected path of config.ini
 		String configPath = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		configPath = configPath.concat("config.ini");
 		File configFile = new File(configPath);
+
+		// Initialize general information
+		initGeneral(configFile);
 
 		// Initialize shortcuts
 		keyParser.initShortcuts(configFile);
@@ -88,7 +95,39 @@ public class VipFrame extends JFrame {
 		manager.addKeyEventDispatcher(keyParser);
 
 		// Initialize mediaplayer
-		VLC.init();
+		VLC.initVLC(configFile);
+	}
+
+	/**
+	 * TODO commentate
+	 * 
+	 * @param configFile
+	 */
+	private void initGeneral(File configFile) {
+		if (configFile.exists()) {
+			try {
+				BufferedReader br = new BufferedReader(new FileReader(configFile));
+				// TODO read general configuration into application
+				br.close();
+			} catch (IOException ioe) {
+				System.out.println("Mistakes were made reading the configuration file. Terminating");
+				System.exit(-1);
+			}
+		} else {
+			// In case the configuration file is missing....we just create our
+			// own config, with blackjack and hookers.
+			try {
+				BufferedWriter bw;
+				bw = new BufferedWriter(new FileWriter(configFile));
+				PrintWriter pw = new PrintWriter(bw);
+				// TODO write own config file, come up with default values
+				pw.close();
+				bw.close();
+			} catch (IOException e) {
+				System.out.println("Couldnt create configuration file. Terminating");
+				System.exit(-1);
+			}
+		}
 	}
 
 	/**

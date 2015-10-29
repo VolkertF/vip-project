@@ -2,11 +2,19 @@ package com.vip.media;
 
 import java.awt.Canvas;
 import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
+import com.sun.jna.Native;
+import com.sun.jna.NativeLibrary;
 
 import uk.co.caprica.vlcj.binding.LibVlc;
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
+import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 
 /**
  * VLC Class. Holds a canvas to display on the movie panel and controls video
@@ -57,8 +65,32 @@ public abstract class VLC {
 	/**
 	 * Initializes vlc plugin,finds vlc installation, sets canvas up.
 	 */
-	public static void init() {
+	public static void initVLC(File configFile) {
 		boolean found = new NativeDiscovery().discover();
+		// If VLC cannot be found, we will use the path from the config file to
+		// do so.
+		if (!found) {
+
+			// Read config file's second line for VLC path.
+			BufferedReader br;
+			try {
+				br = new BufferedReader(new FileReader(configFile));
+				br.readLine();
+				// Extract relevant information
+				String vlcPath = br.readLine().trim().split("=")[1];
+				br.close();
+
+				NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), vlcPath);
+				Native.loadLibrary(RuntimeUtil.getLibVlcLibraryName(), LibVlc.class);
+			} catch (IOException e) {
+				// Shouldn't be happening: initGeneral should have created a
+				// default config by now
+				// TODO Auto-generated catch block
+				System.out.println(
+				        "Couldn't find expected data on second line of config file. It might even be the config file is missing. Terminating.");
+				System.exit(-1);
+			}
+		}
 		System.out.println(found);
 		System.out.println(LibVlc.INSTANCE.libvlc_get_version());
 

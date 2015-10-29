@@ -336,6 +336,9 @@ public class VipFrame extends JFrame {
 	 */
 	private JLabel jlabelMovieTimeline;
 
+	/** Indicator for time left in the current movie **/
+	private JLabel jlabelMovieTimer;
+
 	/**
 	 * Slider for movie timeline
 	 */
@@ -409,10 +412,14 @@ public class VipFrame extends JFrame {
 		});
 
 		jlabelMovieTimeline = new JLabel();
-		jlabelMovieTimeline.setText("0");
+		jlabelMovieTimeline.setText("0%");
 
-		addComponent(0, 0, 1, 1, 1.0, 1.0, jpnlMovieNorth, jsliderMovieProgress, defaultInsets);
-		addComponent(1, 0, 1, 1, 0.1, 0.1, jpnlMovieNorth, jlabelMovieTimeline, defaultInsets);
+		jlabelMovieTimer = new JLabel();
+		jlabelMovieTimer.setText("00:00:00 / 00:00:00");
+
+		addComponent(1, 0, 1, 1, 1.0, 1.0, jpnlMovieNorth, jsliderMovieProgress, defaultInsets);
+		addComponent(2, 0, 1, 1, 0.01, 0.1, jpnlMovieNorth, jlabelMovieTimer, defaultInsets);
+		addComponent(0, 0, 1, 1, 0.01, 0.1, jpnlMovieNorth, jlabelMovieTimeline, defaultInsets);
 
 	}
 
@@ -435,16 +442,32 @@ public class VipFrame extends JFrame {
 	}
 
 	/**
-	 * True on Initialization of a Movie
+	 * TODO
 	 */
-	boolean initMovie = true;
-
-	/**
-	 * Makes it so, that on the next timeline update the media will be
-	 * initialized
-	 */
-	public void initMovie() {
-		initMovie = true;
+	private void updateTimelineLabels() {
+		Double procentualProgress = ((double) VLC.getMediaPlayer().getTime() / VLC.getMediaPlayer().getLength()) * 100;
+		String newTime = String.format("%4.1f", procentualProgress);
+		// is newTime is not a valid Number, we display a default Text
+		if (procentualProgress.isNaN() || procentualProgress.isInfinite()) {
+			jlabelMovieTimeline.setText("0%");
+		} else {
+			jlabelMovieTimeline.setText(newTime + " %");
+		}
+		int hoursPassed = 0;
+		int minutesPassed = 0;
+		int secondsPassed = 0;
+		int hoursTotal = 0;
+		int minutesTotal = 0;
+		int secondsTotal = 0;
+		hoursPassed = (int) (VLC.getMediaPlayer().getTime() / 3600000);
+		minutesPassed = (int) (VLC.getMediaPlayer().getTime() / 60000 % 60);
+		secondsPassed = (int) (VLC.getMediaPlayer().getTime() / 1000 % 60);
+		hoursTotal = (int) (VLC.getMediaPlayer().getLength() / 3600000);
+		minutesTotal = (int) (VLC.getMediaPlayer().getLength() / 60000 % 60);
+		secondsTotal = (int) (VLC.getMediaPlayer().getLength() / 1000 % 60);
+		String newLabelText = String.format("%02d:%02d:%02d / %02d:%02d:%02d", hoursPassed, minutesPassed, secondsPassed,
+		        hoursTotal, minutesTotal, secondsTotal);
+		jlabelMovieTimer.setText(newLabelText);
 	}
 
 	/**
@@ -452,27 +475,24 @@ public class VipFrame extends JFrame {
 	 */
 	public void updateTimeline() {
 		if (VLC.getMediaPlayer().getLength() != -1) {
-			Double procentualProgress = ((double) VLC.getMediaPlayer().getTime() / VLC.getMediaPlayer().getLength())
-			        * 100;
-			String newTime = String.format("%4.1f", procentualProgress);
-			jlabelMovieTimeline.setText(newTime + " %");
-			if (initMovie) {
+			updateTimelineLabels();
+			if (VLC.isMediaInit()) {
 				int movieLength = (int) VLC.getMediaPlayer().getLength();
 				jsliderMovieProgress.setMaximum(movieLength);
 				jsliderMovieProgress.setMinimum(0);
 				revalidate();
 				jsliderMovieProgress.repaint();
-				initMovie = false;
+				VLC.setMediaInit(false);
 			} else {
 				// If initialization fails: retry
 				if (jsliderMovieProgress.getMaximum() == 0) {
-					initMovie = true;
+					VLC.setMediaInit(true);
 				}
 				int currentMovieTime = (int) VLC.getMediaPlayer().getTime();
 				jsliderMovieProgress.setValue(currentMovieTime);
 			}
 		} else {
-			jlabelMovieTimeline.setText("0");
+			jlabelMovieTimeline.setText("0%");
 		}
 	}
 

@@ -38,7 +38,7 @@ public class KeyParser implements KeyEventDispatcher {
 	private static final int PREVIOUS_CHAPTER = 2;
 	private static final int VOLUME_UP = 3;
 	private static final int VOLUME_DOWN = 4;
-	private static final int EXIT_PROGRAM = 5;
+	private static final int SEARCH = 5;
 
 	private int[] shortcutList = new int[NrOfShortcuts];
 	private boolean[] shortcutCTRLmask = new boolean[NrOfShortcuts];
@@ -62,25 +62,60 @@ public class KeyParser implements KeyEventDispatcher {
 		int keyState = ke.getID();
 		int isPressed = KeyEvent.KEY_PRESSED;
 		int currentKey = ke.getKeyCode();
-		// When no textfield is focused, input will be processed
-		if (!(ke.getSource() instanceof JTextField)) {
-			if (keyState == isPressed && currentKey == shortcutList[TOGGLE_PLAYBACK]) {
-				VLC.toggleMoviePlayback();
+		// When no textfield is focused and the key is pressed, input will be
+		// processed
+		if (keyState == isPressed && !(ke.getSource() instanceof JTextField)) {
+			if (currentKey == shortcutList[TOGGLE_PLAYBACK]) {
+				if (isValidInput(ke, TOGGLE_PLAYBACK))
+					VLC.toggleMoviePlayback();
 			}
-			// if (state == KeyEvent.KEY_PRESSED && (id == KeyEvent.VK_PLUS ||
-			// id == KeyEvent.VK_ADD)) {
-			// vipFrame.updateVolume(VLC.getIncreasedVolume());
-			// }
-			// if (state == KeyEvent.KEY_PRESSED && (id == KeyEvent.VK_MINUS ||
-			// id == KeyEvent.VK_SUBTRACT)) {
-			// vipFrame.updateVolume(VLC.getDecreasedVolume());
-			// }
-			// // When CTRL+F is pressed, the search textfield will be focussed
-			// if (state == pressed && id == KeyEvent.VK_F && (ke.getModifiers()
-			// & KeyEvent.CTRL_MASK) != 0)
-			// vipFrame.get_jtfSearch().requestFocus();
+			if (currentKey == shortcutList[NEXT_CHAPTER]) {
+				if (isValidInput(ke, NEXT_CHAPTER))
+					VLC.nextChapter();
+			}
+			if (currentKey == shortcutList[PREVIOUS_CHAPTER]) {
+				if (isValidInput(ke, PREVIOUS_CHAPTER))
+					VLC.previousChapter();
+			}
+			if (currentKey == shortcutList[VOLUME_UP]) {
+				if (isValidInput(ke, VOLUME_UP))
+					VLC.volumeUp();
+			}
+			if (currentKey == shortcutList[VOLUME_DOWN]) {
+				if (isValidInput(ke, VOLUME_DOWN))
+					VLC.volumeDown();
+			}
+			if (currentKey == shortcutList[SEARCH]) {
+				if (isValidInput(ke, SEARCH))
+					vipFrame.get_jtfSearch().requestFocus();
+			}
 		}
 		return false;
+	}
+
+	/**
+	 * Checks a given keyEvent for a shortcut in the array against its CTRL and
+	 * its SHIFT mask.
+	 * 
+	 * @param ke
+	 *            current keyEvent that was fired
+	 * @param index
+	 *            index in the shortcut array to look for
+	 * @return <code>true</code> if the input is a valid shortcut <br />
+	 *         <code>false</code> if the input didn't match the requierements
+	 */
+	private boolean isValidInput(KeyEvent ke, int index) {
+		// Not Valid if CTRL should be pressed but is not
+		if (shortcutCTRLmask[index] && (ke.getModifiers() & KeyEvent.CTRL_MASK) == 0) {
+			return false;
+		} else if (shortcutCTRLmask[index] && (ke.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
+		}
+		// Not Valid if SHIFT should be pressed but is not
+		if (shortcutSHIFTmask[index] && (ke.getModifiers() & KeyEvent.SHIFT_MASK) == 0) {
+			return false;
+		} else if (shortcutSHIFTmask[index] && (ke.getModifiers() & KeyEvent.SHIFT_MASK) != 0) {
+		}
+		return true;
 	}
 
 	public void initShortcuts(File configFile) {
@@ -144,95 +179,17 @@ public class KeyParser implements KeyEventDispatcher {
 			// Making sure every char is upper-case for following parse
 			data = data.toUpperCase();
 			switch (data) {
-			case "A":
-				shortcutList[index] = KeyEvent.VK_A;
-				break;
-			case "B":
-				shortcutList[index] = KeyEvent.VK_B;
-				break;
-			case "C":
-				shortcutList[index] = KeyEvent.VK_C;
-				break;
-			case "D":
-				shortcutList[index] = KeyEvent.VK_D;
-				break;
-			case "E":
-				shortcutList[index] = KeyEvent.VK_E;
-				break;
-			case "F":
-				shortcutList[index] = KeyEvent.VK_F;
-				break;
-			case "G":
-				shortcutList[index] = KeyEvent.VK_G;
-				break;
-			case "H":
-				shortcutList[index] = KeyEvent.VK_H;
-				break;
-			case "I":
-				shortcutList[index] = KeyEvent.VK_I;
-				break;
-			case "J":
-				shortcutList[index] = KeyEvent.VK_J;
-				break;
-			case "K":
-				shortcutList[index] = KeyEvent.VK_K;
-				break;
-			case "L":
-				shortcutList[index] = KeyEvent.VK_L;
-				break;
-			case "M":
-				shortcutList[index] = KeyEvent.VK_M;
-				break;
-			case "N":
-				shortcutList[index] = KeyEvent.VK_N;
-				break;
-			case "O":
-				shortcutList[index] = KeyEvent.VK_O;
-				break;
-			case "P":
-				shortcutList[index] = KeyEvent.VK_P;
-				break;
-			case "Q":
-				shortcutList[index] = KeyEvent.VK_Q;
-				break;
-			case "R":
-				shortcutList[index] = KeyEvent.VK_R;
-				break;
-			case "S":
-				shortcutList[index] = KeyEvent.VK_S;
-				break;
-			case "T":
-				shortcutList[index] = KeyEvent.VK_T;
-				break;
-			case "U":
-				shortcutList[index] = KeyEvent.VK_U;
-				break;
-			case "V":
-				shortcutList[index] = KeyEvent.VK_V;
-				break;
-			case "W":
-				shortcutList[index] = KeyEvent.VK_W;
-				break;
-			case "X":
-				shortcutList[index] = KeyEvent.VK_X;
-				break;
-			case "Y":
-				shortcutList[index] = KeyEvent.VK_Y;
-				break;
-			case "Z":
-				shortcutList[index] = KeyEvent.VK_Z;
-				break;
 			case "SPACE":
 				shortcutList[index] = KeyEvent.VK_SPACE;
 				break;
-			case "NUM PLUS":
+			case "NUM_PLUS":
 				shortcutList[index] = KeyEvent.VK_ADD;
 				break;
-			case "NUM MINUS":
+			case "NUM_MINUS":
 				shortcutList[index] = KeyEvent.VK_SUBTRACT;
 				break;
 			default:
-				shortcutList[index] = -1;
+				shortcutList[index] = KeyEvent.getExtendedKeyCodeForChar(data.charAt(0));
 				break;
 			}
 		}

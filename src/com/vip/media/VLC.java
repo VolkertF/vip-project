@@ -36,6 +36,25 @@ public abstract class VLC {
 	private static Canvas canvas;
 
 	/**
+	 * True on Initialization of a media
+	 */
+	private static boolean initMedia = true;
+
+	/**
+	 * Returns wether or not the GUI needs to rebuild for a new media to play
+	 * 
+	 * @return <code>true</code> if the media should be initialized<br />
+	 *         <code>false</code> if the media is not to be inizialized
+	 */
+	public static boolean isMediaInit() {
+		return initMedia;
+	}
+
+	public static void setMediaInit(boolean newInit) {
+		initMedia = newInit;
+	}
+
+	/**
 	 * Initializes vlc plugin,finds vlc installation, sets canvas up.
 	 */
 	public static void init() {
@@ -94,8 +113,10 @@ public abstract class VLC {
 	 *            Path to the media file to be loaded
 	 */
 	public static void loadMedia(String media_path) {
-		if (mediaPlayerComponent != null)
+		if (mediaPlayerComponent != null) {
 			mediaPlayerComponent.prepareMedia(media_path);
+			VLC.setMediaInit(true);
+		}
 	}
 
 	public static void switchMediaFile(String newFile) {

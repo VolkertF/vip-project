@@ -27,12 +27,10 @@ public class ButtonParser implements ActionListener {
 		if ("jbtnPreviousMovie".equals(action)) {
 			// TODO exchange hardcoded video file with list reference
 			VLC.switchMediaFile("F:\\The Saga Of Bjorn-HD.mp4");
-			vipFrame.initMovie();
 		}
 		if ("jbtnNextMovie".equals(action)) {
 			// TODO exchange hardcoded video file with list reference
 			VLC.switchMediaFile("F:\\Dji. Death Sails-HD.mp4");
-			vipFrame.initMovie();
 		}
 		if ("jbtnPreviousChapter".equals(action))
 			VLC.previousChapter();

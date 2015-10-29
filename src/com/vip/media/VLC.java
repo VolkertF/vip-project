@@ -213,7 +213,6 @@ public abstract class VLC {
 		if (mediaPlayerComponent != null && mediaPlayerComponent.getLength() != -1) {
 			if (mediaPlayerComponent.getVolume() <= MAX_VOLUME - VOLUME_STEPS) {
 				mediaPlayerComponent.setVolume(mediaPlayerComponent.getVolume() + VOLUME_STEPS);
-				System.out.println(mediaPlayerComponent.getVolume());
 			} else {
 				mediaPlayerComponent.setVolume(MAX_VOLUME);
 			}
@@ -228,7 +227,6 @@ public abstract class VLC {
 		if (mediaPlayerComponent != null && mediaPlayerComponent.getLength() != -1) {
 			if (mediaPlayerComponent.getVolume() >= MIN_VOLUME + VOLUME_STEPS) {
 				mediaPlayerComponent.setVolume(mediaPlayerComponent.getVolume() - VOLUME_STEPS);
-				System.out.println(mediaPlayerComponent.getVolume());
 			} else {
 				mediaPlayerComponent.setVolume(MIN_VOLUME);
 			}

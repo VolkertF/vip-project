@@ -18,7 +18,7 @@ public class Main {
 					while (true) {
 						Thread.sleep(UPDATE_RATE);
 						if (VLC.getMediaPlayer() != null && VLC.getMediaPlayer().getLength() != -1) {
-							f.updateTimeline();
+							f.updateGUI();
 						}
 					}
 				} catch (InterruptedException e) {

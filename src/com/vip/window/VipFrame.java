@@ -72,6 +72,9 @@ public class VipFrame extends JFrame {
 		requestFocus();
 	}
 
+	/**
+	 * TODO @author Fabian Volkert
+	 */
 	private void initConfig() {
 		// locate expected path of config.ini
 		String configPath = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
@@ -91,7 +94,7 @@ public class VipFrame extends JFrame {
 	/**
 	 * Responsible for parsing button input into actions
 	 */
-	private ButtonParser buttonParser = new ButtonParser(this);
+	private ButtonParser buttonParser = new ButtonParser();
 
 	/** Responsible for parsing keyboard input into actions **/
 	private KeyParser keyParser = new KeyParser();
@@ -308,20 +311,6 @@ public class VipFrame extends JFrame {
 	}
 
 	/**
-	 * Class listens to volume slider changes and processes them
-	 */
-	private class VolumeSliderListener implements ChangeListener {
-		public void stateChanged(ChangeEvent ce) {
-			JSlider source = (JSlider) ce.getSource();
-			int newVolume = source.getValue();
-			VLC.getMediaPlayer().setVolume(newVolume);
-			if (JlabelVolume != null) {
-				JlabelVolume.setText(Integer.toString(newVolume) + "%");
-			}
-		}
-	}
-
-	/**
 	 * Indicator of current volume level
 	 */
 	private JLabel JlabelVolume;
@@ -389,7 +378,14 @@ public class VipFrame extends JFrame {
 		jsliderVolume = new JSlider(JSlider.HORIZONTAL, VLC.getMinVolume(), VLC.getMaxVolume(),
 		        ((VLC.getMinVolume() + VLC.getMaxVolume()) / 2));
 		jpnlMovieControl.add(jsliderVolume);
-		jsliderVolume.addChangeListener(new VolumeSliderListener());
+		jsliderVolume.addMouseListener(new MouseAdapter() {
+			public void mouseReleased(MouseEvent me) {
+				JSlider jslider = (JSlider) me.getSource();
+				BasicSliderUI ui = (BasicSliderUI) jslider.getUI();
+				int newVolume = ui.valueForXPosition(me.getX());
+				VLC.getMediaPlayer().setVolume(newVolume);
+			}
+		});
 
 		JlabelVolume = new JLabel(Integer.toString(((VLC.getMinVolume() + VLC.getMaxVolume()) / 2)) + "%");
 		jpnlMovieControl.add(JlabelVolume);
@@ -406,8 +402,8 @@ public class VipFrame extends JFrame {
 			public void mouseReleased(MouseEvent me) {
 				JSlider jslider = (JSlider) me.getSource();
 				BasicSliderUI ui = (BasicSliderUI) jslider.getUI();
-				int value = ui.valueForXPosition(me.getX());
-				VLC.getMediaPlayer().setTime(value);
+				int newTime = ui.valueForXPosition(me.getX());
+				VLC.getMediaPlayer().setTime(newTime);
 			}
 		});
 
@@ -423,26 +419,42 @@ public class VipFrame extends JFrame {
 
 	}
 
+	private void initProgressBar() {
+		int movieLength = (int) VLC.getMediaPlayer().getLength();
+		jsliderMovieProgress.setMaximum(movieLength);
+		jsliderMovieProgress.setMinimum(0);
+		revalidate();
+		jsliderMovieProgress.repaint();
+	}
+
 	/**
-	 * Updates the state of the nominators for current volume level
+	 * Updates the state of the nominators for current progress in media file
 	 */
-	public void updateVolume(int newVolume) {
-		if (VLC.getMediaPlayer() != null) {
-			if (jsliderVolume != null) {
-				jsliderVolume.setValue(newVolume);
+	public void updateGUI() {
+		if (VLC.getMediaPlayer().getLength() != -1) {
+			updateTimelineLabels();
+			updateVolumeSlider();
+			if (VLC.isMediaInit()) {
+				initProgressBar();
+				VLC.setMediaInit(false);
+			} else {
+				// If initialization fails: retry
+				if (jsliderMovieProgress.getMaximum() == 0) {
+					VLC.setMediaInit(true);
+				}
+				// Might be -1, means you cannot move the slider on invalid
+				// movie file
+				// on purpose!
+				int currentMovieTime = (int) VLC.getMediaPlayer().getTime();
+				jsliderMovieProgress.setValue(currentMovieTime);
 			}
+		} else {
+			jlabelMovieTimeline.setText("0%");
 		}
 	}
 
 	/**
-	 * Method for delivering KeyParser the search TextField
-	 */
-	public JComponent get_jtfSearch() {
-		return jtfSearch;
-	}
-
-	/**
-	 * TODO
+	 * TODO @author Fabian Volkert
 	 */
 	private void updateTimelineLabels() {
 		Double procentualProgress = ((double) VLC.getMediaPlayer().getTime() / VLC.getMediaPlayer().getLength()) * 100;
@@ -465,35 +477,24 @@ public class VipFrame extends JFrame {
 		hoursTotal = (int) (VLC.getMediaPlayer().getLength() / 3600000);
 		minutesTotal = (int) (VLC.getMediaPlayer().getLength() / 60000 % 60);
 		secondsTotal = (int) (VLC.getMediaPlayer().getLength() / 1000 % 60);
-		String newLabelText = String.format("%02d:%02d:%02d / %02d:%02d:%02d", hoursPassed, minutesPassed, secondsPassed,
-		        hoursTotal, minutesTotal, secondsTotal);
+		String newLabelText = String.format("%02d:%02d:%02d / %02d:%02d:%02d", hoursPassed, minutesPassed,
+		        secondsPassed, hoursTotal, minutesTotal, secondsTotal);
 		jlabelMovieTimer.setText(newLabelText);
 	}
 
 	/**
-	 * Updates the state of the nominators for current progress in media file
+	 * TODO @author Fabian Volkert
 	 */
-	public void updateTimeline() {
-		if (VLC.getMediaPlayer().getLength() != -1) {
-			updateTimelineLabels();
-			if (VLC.isMediaInit()) {
-				int movieLength = (int) VLC.getMediaPlayer().getLength();
-				jsliderMovieProgress.setMaximum(movieLength);
-				jsliderMovieProgress.setMinimum(0);
-				revalidate();
-				jsliderMovieProgress.repaint();
-				VLC.setMediaInit(false);
-			} else {
-				// If initialization fails: retry
-				if (jsliderMovieProgress.getMaximum() == 0) {
-					VLC.setMediaInit(true);
-				}
-				int currentMovieTime = (int) VLC.getMediaPlayer().getTime();
-				jsliderMovieProgress.setValue(currentMovieTime);
-			}
-		} else {
-			jlabelMovieTimeline.setText("0%");
-		}
+	public void updateVolumeSlider() {
+		JlabelVolume.setText(VLC.getMediaPlayer().getVolume() + "%");
+		jsliderVolume.setValue(VLC.getMediaPlayer().getVolume());
+	}
+
+	/**
+	 * Method for delivering KeyParser the search TextField
+	 */
+	public JComponent get_jtfSearch() {
+		return jtfSearch;
 	}
 
 	/**

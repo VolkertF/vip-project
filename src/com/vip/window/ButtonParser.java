@@ -11,10 +11,10 @@ import com.vip.media.VLC;
  */
 public class ButtonParser implements ActionListener {
 
-	private VipFrame vipFrame;
-
-	public ButtonParser(VipFrame newVipFrame) {
-		vipFrame = newVipFrame;
+	/**
+	 * 
+	 */
+	public ButtonParser() {
 	}
 
 	@Override
@@ -44,9 +44,5 @@ public class ButtonParser implements ActionListener {
 			VLC.volumeDown();
 		if ("jbtnVolumeUp".equals(action))
 			VLC.volumeUp();
-	}
-
-	public void setVipFrame(VipFrame newVipFrame) {
-		vipFrame = newVipFrame;
 	}
 }

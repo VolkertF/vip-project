@@ -26,11 +26,16 @@ public class VideoTable {
 					+ "(ID				INT		PRIMARY KEY		NOT NULL,"
 					+ "	PATH 			STRING					NOT NULL,"
 					+ " TITLE           STRING 					NOT NULL,"
-					+ " RELEASE_DATE 	DATETIME," + " GENRE			STRING,"
-					+ " DIRECTOR        STRING," + "	CAST			STRING,"
-					+ " WRITERS			STRING," + " PLOT        	STRING,"
-					+ " COUNTRY			STRING," + " IMDB_RATING		DOUBLE,"
-					+ " PERSONAL_RATING	DOUBLE," + " SEASON			INT,"
+					+ " RELEASE_DATE 	DATETIME," 
+					+ " GENRE			STRING,"
+					+ " DIRECTOR        STRING," 
+					+ "	CAST			STRING,"
+					+ " WRITERS			STRING," 
+					+ " PLOT        	STRING,"
+					+ " COUNTRY			STRING," 
+					+ " IMDB_RATING		DOUBLE,"
+					+ " PERSONAL_RATING	DOUBLE," 
+					+ " SEASON			INT,"
 					+ " EPISODE			INT)";
 
 			statement.executeUpdate(sql);
@@ -55,12 +60,12 @@ public class VideoTable {
 			c = DriverManager.getConnection("jdbc:sqlite:test.db");
 			c.setAutoCommit(false);
 
-			String insertString = "	UPDATE VIDEO"
+			String updateString = "	UPDATE VIDEO"
 					+ " SET (PATH,TITLE,RELEASE_DATE,GENRE,DIRECTOR,CAST,WRITERS,"
 					+ "	PLOT,COUNTRY,IMDB_RATING,PERSONAL_RATING,SEASON,EPISODE) "
 					+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)" + " WHERE ID = ?";
 
-			statement = c.prepareStatement(insertString);
+			statement = c.prepareStatement(updateString);
 
 			statement.setString(1, video.getFilePath());
 			statement.setString(2, video.getTitle());
@@ -94,8 +99,54 @@ public class VideoTable {
 		}
 		System.out.println("Records created successfully");
 	}
+	
+	public void insertVideo(Video video){
+		Connection c = null;
+		PreparedStatement statement = null;
 
-	public void select() {
+		try {
+			Class.forName("org.sqlite.JDBC");
+			c = DriverManager.getConnection("jdbc:sqlite:test.db");
+			c.setAutoCommit(false);
+
+			String insertString = "	INSERT INTO VIDEO"
+					+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
+			statement = c.prepareStatement(insertString);
+
+			statement.setString(1, video.getFilePath());
+			statement.setString(2, video.getTitle());
+			statement.setString(3, video.getReleaseDate().toString());
+			statement.setString(4, video.getGenre().toString()
+					.replace("[", "'")
+					.replace("]", "'"));
+			statement.setString(5, video.getDirector());
+			statement.setString(6, video.getCast().toString()
+							.replace("[", "'")
+							.replace("]", "'"));
+			statement.setString(7, video.getWriters().toString()
+							.replace("[", "'")
+							.replace("]", "'"));
+			statement.setString(8, video.getPlotSummary());
+			statement.setString(9, video.getCountry());
+			statement.setDouble(10, video.getImdbRating());
+			statement.setDouble(11, video.getPersonalRating());
+			statement.setInt(12, video.getSeason());
+			statement.setInt(13, video.getEpisode());
+
+			statement.execute();
+
+			c.commit();
+			statement.close();
+
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			System.exit(0);
+		}	
+		
+	}
+
+	public void loadVideos() {
 
 		Connection c = null;
 		Statement statement = null;

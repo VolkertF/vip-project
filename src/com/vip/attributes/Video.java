@@ -35,17 +35,6 @@ public class Video {
 	private int episode;
 	
 	
-	//Improvised Constructors
-	public Video() {
-		this.filePath = "";
-		this.title = "";
-	}
-	public Video(String path, String title) {
-		this.filePath = path;
-		this.title = title;
-	}
-
-	
 	
 	public int getID() {
 		return ID;

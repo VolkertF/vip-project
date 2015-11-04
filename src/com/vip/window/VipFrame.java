@@ -18,7 +18,6 @@ import java.awt.event.MouseListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -49,6 +48,7 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.plaf.basic.BasicSliderUI;
 
+import com.vip.Controller;
 import com.vip.Main;
 import com.vip.attributes.Video;
 import com.vip.media.VLC;
@@ -63,7 +63,7 @@ public class VipFrame extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		defaultInsets = new Insets(2, 2, 2, 2);
 		changeGUILook();
-		initConfig();
+		controller.initConfiguration();
 		buildPanels();
 		buildExplorerGUI();
 		buildMovieGUI();
@@ -74,69 +74,8 @@ public class VipFrame extends JFrame {
 		requestFocus();
 	}
 
-	/**
-	 * Method tries to read the config file and load its data into the
-	 * application. On failure it will fall back on a default configuration and
-	 * create a config file with those.
-	 */
-	private void initConfig() {
-		// locate expected path of config.ini
-		String configPath = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-		configPath = configPath.concat("config.ini");
-		File configFile = new File(configPath);
-
-		// Initialize general information
-		initGeneral(configFile);
-
-		// Initialize shortcuts
-		keyParser.initShortcuts(configFile);
-		keyParser.setVipFrame(this);
-		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-		manager.addKeyEventDispatcher(keyParser);
-
-		// Initialize mediaplayer
-		VLC.initVLC(configFile);
-	}
-
-	/**
-	 * TODO commentate
-	 * 
-	 * @param configFile
-	 */
-	private void initGeneral(File configFile) {
-		if (configFile.exists()) {
-			try {
-				BufferedReader br = new BufferedReader(new FileReader(configFile));
-				// TODO read general configuration into application
-				br.close();
-			} catch (IOException ioe) {
-				System.out.println("Mistakes were made reading the configuration file. Terminating");
-				System.exit(-1);
-			}
-		} else {
-			// In case the configuration file is missing....we just create our
-			// own config, with blackjack and hookers.
-			try {
-				BufferedWriter bw;
-				bw = new BufferedWriter(new FileWriter(configFile));
-				PrintWriter pw = new PrintWriter(bw);
-				// TODO write own config file, come up with default values
-				pw.close();
-				bw.close();
-			} catch (IOException e) {
-				System.out.println("Couldnt create configuration file. Terminating");
-				System.exit(-1);
-			}
-		}
-	}
-
-	/**
-	 * Responsible for parsing button input into actions
-	 */
-	private ButtonParser buttonParser = new ButtonParser();
-
-	/** Responsible for parsing keyboard input into actions **/
-	private KeyParser keyParser = new KeyParser();
+	/** Controller class, that contains methods to access data **/
+	private Controller controller = new Controller(this);
 
 	/**
 	 * ArrayList<String> to display all movies in a datastructure
@@ -385,32 +324,32 @@ public class VipFrame extends JFrame {
 		jpnlMovieControl.setLayout(new FlowLayout());
 
 		JButton jbtnPlayMovie = new JButton("Play/Pause");
-		jbtnPlayMovie.addActionListener(buttonParser);
+		jbtnPlayMovie.addActionListener(controller.getButtonParser());
 		jbtnPlayMovie.setActionCommand("jbtnToggleMoviePlayback");
 		jpnlMovieControl.add(jbtnPlayMovie);
 
 		JButton jbtnStopMovie = new JButton("Stop");
-		jbtnStopMovie.addActionListener(buttonParser);
+		jbtnStopMovie.addActionListener(controller.getButtonParser());
 		jbtnStopMovie.setActionCommand("jbtnStopMovie");
 		jpnlMovieControl.add(jbtnStopMovie);
 
 		JButton jbtnPreviousMovie = new JButton("|<");
-		jbtnPreviousMovie.addActionListener(buttonParser);
+		jbtnPreviousMovie.addActionListener(controller.getButtonParser());
 		jbtnPreviousMovie.setActionCommand("jbtnPreviousMovie");
 		jpnlMovieControl.add(jbtnPreviousMovie);
 
 		JButton jbtnNextMovie = new JButton(">|");
-		jbtnNextMovie.addActionListener(buttonParser);
+		jbtnNextMovie.addActionListener(controller.getButtonParser());
 		jbtnNextMovie.setActionCommand("jbtnNextMovie");
 		jpnlMovieControl.add(jbtnNextMovie);
 
 		JButton jbtnPreviousChapter = new JButton("<<");
-		jbtnPreviousChapter.addActionListener(buttonParser);
+		jbtnPreviousChapter.addActionListener(controller.getButtonParser());
 		jbtnPreviousChapter.setActionCommand("jbtnJumpBack");
 		jpnlMovieControl.add(jbtnPreviousChapter);
 
 		JButton jbtnNextChapter = new JButton(">>");
-		jbtnNextChapter.addActionListener(buttonParser);
+		jbtnNextChapter.addActionListener(controller.getButtonParser());
 		jbtnNextChapter.setActionCommand("jbtnJumpForward");
 		jpnlMovieControl.add(jbtnNextChapter);
 

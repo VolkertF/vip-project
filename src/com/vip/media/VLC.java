@@ -9,11 +9,13 @@ import java.io.IOException;
 
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
+import com.vip.window.VipFrame;
 
 import uk.co.caprica.vlcj.binding.LibVlc;
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
+import uk.co.caprica.vlcj.player.embedded.windows.Win32FullScreenStrategy;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 
 /**
@@ -40,6 +42,8 @@ public abstract class VLC {
 	/** The mediaplayer that is responsible for playback **/
 	private static EmbeddedMediaPlayer mediaPlayerComponent;
 
+	private static MediaPlayerFactory mediaPlayerFactory;
+
 	/** Canvas on which the mediaplayer plays media on **/
 	private static Canvas canvas;
 
@@ -65,39 +69,18 @@ public abstract class VLC {
 	/**
 	 * Initializes vlc plugin,finds vlc installation, sets canvas up.
 	 */
-	public static void initVLC(File configFile) {
+	public static void initVLC(String vlcPath) {
 		boolean found = new NativeDiscovery().discover();
 		// If VLC cannot be found, we will use the path from the config file to
 		// do so.
 		if (!found) {
-
-			// Read config file's second line for VLC path.
-			BufferedReader br;
-			try {
-				br = new BufferedReader(new FileReader(configFile));
-				br.readLine();
-				// Extract relevant information
-				String vlcPath = br.readLine().trim().split("=")[1];
-				br.close();
-
-				NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), vlcPath);
-				Native.loadLibrary(RuntimeUtil.getLibVlcLibraryName(), LibVlc.class);
-			} catch (IOException e) {
-				// Shouldn't be happening: initGeneral should have created a
-				// default config by now
-				// TODO Auto-generated catch block
-				System.out.println(
-				        "Couldn't find expected data on second line of config file. It might even be the config file is missing. Terminating.");
-				System.exit(-1);
-			}
+			NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), vlcPath);
+			Native.loadLibrary(RuntimeUtil.getLibVlcLibraryName(), LibVlc.class);
 		}
-		System.out.println(found);
-		System.out.println(LibVlc.INSTANCE.libvlc_get_version());
 
 		canvas = new Canvas();
 		canvas.setBackground(Color.BLACK);
-
-		MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory();
+		mediaPlayerFactory = new MediaPlayerFactory();
 		mediaPlayerComponent = mediaPlayerFactory.newEmbeddedMediaPlayer();
 		mediaPlayerComponent.setVideoSurface(mediaPlayerFactory.newVideoSurface(canvas));
 	}
@@ -136,6 +119,10 @@ public abstract class VLC {
 	 */
 	public static EmbeddedMediaPlayer getMediaPlayer() {
 		return mediaPlayerComponent;
+	}
+
+	public static MediaPlayerFactory getMediaPlayerFactory() {
+		return mediaPlayerFactory;
 	}
 
 	/**

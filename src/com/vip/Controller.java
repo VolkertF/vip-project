@@ -49,7 +49,9 @@ public class Controller {
 	}
 
 	/**
-	 * 
+	 * Responsible for initializse the configuration file. If it is missing the
+	 * method will automatically create a default configuration. It will also do
+	 * so, if the config file seems to be broken.
 	 */
 	public void initConfiguration() {
 		// locate expected path of config.ini
@@ -75,6 +77,13 @@ public class Controller {
 
 	}
 
+	/**
+	 * Creates a new configuration file in the workspace folder and fills it
+	 * with default information.
+	 * 
+	 * @param configFile
+	 *            the file, that will be created
+	 */
 	private void createDefaultConfigurationFile(File configFile) {
 		BufferedWriter bw = null;
 		try {
@@ -105,6 +114,12 @@ public class Controller {
 		}
 	}
 
+	/**
+	 * Writes some default general information into the given file.
+	 * 
+	 * @param pw
+	 *            PrintWriter to the file that information will be written to
+	 */
 	private void writeDefaultGeneralInformation(PrintWriter pw) {
 		pw.println("//Contains general application information");
 		pw.println(GENERAL_ENTRY_POINT);
@@ -119,6 +134,12 @@ public class Controller {
 		pw.println();
 	}
 
+	/**
+	 * Writes some default shortcut information into the given file.
+	 * 
+	 * @param pw
+	 *            PrintWriter to the file that information will be written to
+	 */
 	private void writeDefaultKeyboard(PrintWriter pw) {
 		pw.println("//Contains information about shortcuts");
 		pw.println(SHORTCUT_ENTRY_POINT);
@@ -134,9 +155,16 @@ public class Controller {
 	}
 
 	/**
+	 * Reads from a reader to a file and tries to extract general information
+	 * from it. if it fails the file will be deleted and newly created with
+	 * default information.
 	 * 
 	 * @param br
+	 *            Reader to the configuration file
+	 * @param configFile
+	 *            the file that might needs to be deleted
 	 * @throws IOException
+	 *             Is thrown if something with file input goes wrong
 	 */
 	private void initGeneralInformation(BufferedReader br, File configFile) throws IOException {
 		String information = null;
@@ -157,11 +185,16 @@ public class Controller {
 	}
 
 	/**
-	 * Initializes shortcuts from the given configuration file.
+	 * Reads from a reader to a file and tries to extract general information
+	 * from it. if it fails the file will be deleted and newly created with
+	 * default information.
 	 * 
+	 * @param br
+	 *            Reader to the configuration file
 	 * @param configFile
-	 *            the File that is to be searched for shortcuts.
+	 *            the file that might needs to be deleted
 	 * @throws IOException
+	 *             Is thrown if something with file input goes wrong
 	 */
 	public void initKeyboard(BufferedReader br, File configFile) throws IOException {
 		String information = null;
@@ -237,10 +270,14 @@ public class Controller {
 	}
 
 	/**
+	 * Reads lines from the given file, until it finds a relevant line. Relevant
+	 * data is considered to be a line not being empty or starting with "//".
 	 * 
 	 * @param br
-	 * @return
+	 *            Reader to the file that is read from
+	 * @return The String containing a relevant line of data from the file
 	 * @throws IOException
+	 *             Is thrown if input goes wrong
 	 */
 	private String readLine(BufferedReader br) throws IOException {
 		String line = null;
@@ -250,6 +287,14 @@ public class Controller {
 		return line;
 	}
 
+	/**
+	 * Tries to extract relevant data from a given string. Relevant data has to
+	 * be on the right of an "=" sign.
+	 * 
+	 * @param line
+	 *            The String the method has a look at
+	 * @return The relevant data extracted or the unchanged string, if not found
+	 */
 	private String extractInformation(String line) {
 		if (line != null && line.contains("=")) {
 			line = line.trim().split("=")[1];
@@ -258,8 +303,9 @@ public class Controller {
 	}
 
 	/**
+	 * Getter method for the buttonParser object.
 	 * 
-	 * @return
+	 * @return The Controller's buttonParser
 	 */
 	public ButtonParser getButtonParser() {
 		return buttonParser;

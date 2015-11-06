@@ -16,7 +16,9 @@ import com.vip.window.ButtonParser;
 import com.vip.window.VipFrame;
 
 /**
- * TODO comment
+ * Controller class. Contains diverse methods for data processing and forms an
+ * interface between GUI and persistence layer. Resonsible for configuration
+ * loadout
  * 
  * @author Fabian
  *
@@ -28,6 +30,9 @@ public class Controller {
 
 	/** Responsible for parsing button input into actions **/
 	private ButtonParser buttonParser = new ButtonParser();
+
+	/** VLC media player. **/
+	private VLC vlcInstance = new VLC();
 
 	/** **/
 	private VipFrame vipFrame;
@@ -65,6 +70,8 @@ public class Controller {
 				initKeyboard(br, configFile);
 
 				br.close();
+
+				VLC.initVLC();
 			} catch (IOException e) {
 				e.printStackTrace();
 				System.out.println("Error on reading in the configuration file. Terminating");
@@ -207,7 +214,6 @@ public class Controller {
 				information = extractInformation(readLine(br));
 				System.out.println("At " + index + ": " + information);
 				if (information != null && !information.trim().isEmpty()) {
-					// TODO parse shortcut information into keycodes.
 					parseStringToKeyCodeArray(index, information);
 				} else {
 					if (index < keyParser.getNumberOfShortcuts()) {
@@ -222,6 +228,7 @@ public class Controller {
 
 			}
 
+			// Disables default keyboard input and puts this manager in charge
 			keyParser.setVipFrame(vipFrame);
 			KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 			manager.addKeyEventDispatcher(keyParser);

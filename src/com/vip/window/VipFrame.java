@@ -254,12 +254,12 @@ public class VipFrame extends JFrame {
 		defaultJList = new DefaultListModel<String>(); // Do all search and sort
 		                                               // stuff with this thing
 		jlstFileList = new JList<String>(defaultJList);
-		Video born2die = new Video("G:\\Videos\\Filme\\Born2Die.avi", "Born to Die");
-		Video fanboys = new Video("G:\\Videos\\Filme\\Fanboys.avi", "Fanboys");
-		movies.add(new Video("F:\\Dji. Death Sails-HD.mp4", "Dji - Death Sails"));
-		movies.add(new Video("F:\\The Saga Of Bjorn-HD.mp4", "The Saga of Bjorn"));
-		movies.add(born2die);
-		movies.add(fanboys);
+//		Video born2die = new Video("G:\\Videos\\Filme\\Born2Die.avi", "Born to Die");
+//		Video fanboys = new Video("G:\\Videos\\Filme\\Fanboys.avi", "Fanboys");
+//		movies.add(new Video("F:\\Dji. Death Sails-HD.mp4", "Dji - Death Sails"));
+//		movies.add(new Video("F:\\The Saga Of Bjorn-HD.mp4", "The Saga of Bjorn"));
+//		movies.add(born2die);
+//		movies.add(fanboys);
 		for (Video temp : movies) {
 			defaultJList.addElement(temp.getTitle());
 		}

@@ -17,7 +17,8 @@ public class Main {
 				try {
 					while (true) {
 						Thread.sleep(UPDATE_RATE);
-						if (VLC.getMediaPlayer() != null && VLC.getMediaPlayer().getLength() != -1) {
+						if (f.getController().getVLC().getMediaPlayer() != null
+		                        && f.getController().getVLC().getMediaPlayer().getLength() != -1) {
 							f.updateGUI();
 						}
 					}

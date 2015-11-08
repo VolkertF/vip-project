@@ -7,6 +7,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
+import com.vip.Controller;
 import com.vip.attributes.Video;
 import com.vip.media.VLC;
 
@@ -14,30 +15,31 @@ import com.vip.media.VLC;
 public class ContextVideoMenu extends JPopupMenu {
 	private JMenuItem jmiPlay;
 	private JMenuItem jmiInfo;
-	
-	public ContextVideoMenu(Video vid) {
+	private Controller controller;
+
+	public ContextVideoMenu(Video vid, Controller controllerInstance) {
+		controller = controllerInstance;
 		init(vid);
 		addMenuItems();
 	}
-	
+
 	private void init(final Video vid) {
 		final String vidPath = vid.getFilePath();
-		
+
 		jmiPlay = new JMenuItem("Play " + vid.getTitle());
 		jmiPlay.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				VLC.loadMedia(vidPath);
-				VLC.toggleMoviePlayback();
+				controller.getVLC().loadMedia(vidPath);
+				controller.getVLC().toggleMediaPlayback();
 				vid.deactivateContextVideoMenu();
 			}
 		});
-		
-		
+
 		jmiInfo = new JMenuItem("Get Video Information");
-		final String info = "You have selected information about " + vid.getTitle() +
-				            "\nThe Movie is situated at: " + vid.getFilePath();
-		jmiInfo.addActionListener(new ActionListener() {			
+		final String info = "You have selected information about " + vid.getTitle() + "\nThe Movie is situated at: "
+		        + vid.getFilePath();
+		jmiInfo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				vid.deactivateContextVideoMenu();
@@ -45,7 +47,7 @@ public class ContextVideoMenu extends JPopupMenu {
 			}
 		});
 	}
-	
+
 	private void addMenuItems() {
 		this.add(jmiPlay);
 		this.addSeparator();

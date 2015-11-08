@@ -11,38 +11,41 @@ import com.vip.media.VLC;
  */
 public class ButtonParser implements ActionListener {
 
+	private VLC vlc;
+
 	/**
 	 * 
 	 */
-	public ButtonParser() {
+	public ButtonParser(VLC vlcInstance) {
+		vlc = vlcInstance;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		String action = ae.getActionCommand();
 		if ("jbtnToggleMoviePlayback".equals(action))
-			VLC.toggleMoviePlayback();
+			vlc.toggleMediaPlayback();
 		if ("jbtnStopMovie".equals(action))
-			VLC.stopMedia();
+			vlc.stopMedia();
 		if ("jbtnPreviousMovie".equals(action)) {
 			// TODO exchange hardcoded video file with list reference
-			VLC.switchMediaFile("F:\\The Saga Of Bjorn-HD.mp4");
+			vlc.switchMediaFile("F:\\The Saga Of Bjorn-HD.mp4");
 		}
 		if ("jbtnNextMovie".equals(action)) {
 			// TODO exchange hardcoded video file with list reference
-			VLC.switchMediaFile("F:\\Dji. Death Sails-HD.mp4");
+			vlc.switchMediaFile("F:\\Dji. Death Sails-HD.mp4");
 		}
 		if ("jbtnPreviousChapter".equals(action))
-			VLC.previousChapter();
+			vlc.previousChapter();
 		if ("jbtnNextChapter".equals(action))
-			VLC.nextChapter();
+			vlc.nextChapter();
 		if ("jbtnJumpBack".equals(action))
-			VLC.jumpBack();
+			vlc.jumpBack();
 		if ("jbtnJumpForward".equals(action))
-			VLC.jumpForward();
+			vlc.jumpForward();
 		if ("jbtnVolumeDown".equals(action))
-			VLC.volumeDown();
+			vlc.volumeDown();
 		if ("jbtnVolumeUp".equals(action))
-			VLC.volumeUp();
+			vlc.volumeUp();
 	}
 }

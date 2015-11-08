@@ -29,7 +29,7 @@ public class Controller {
 	private KeyParser keyParser = new KeyParser();
 
 	/** Responsible for parsing button input into actions **/
-	private ButtonParser buttonParser = new ButtonParser();
+	private ButtonParser buttonParser;
 
 	/** VLC media player. **/
 	private VLC vlcInstance = new VLC();
@@ -51,6 +51,7 @@ public class Controller {
 
 	public Controller(VipFrame newVipFrame) {
 		vipFrame = newVipFrame;
+		buttonParser = new ButtonParser(vlcInstance);
 	}
 
 	/**
@@ -208,10 +209,8 @@ public class Controller {
 			information = readLine(br);
 		} while (information != null && !SHORTCUT_ENTRY_POINT.equals(information));
 		if (information != null) {
-			System.out.println(information);
 			for (int index = 0; index < keyParser.getNumberOfShortcuts(); index++) {
 				information = extractInformation(readLine(br));
-				System.out.println("At " + index + ": " + information);
 				if (information != null && !information.trim().isEmpty()) {
 					parseStringToKeyCodeArray(index, information);
 				} else {

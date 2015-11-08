@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -24,6 +25,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -53,6 +55,8 @@ public class VipFrame extends JFrame {
 	public VipFrame() {
 		super("VipFrame");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		JOptionPane.showMessageDialog(this, "You have to select a root folder for you video collection!");
+		rootFolderPath = getFolderPath();
 		defaultInsets = new Insets(2, 2, 2, 2);
 		changeGUILook();
 		controller.initConfiguration();
@@ -62,9 +66,30 @@ public class VipFrame extends JFrame {
 		buildIntelGUI();
 		buildMenuBar();
 		addFileListActionListener();
+		
+		searchForMovies(rootFolderPath);
 		pack();
 		requestFocus();
 	}
+
+	/**
+	 * Method for getting the path of a selected folder
+	 * @return Absolute path to the folder
+	 */
+	private String getFolderPath() {
+		JFileChooser chooser = new JFileChooser();
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		int returnVal = chooser.showOpenDialog(rootPane);
+		if(returnVal == JFileChooser.APPROVE_OPTION) {
+			return chooser.getSelectedFile().getAbsolutePath();
+		}
+		return null;
+	}
+
+	/**
+	 * String for the root-folder path
+	 */
+	private String rootFolderPath;
 
 	/** Controller class, that contains methods to access data **/
 	private Controller controller = new Controller(this);
@@ -670,6 +695,16 @@ public class VipFrame extends JFrame {
 				}
 			}
 		});
+	}
+	
+	/**
+	 * Searching for movie Files with a folder path.
+	 * @param folderPath
+	 * 			Path of the folder to search for movies
+	 */
+	private void searchForMovies(String folderPath) {
+		//File folder = new File(folderPath);
+		//File[] listOfFiles = folder.listFiles();
 	}
 
 }

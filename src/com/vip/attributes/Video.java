@@ -1,6 +1,7 @@
 package com.vip.attributes;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import org.joda.time.DateTime;
 
@@ -34,7 +35,13 @@ public class Video {
 	
 	private int episode;
 	
+	public Video(String path) {
+		this.filePath = path;
+		String[] temp = path.split(Pattern.quote("\\"));
+		this.title = temp[temp.length-1];
+	}
 	
+	public Video() {}
 	
 	public int getID() {
 		return ID;

@@ -2,17 +2,8 @@ package com.vip.input;
 
 import java.awt.KeyEventDispatcher;
 import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-
 import javax.swing.JTextField;
 
-import com.vip.media.VLC;
 import com.vip.window.VipFrame;
 
 /**

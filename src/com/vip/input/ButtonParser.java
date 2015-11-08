@@ -1,4 +1,4 @@
-package com.vip.window;
+package com.vip.input;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

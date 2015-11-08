@@ -10,9 +10,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import com.vip.input.ButtonParser;
 import com.vip.input.KeyParser;
 import com.vip.media.VLC;
-import com.vip.window.ButtonParser;
 import com.vip.window.VipFrame;
 
 /**

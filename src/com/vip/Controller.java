@@ -71,7 +71,6 @@ public class Controller {
 
 				br.close();
 
-				VLC.initVLC();
 			} catch (IOException e) {
 				e.printStackTrace();
 				System.out.println("Error on reading in the configuration file. Terminating");
@@ -316,6 +315,14 @@ public class Controller {
 	 */
 	public ButtonParser getButtonParser() {
 		return buttonParser;
+	}
+
+	public VLC getVLC() {
+		return vlcInstance;
+	}
+
+	public void setVLC(VLC vlcInstance) {
+		this.vlcInstance = vlcInstance;
 	}
 
 }

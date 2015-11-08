@@ -78,6 +78,15 @@ public class VipFrame extends JFrame {
 	private Controller controller = new Controller(this);
 
 	/**
+	 * Getter for controller class
+	 * 
+	 * @return the responsible controller class for this frame.
+	 */
+	public Controller getController() {
+		return controller;
+	}
+
+	/**
 	 * ArrayList<String> to display all movies in a datastructure
 	 */
 	private ArrayList<Video> movies;
@@ -254,12 +263,16 @@ public class VipFrame extends JFrame {
 		defaultJList = new DefaultListModel<String>(); // Do all search and sort
 		                                               // stuff with this thing
 		jlstFileList = new JList<String>(defaultJList);
-//		Video born2die = new Video("G:\\Videos\\Filme\\Born2Die.avi", "Born to Die");
-//		Video fanboys = new Video("G:\\Videos\\Filme\\Fanboys.avi", "Fanboys");
-//		movies.add(new Video("F:\\Dji. Death Sails-HD.mp4", "Dji - Death Sails"));
-//		movies.add(new Video("F:\\The Saga Of Bjorn-HD.mp4", "The Saga of Bjorn"));
-//		movies.add(born2die);
-//		movies.add(fanboys);
+		// Video born2die = new Video("G:\\Videos\\Filme\\Born2Die.avi", "Born
+		// to Die");
+		// Video fanboys = new Video("G:\\Videos\\Filme\\Fanboys.avi",
+		// "Fanboys");
+		// movies.add(new Video("F:\\Dji. Death Sails-HD.mp4", "Dji - Death
+		// Sails"));
+		// movies.add(new Video("F:\\The Saga Of Bjorn-HD.mp4", "The Saga of
+		// Bjorn"));
+		// movies.add(born2die);
+		// movies.add(fanboys);
 		for (Video temp : movies) {
 			defaultJList.addElement(temp.getTitle());
 		}
@@ -319,7 +332,7 @@ public class VipFrame extends JFrame {
 	 * @author Fabian Volkert
 	 */
 	private void buildMovieGUI() {
-		jpnlMovie.add(VLC.getCanvas(), BorderLayout.CENTER);
+		jpnlMovie.add(controller.getVLC().getCanvas(), BorderLayout.CENTER);
 		JPanel jpnlMovieControl = new JPanel();
 		jpnlMovieControl.setLayout(new FlowLayout());
 
@@ -361,7 +374,7 @@ public class VipFrame extends JFrame {
 				JSlider jslider = (JSlider) me.getSource();
 				BasicSliderUI ui = (BasicSliderUI) jslider.getUI();
 				int newVolume = ui.valueForXPosition(me.getX());
-				VLC.getMediaPlayer().setVolume(newVolume);
+				controller.getVLC().getMediaPlayer().setVolume(newVolume);
 			}
 		});
 
@@ -381,7 +394,7 @@ public class VipFrame extends JFrame {
 				JSlider jslider = (JSlider) me.getSource();
 				BasicSliderUI ui = (BasicSliderUI) jslider.getUI();
 				int newTime = ui.valueForXPosition(me.getX());
-				VLC.getMediaPlayer().setTime(newTime);
+				controller.getVLC().getMediaPlayer().setTime(newTime);
 			}
 		});
 
@@ -398,7 +411,7 @@ public class VipFrame extends JFrame {
 	}
 
 	private void initProgressBar() {
-		int movieLength = (int) VLC.getMediaPlayer().getLength();
+		int movieLength = (int) controller.getVLC().getMediaPlayer().getLength();
 		jsliderMovieProgress.setMaximum(movieLength);
 		jsliderMovieProgress.setMinimum(0);
 		revalidate();
@@ -409,21 +422,21 @@ public class VipFrame extends JFrame {
 	 * Updates the state of the nominators for current progress in media file
 	 */
 	public void updateGUI() {
-		if (VLC.getMediaPlayer().getLength() != -1) {
+		if (controller.getVLC().getMediaPlayer().getLength() != -1) {
 			updateTimelineLabels();
 			updateVolumeSlider();
-			if (VLC.isMediaInit()) {
+			if (controller.getVLC().shouldInitMedia()) {
 				initProgressBar();
-				VLC.setMediaInit(false);
+				controller.getVLC().setMediaInitState(false);
 			} else {
 				// If initialization fails: retry
 				if (jsliderMovieProgress.getMaximum() == 0) {
-					VLC.setMediaInit(true);
+					controller.getVLC().setMediaInitState(true);
 				}
 				// Might be -1, means you cannot move the slider on invalid
 				// movie file
 				// on purpose!
-				int currentMovieTime = (int) VLC.getMediaPlayer().getTime();
+				int currentMovieTime = (int) controller.getVLC().getMediaPlayer().getTime();
 				jsliderMovieProgress.setValue(currentMovieTime);
 			}
 		} else {
@@ -435,7 +448,8 @@ public class VipFrame extends JFrame {
 	 * TODO @author Fabian Volkert
 	 */
 	private void updateTimelineLabels() {
-		Double procentualProgress = ((double) VLC.getMediaPlayer().getTime() / VLC.getMediaPlayer().getLength()) * 100;
+		Double procentualProgress = ((double) controller.getVLC().getMediaPlayer().getTime()
+		        / controller.getVLC().getMediaPlayer().getLength()) * 100;
 		String newTime = String.format("%4.1f", procentualProgress);
 		// is newTime is not a valid Number, we display a default Text
 		if (procentualProgress.isNaN() || procentualProgress.isInfinite()) {
@@ -449,12 +463,12 @@ public class VipFrame extends JFrame {
 		int hoursTotal = 0;
 		int minutesTotal = 0;
 		int secondsTotal = 0;
-		hoursPassed = (int) (VLC.getMediaPlayer().getTime() / 3600000);
-		minutesPassed = (int) (VLC.getMediaPlayer().getTime() / 60000 % 60);
-		secondsPassed = (int) (VLC.getMediaPlayer().getTime() / 1000 % 60);
-		hoursTotal = (int) (VLC.getMediaPlayer().getLength() / 3600000);
-		minutesTotal = (int) (VLC.getMediaPlayer().getLength() / 60000 % 60);
-		secondsTotal = (int) (VLC.getMediaPlayer().getLength() / 1000 % 60);
+		hoursPassed = (int) (controller.getVLC().getMediaPlayer().getTime() / 3600000);
+		minutesPassed = (int) (controller.getVLC().getMediaPlayer().getTime() / 60000 % 60);
+		secondsPassed = (int) (controller.getVLC().getMediaPlayer().getTime() / 1000 % 60);
+		hoursTotal = (int) (controller.getVLC().getMediaPlayer().getLength() / 3600000);
+		minutesTotal = (int) (controller.getVLC().getMediaPlayer().getLength() / 60000 % 60);
+		secondsTotal = (int) (controller.getVLC().getMediaPlayer().getLength() / 1000 % 60);
 		String newLabelText = String.format("%02d:%02d:%02d / %02d:%02d:%02d", hoursPassed, minutesPassed,
 		        secondsPassed, hoursTotal, minutesTotal, secondsTotal);
 		jlabelMovieTimer.setText(newLabelText);
@@ -464,8 +478,8 @@ public class VipFrame extends JFrame {
 	 * TODO @author Fabian Volkert
 	 */
 	public void updateVolumeSlider() {
-		JlabelVolume.setText(VLC.getMediaPlayer().getVolume() + "%");
-		jsliderVolume.setValue(VLC.getMediaPlayer().getVolume());
+		JlabelVolume.setText(controller.getVLC().getMediaPlayer().getVolume() + "%");
+		jsliderVolume.setValue(controller.getVLC().getMediaPlayer().getVolume());
 	}
 
 	/**
@@ -652,8 +666,8 @@ public class VipFrame extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent ev) {
 				if (ev.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(ev)) {
-					VLC.loadMedia(movies.get(jlstFileList.getSelectedIndex()).getFilePath());
-					VLC.toggleMoviePlayback();
+					controller.getVLC().loadMedia(movies.get(jlstFileList.getSelectedIndex()).getFilePath());
+					controller.getVLC().toggleMediaPlayback();
 				}
 			}
 

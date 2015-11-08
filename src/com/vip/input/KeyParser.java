@@ -66,6 +66,8 @@ public class KeyParser implements KeyEventDispatcher {
 	}
 
 	// (TODO What if a JDialog is opened? Add more conditions! -> frame focused)
+	// TODO refactor methods, disable vipframe reference, let the controller
+	// class to the work
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent ke) {
 		int keyState = ke.getID();
@@ -76,23 +78,23 @@ public class KeyParser implements KeyEventDispatcher {
 		if (keyState == isPressed && !(ke.getSource() instanceof JTextField) && vipFrame.isFocused()) {
 			if (currentKey == shortcutList[TOGGLE_PLAYBACK]) {
 				if (isValidInput(ke, TOGGLE_PLAYBACK))
-					VLC.toggleMoviePlayback();
+					vipFrame.getController().getVLC().toggleMediaPlayback();
 			}
 			if (currentKey == shortcutList[NEXT_CHAPTER]) {
 				if (isValidInput(ke, NEXT_CHAPTER))
-					VLC.nextChapter();
+					vipFrame.getController().getVLC().nextChapter();
 			}
 			if (currentKey == shortcutList[PREVIOUS_CHAPTER]) {
 				if (isValidInput(ke, PREVIOUS_CHAPTER))
-					VLC.previousChapter();
+					vipFrame.getController().getVLC().previousChapter();
 			}
 			if (currentKey == shortcutList[VOLUME_UP]) {
 				if (isValidInput(ke, VOLUME_UP))
-					VLC.volumeUp();
+					vipFrame.getController().getVLC().volumeUp();
 			}
 			if (currentKey == shortcutList[VOLUME_DOWN]) {
 				if (isValidInput(ke, VOLUME_DOWN))
-					VLC.volumeDown();
+					vipFrame.getController().getVLC().volumeDown();
 			}
 			if (currentKey == shortcutList[SEARCH]) {
 				if (isValidInput(ke, SEARCH))

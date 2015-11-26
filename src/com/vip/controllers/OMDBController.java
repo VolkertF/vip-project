@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import com.vip.omdb.OMDBConnector;
-import com.vip.extractor.InfoExtractor;
+import com.vip.extractor.*;
 
 /**
  * This controller allows the GUI to interact with OMDb. 
@@ -63,8 +63,36 @@ public class OMDBController {
 		}
 		
 		return extractor.extractMovieInfo(apiResponse);
-	}
+	} 
 	
+	
+	/**
+	 * This method searches the API. Its results are held in SearchResults
+	 * objects. These objects hold basic information about each results
+	 * including an IMDB ID that can be used to perform a more specific
+	 * search.
+	 * 
+	 * @param searchKey
+	 * 		The item to search for
+	 * @return
+	 * 		A list of SearchResult objects holding information about
+	 * 		each result
+	 */
+	public ArrayList<SearchResult> searchApi(String searchKey) {
+		
+		String response = "";
+		try {
+			response = connector.requestSearch(searchKey, null);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		ArrayList<SearchResult> results =
+				extractor.extractSearchResults(response);
+		
+		return results;
+	}
 	
 	/**
 	 * This method returns a list of a movie's genres as listed by OMDb.
@@ -82,7 +110,7 @@ public class OMDBController {
 	/**
 	 * This method returns a list of a movie's genres as listed by OMDb.
 	 * 
-	 * @param infoMap
+	 * @param infoMapx
 	 * 		A map holding information about a movie
 	 * @return
 	 * 		A list of this movie's genres

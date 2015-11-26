@@ -122,6 +122,103 @@ public class OMDBController {
 	
 	
 	/**
+	 * This method extracts the title from a search result object.
+	 * 
+	 * @param result
+	 * 		The SearchResult object we want info from
+	 * @return
+	 * 		The title of the item this result represents
+	 */
+	public String getResultTitle(SearchResult result) {
+		return result.getTitle();
+	}
+	
+	
+	/**
+	 * This method extracts the IMDB ID from a search result object. The ID
+	 * can then be used to perform a more specific search.
+	 * 
+	 * @param result
+	 * 		The SearchResult object we want info from
+	 * @return
+	 * 		The IMDB ID of the item this result represents
+	 */
+	public String getResultImdbId(SearchResult result) {
+		return result.getImdbId();
+	}
+	
+	
+	/**
+	 * This method extracts the release year from a general media search
+	 * object.
+	 * 
+	 * @param result
+	 * 		The MediaSearchResult object we want info from
+	 * @return
+	 * 		The year this item came out
+	 */
+	public String getMediaResultYear(MediaSearchResult mediaResult) {
+		return mediaResult.getYear();
+	}
+	
+	
+	/**
+	 * This method extracts the URL leading to a poster from a general media 
+	 * search object.
+	 * 
+	 * @param result
+	 * 		The MediaSearchResult object we want info from
+	 * @return
+	 * 		The URL to the poster for this item
+	 */
+	public String getMediaResultPoster(MediaSearchResult mediaResult) {
+		return mediaResult.getPoster();
+	}
+	
+	
+	/**
+	 * This method extracts the episode number from an episode list result
+	 * object.
+	 * 
+	 * @param result
+	 * 		The EpisodeListResult object we want info from
+	 * @return
+	 * 		The episode number of this item
+	 */
+	public int getEpisodeNumber(EpisodeListResult episodeResult) {
+		return episodeResult.getEpisodeNumber();
+	}
+	
+	
+	/**
+	 * This method extracts the release date from an episode list result
+	 * object.
+	 * 
+	 * @param result
+	 * 		The EpisodeListResult object we want info from
+	 * @return
+	 * 		The release date of this item
+	 */
+	public String getEpisodeReleaseDate(EpisodeListResult episodeResult) {
+		return episodeResult.getReleaseDate();
+	}
+	
+	
+	/**
+	 * This method extracts the IMDB rating from an episode list result
+	 * object.
+	 * 
+	 * @param result
+	 * 		The EpisodeListResult object we want info from
+	 * @return
+	 * 		The IMDB rating of this item
+	 */
+	public double getEpisodeImdbRating(EpisodeListResult episodeResult) {
+		return episodeResult.getImdbRating();
+	}
+	
+	
+	/**
 	 * This method returns a list of a movie's genres as listed by OMDb.
 	 * 
 	 * @param infoMap

@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -51,6 +50,7 @@ import javax.swing.plaf.basic.BasicSliderUI;
 
 import com.vip.Controller;
 import com.vip.attributes.Video;
+import com.vip.controllers.DatabaseController;
 import com.vip.media.VLC;
 
 @SuppressWarnings("serial")
@@ -64,8 +64,7 @@ public class VipFrame extends JFrame {
 		defaultInsets = new Insets(2, 2, 2, 2);
 		changeGUILook();
 		controller.initConfiguration();
-		JOptionPane.showMessageDialog(this,"You have to select a root folder for you video collection!");
-		rootFolderPath = getFilePath(2);
+		selectRootFolder();
 		buildPanels();
 		buildExplorerGUI();
 		buildMovieGUI();
@@ -78,9 +77,20 @@ public class VipFrame extends JFrame {
 	}
 
 	/**
+	 * Outsourced method for detecting whether a root folder is already determined or
+	 * has to be declared by the user
+	 */
+	private void selectRootFolder() {
+		JOptionPane.showMessageDialog(this,"You have to select a root folder for you video collection!");
+		rootFolderPath = getFilePath(2);
+	}
+
+	/**
 	 * Method for getting the path of a selected folder
 	 * 
 	 * @return Absolute path to the file
+	 * @param int type
+	 * 			Integer for choosing a different selection type of the open dialog
 	 */
 	private String getFilePath(int type) {
 		JFileChooser chooser = new JFileChooser();
@@ -101,7 +111,7 @@ public class VipFrame extends JFrame {
 	}
 	
 	/**
-	 * overloaded method for searching for files with a certain ending
+	 * Overloaded method for searching for files with a certain ending
 	 * @param filter
 	 * 			FileNameExtensionFilter for only making files searchable for the JFileChooser, that have the specified ending.
 	 * @return Absolute path to the file
@@ -127,8 +137,15 @@ public class VipFrame extends JFrame {
 	 */
 	private String rootFolderPath;
 
-	/** Controller class, that contains methods to access data **/
+	/** 
+	 * Controller class, that contains methods to access data 
+	 */
 	private Controller controller = new Controller(this);
+	
+	/**
+	 * Controller for saving the movies into a database
+	 */
+	private DatabaseController dataController = new DatabaseController();
 
 	/**
 	 * Getter for controller class
@@ -138,11 +155,6 @@ public class VipFrame extends JFrame {
 	public Controller getController() {
 		return controller;
 	}
-
-	/**
-	 * ArrayList<String> to display all movies in a datastructure
-	 */
-	private ArrayList<Video> movies;
 
 	/**
 	 * The JPanel that represents the Explorer and do file-searching stuff and
@@ -307,19 +319,11 @@ public class VipFrame extends JFrame {
 	private JButton jbtnSearchExecute; // Button for executing the search
 
 	/**
-	 * JListModel for displaying all movies in the internal list
-	 */
-	private DefaultListModel<String> defaultJList;
-
-	/**
 	 * Create Sub-sub-panels in the explorer panel
 	 */
 	private void buildExplorerGUI() {
-		movies = new ArrayList<Video>();
-		defaultJList = new DefaultListModel<String>(); // Do all search and sort
-														// stuff with this thing
-		jlstFileList = new JList<String>(defaultJList);
-		updateFileList();
+		jlstFileList = new JList<String>(dataController.getList());
+		dataController.updateList();
 		jlstFileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jlstFileList.setSelectedIndex(0);
 		JScrollPane scrollPane = new JScrollPane();
@@ -713,8 +717,8 @@ public class VipFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String path = getFilePath(new FileNameExtensionFilter("Video Files", movieExtensions));
-				movies.add(new Video(path));
-				updateFileList();
+				dataController.addMovieToList(new Video(path));
+				dataController.updateList();
 			}
 		});
 		
@@ -750,8 +754,7 @@ public class VipFrame extends JFrame {
 				if (ev.getClickCount() == 2
 						&& SwingUtilities.isLeftMouseButton(ev)) {
 					controller.getVLC().loadMedia(
-							movies.get(jlstFileList.getSelectedIndex())
-									.getFilePath());
+							dataController.getVideoByIndex(jlstFileList.getSelectedIndex()).getFilePath());
 					controller.getVLC().toggleMediaPlayback();
 				}
 			}
@@ -791,18 +794,8 @@ public class VipFrame extends JFrame {
 			e.printStackTrace();
 		}
 		for (int i = 0; i < fileList.size(); i++) {
-			movies.add(new Video(fileList.get(i).getAbsolutePath()));
+			dataController.addMovieToList(new Video(fileList.get(i).getAbsolutePath()));
 		}
-		updateFileList();
-	}
-
-	/**
-	 * 
-	 */
-	private void updateFileList() {
-		defaultJList.clear();
-		for (Video temp : movies) {
-			defaultJList.addElement(temp.getTitle());
-		}
+		dataController.updateList();
 	}
 }

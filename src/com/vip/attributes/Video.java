@@ -35,10 +35,13 @@ public class Video {
 	
 	private int episode;
 	
+	private boolean infoFetched;
+	
 	public Video(String path) {
 		this.filePath = path;
 		String[] temp = path.split(Pattern.quote("\\"));
 		this.title = temp[temp.length-1];
+		this.infoFetched = false;
 	}
 	
 	public Video() {}
@@ -156,4 +159,11 @@ public class Video {
 		this.episode = episode;
 	}
 	
+	public boolean isInfoFetched() {
+		return infoFetched;
+	}
+	
+	public void setInfoFetched(boolean infoFetched) {
+		this.infoFetched = infoFetched;
+	}
 }

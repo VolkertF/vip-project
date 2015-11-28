@@ -326,8 +326,10 @@ public class VipFrame extends JFrame {
 		dataController.updateList();
 		jlstFileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jlstFileList.setSelectedIndex(0);
+		jlstFileList.setPreferredSize(new Dimension(200, 650));
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setViewportView(jlstFileList);
+		scrollPane.getViewport().setView(jlstFileList);
+		jlstFileList.revalidate();
 
 		jtfSearch = new JTextField(20);
 

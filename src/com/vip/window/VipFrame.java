@@ -46,6 +46,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicSliderUI;
 
 import com.vip.Controller;
@@ -60,11 +61,11 @@ public class VipFrame extends JFrame {
 	public VipFrame() {
 		super("VipFrame");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		JOptionPane.showMessageDialog(this, "You have to select a root folder for you video collection!");
-		rootFolderPath = getFolderPath();
 		defaultInsets = new Insets(2, 2, 2, 2);
 		changeGUILook();
 		controller.initConfiguration();
+		JOptionPane.showMessageDialog(this,"You have to select a root folder for you video collection!");
+		rootFolderPath = getFilePath(2);
 		buildPanels();
 		buildExplorerGUI();
 		buildMovieGUI();
@@ -79,22 +80,47 @@ public class VipFrame extends JFrame {
 	/**
 	 * Method for getting the path of a selected folder
 	 * 
-	 * @return Absolute path to the folder
+	 * @return Absolute path to the file
 	 */
-	private String getFolderPath() {
+	private String getFilePath(int type) {
 		JFileChooser chooser = new JFileChooser();
-		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		if(type == 2) {
+			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		} else if(type == 1) {
+			chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		} else if(type != 1 && type != 2){
+			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		}
+		
+		
 		int returnVal = chooser.showOpenDialog(rootPane);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			return chooser.getSelectedFile().getAbsolutePath();
 		}
-		return null;
+		return "";
+	}
+	
+	/**
+	 * overloaded method for searching for files with a certain ending
+	 * @param filter
+	 * 			FileNameExtensionFilter for only making files searchable for the JFileChooser, that have the specified ending.
+	 * @return Absolute path to the file
+	 */
+	private String getFilePath(FileNameExtensionFilter filter) {
+		JFileChooser chooser = new JFileChooser();
+		chooser.setFileFilter(filter);
+		int returnVal = chooser.showOpenDialog(rootPane);
+		if(returnVal == JFileChooser.APPROVE_OPTION) {
+			return chooser.getSelectedFile().getAbsolutePath();
+		}
+		return "";
 	}
 
 	/**
 	 * String Array for filtering the right files
 	 */
-	private final String[] movieExtensions = { "avi", "mp4", "webm", "flv", "mkv", "ogg", "mov", "wmv", "m4v" };
+	private final String[] movieExtensions = { "avi", "mp4", "webm", "flv",
+			"mkv", "ogg", "mov", "wmv", "m4v" };
 
 	/**
 	 * String for the root-folder path
@@ -171,8 +197,9 @@ public class VipFrame extends JFrame {
 	 * @param insets
 	 *            Distances round the component that is added
 	 */
-	private static void addComponent(int x, int y, int width, int height, double weightx, double weighty,
-	        Container cont, Component comp, Insets insets) {
+	private static void addComponent(int x, int y, int width, int height,
+			double weightx, double weighty, Container cont, Component comp,
+			Insets insets) {
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.gridx = x;
@@ -196,7 +223,8 @@ public class VipFrame extends JFrame {
 	 *            The URL that should open when you click the MenuItem
 	 * @throws URISyntaxException
 	 */
-	private static void addURLActionListenerToMenuBarItem(JMenuItem menuItem, final URI url) throws URISyntaxException {
+	private static void addURLActionListenerToMenuBarItem(JMenuItem menuItem,
+			final URI url) throws URISyntaxException {
 		ActionListener al = new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
@@ -249,7 +277,8 @@ public class VipFrame extends JFrame {
 		jpnlIntel.setBorder(BorderFactory.createTitledBorder("Intel"));
 		jpnlIntel.setPreferredSize(new Dimension(1200, 150));
 
-		addComponent(0, 0, 1, 2, 0.0, 0.0, jpnlMain, jpnlExplorer, defaultInsets);
+		addComponent(0, 0, 1, 2, 0.0, 0.0, jpnlMain, jpnlExplorer,
+				defaultInsets);
 		addComponent(1, 0, 1, 1, 1.0, 1.0, jpnlMain, jpnlMovie, defaultInsets);
 		addComponent(1, 1, 1, 1, 0.1, 0.1, jpnlMain, jpnlIntel, defaultInsets);
 	}
@@ -288,18 +317,8 @@ public class VipFrame extends JFrame {
 	private void buildExplorerGUI() {
 		movies = new ArrayList<Video>();
 		defaultJList = new DefaultListModel<String>(); // Do all search and sort
-		                                               // stuff with this thing
+														// stuff with this thing
 		jlstFileList = new JList<String>(defaultJList);
-		// Video born2die = new Video("G:\\Videos\\Filme\\Born2Die.avi", "Born
-		// to Die");
-		// Video fanboys = new Video("G:\\Videos\\Filme\\Fanboys.avi",
-		// "Fanboys");
-		// movies.add(new Video("F:\\Dji. Death Sails-HD.mp4", "Dji - Death
-		// Sails"));
-		// movies.add(new Video("F:\\The Saga Of Bjorn-HD.mp4", "The Saga of
-		// Bjorn"));
-		// movies.add(born2die);
-		// movies.add(fanboys);
 		updateFileList();
 		jlstFileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jlstFileList.setSelectedIndex(0);
@@ -309,9 +328,9 @@ public class VipFrame extends JFrame {
 		jtfSearch = new JTextField(20);
 
 		String[] searchCategories = { "By Length, increasing", // Index 0
-		        "By length, decreasing", // Index 1
-		        "By rating, increasing", // Index 2
-		        "By rating, decreasing", }; // Index 3
+				"By length, decreasing", // Index 1
+				"By rating, increasing", // Index 2
+				"By rating, decreasing", }; // Index 3
 
 		jcbSearchCategories = new JComboBox<String>(searchCategories);
 		jcbSearchCategories.setEditable(false);
@@ -322,10 +341,14 @@ public class VipFrame extends JFrame {
 		jbtnSearchExecute = new JButton("Search");
 
 		// x y w h wx wy cont comp insets
-		addComponent(0, 0, 2, 1, 0.0, 0.0, jpnlExplorer, jtfSearch, defaultInsets);
-		addComponent(0, 1, 1, 1, 0.0, 0.0, jpnlExplorer, jcbSearchCategories, defaultInsets);
-		addComponent(1, 1, 1, 1, 0.0, 0.0, jpnlExplorer, jbtnSearchExecute, defaultInsets);
-		addComponent(0, 2, 2, 1, 1.0, 1.0, jpnlExplorer, jlstFileList, defaultInsets);
+		addComponent(0, 0, 2, 1, 0.0, 0.0, jpnlExplorer, jtfSearch,
+				defaultInsets);
+		addComponent(0, 1, 1, 1, 0.0, 0.0, jpnlExplorer, jcbSearchCategories,
+				defaultInsets);
+		addComponent(1, 1, 1, 1, 0.0, 0.0, jpnlExplorer, jbtnSearchExecute,
+				defaultInsets);
+		addComponent(0, 2, 2, 1, 1.0, 1.0, jpnlExplorer, jlstFileList,
+				defaultInsets);
 	}
 
 	/**
@@ -393,8 +416,9 @@ public class VipFrame extends JFrame {
 		jbtnNextChapter.setActionCommand("jbtnJumpForward");
 		jpnlMovieControl.add(jbtnNextChapter);
 
-		jsliderVolume = new JSlider(JSlider.HORIZONTAL, VLC.getMinVolume(), VLC.getMaxVolume(),
-		        ((VLC.getMinVolume() + VLC.getMaxVolume()) / 2));
+		jsliderVolume = new JSlider(JSlider.HORIZONTAL, VLC.getMinVolume(),
+				VLC.getMaxVolume(),
+				((VLC.getMinVolume() + VLC.getMaxVolume()) / 2));
 		jpnlMovieControl.add(jsliderVolume);
 		jsliderVolume.addMouseListener(new MouseAdapter() {
 			public void mouseReleased(MouseEvent me) {
@@ -405,7 +429,8 @@ public class VipFrame extends JFrame {
 			}
 		});
 
-		JlabelVolume = new JLabel(Integer.toString(((VLC.getMinVolume() + VLC.getMaxVolume()) / 2)) + "%");
+		JlabelVolume = new JLabel(Integer.toString(((VLC.getMinVolume() + VLC
+				.getMaxVolume()) / 2)) + "%");
 		jpnlMovieControl.add(JlabelVolume);
 
 		jpnlMovie.add(jpnlMovieControl, BorderLayout.SOUTH);
@@ -431,14 +456,18 @@ public class VipFrame extends JFrame {
 		jlabelMovieTimer = new JLabel();
 		jlabelMovieTimer.setText("00:00:00 / 00:00:00");
 
-		addComponent(1, 0, 1, 1, 1.0, 1.0, jpnlMovieNorth, jsliderMovieProgress, defaultInsets);
-		addComponent(2, 0, 1, 1, 0.01, 0.1, jpnlMovieNorth, jlabelMovieTimer, defaultInsets);
-		addComponent(0, 0, 1, 1, 0.01, 0.1, jpnlMovieNorth, jlabelMovieTimeline, defaultInsets);
+		addComponent(1, 0, 1, 1, 1.0, 1.0, jpnlMovieNorth,
+				jsliderMovieProgress, defaultInsets);
+		addComponent(2, 0, 1, 1, 0.01, 0.1, jpnlMovieNorth, jlabelMovieTimer,
+				defaultInsets);
+		addComponent(0, 0, 1, 1, 0.01, 0.1, jpnlMovieNorth,
+				jlabelMovieTimeline, defaultInsets);
 
 	}
 
 	private void initProgressBar() {
-		int movieLength = (int) controller.getVLC().getMediaPlayer().getLength();
+		int movieLength = (int) controller.getVLC().getMediaPlayer()
+				.getLength();
 		jsliderMovieProgress.setMaximum(movieLength);
 		jsliderMovieProgress.setMinimum(0);
 		revalidate();
@@ -463,7 +492,8 @@ public class VipFrame extends JFrame {
 				// Might be -1, means you cannot move the slider on invalid
 				// movie file
 				// on purpose!
-				int currentMovieTime = (int) controller.getVLC().getMediaPlayer().getTime();
+				int currentMovieTime = (int) controller.getVLC()
+						.getMediaPlayer().getTime();
 				jsliderMovieProgress.setValue(currentMovieTime);
 			}
 		} else {
@@ -475,8 +505,9 @@ public class VipFrame extends JFrame {
 	 * TODO @author Fabian Volkert
 	 */
 	private void updateTimelineLabels() {
-		Double procentualProgress = ((double) controller.getVLC().getMediaPlayer().getTime()
-		        / controller.getVLC().getMediaPlayer().getLength()) * 100;
+		Double procentualProgress = ((double) controller.getVLC()
+				.getMediaPlayer().getTime() / controller.getVLC()
+				.getMediaPlayer().getLength()) * 100;
 		String newTime = String.format("%4.1f", procentualProgress);
 		// is newTime is not a valid Number, we display a default Text
 		if (procentualProgress.isNaN() || procentualProgress.isInfinite()) {
@@ -496,8 +527,9 @@ public class VipFrame extends JFrame {
 		hoursTotal = (int) (controller.getVLC().getMediaPlayer().getLength() / 3600000);
 		minutesTotal = (int) (controller.getVLC().getMediaPlayer().getLength() / 60000 % 60);
 		secondsTotal = (int) (controller.getVLC().getMediaPlayer().getLength() / 1000 % 60);
-		String newLabelText = String.format("%02d:%02d:%02d / %02d:%02d:%02d", hoursPassed, minutesPassed,
-		        secondsPassed, hoursTotal, minutesTotal, secondsTotal);
+		String newLabelText = String.format("%02d:%02d:%02d / %02d:%02d:%02d",
+				hoursPassed, minutesPassed, secondsPassed, hoursTotal,
+				minutesTotal, secondsTotal);
 		jlabelMovieTimer.setText(newLabelText);
 	}
 
@@ -505,8 +537,10 @@ public class VipFrame extends JFrame {
 	 * TODO @author Fabian Volkert
 	 */
 	public void updateVolumeSlider() {
-		JlabelVolume.setText(controller.getVLC().getMediaPlayer().getVolume() + "%");
-		jsliderVolume.setValue(controller.getVLC().getMediaPlayer().getVolume());
+		JlabelVolume.setText(controller.getVLC().getMediaPlayer().getVolume()
+				+ "%");
+		jsliderVolume
+				.setValue(controller.getVLC().getMediaPlayer().getVolume());
 	}
 
 	/**
@@ -647,20 +681,23 @@ public class VipFrame extends JFrame {
 		jmiPathVLC.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				JOptionPane.showMessageDialog(rootPane, "In order to run the 'Video Information Program' smoothly "
-		                + "you have to install the 64-Bit Version of Video Lan Player! "
-		                + "\n It can be found on the Website: http://www.videolan.org/vlc/download-windows.html");
+				JOptionPane.showMessageDialog(rootPane,
+					"In order to run the 'Video Information Program' smoothly "
+					+ "you have to install the 64-Bit Version of Video Lan Player! "
+					+ "\n It can be found on the Website: http://www.videolan.org/vlc/download-windows.html");
 			}
 		});
 
 		// Adding ActionListeners with URLs
 		try {
-			addURLActionListenerToMenuBarItem(jmiWebsite, new URI("http://cyril-casapao.github.io/vip-project/"));
-			addURLActionListenerToMenuBarItem(jmiMeetTheTeam,
-			        new URI("http://cyril-casapao.github.io/vip-project/team.html"));
-			addURLActionListenerToMenuBarItem(jmiWatchCode, new URI("https://github.com/cyril-casapao/vip-project"));
-			addURLActionListenerToMenuBarItem(jmiJournals,
-			        new URI("http://cyril-casapao.github.io/vip-project/journals.html"));
+			addURLActionListenerToMenuBarItem(jmiWebsite, new URI(
+					"http://cyril-casapao.github.io/vip-project/"));
+			addURLActionListenerToMenuBarItem(jmiMeetTheTeam, new URI(
+					"http://cyril-casapao.github.io/vip-project/team.html"));
+			addURLActionListenerToMenuBarItem(jmiWatchCode, new URI(
+					"https://github.com/cyril-casapao/vip-project"));
+			addURLActionListenerToMenuBarItem(jmiJournals, new URI(
+					"http://cyril-casapao.github.io/vip-project/journals.html"));
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
@@ -669,6 +706,23 @@ public class VipFrame extends JFrame {
 		jmiClose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				dispose();
+			}
+		});
+		
+		jmiAddFile.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				String path = getFilePath(new FileNameExtensionFilter("Video Files", movieExtensions));
+				movies.add(new Video(path));
+				updateFileList();
+			}
+		});
+		
+		jmiAddDirectory.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				String path = getFilePath(2);
+				searchForMovies(path);
 			}
 		});
 	}
@@ -693,8 +747,11 @@ public class VipFrame extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent ev) {
-				if (ev.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(ev)) {
-					controller.getVLC().loadMedia(movies.get(jlstFileList.getSelectedIndex()).getFilePath());
+				if (ev.getClickCount() == 2
+						&& SwingUtilities.isLeftMouseButton(ev)) {
+					controller.getVLC().loadMedia(
+							movies.get(jlstFileList.getSelectedIndex())
+									.getFilePath());
 					controller.getVLC().toggleMediaPlayback();
 				}
 			}
@@ -711,11 +768,11 @@ public class VipFrame extends JFrame {
 	/**
 	 * Searching for movie Files with a folder path.
 	 * 
-	 * @param folderPath
+	 * @param path
 	 *            Path of the folder to search for movies
 	 */
-	private void searchForMovies(String folderPath) {
-		Path path = Paths.get(folderPath);
+	private void searchForMovies(String filePath) {
+		Path path = Paths.get(filePath);
 		ArrayList<File> fileList = new ArrayList<File>();
 		try (DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
 			for (Path entry : stream) {
@@ -743,6 +800,7 @@ public class VipFrame extends JFrame {
 	 * 
 	 */
 	private void updateFileList() {
+		defaultJList.clear();
 		for (Video temp : movies) {
 			defaultJList.addElement(temp.getTitle());
 		}

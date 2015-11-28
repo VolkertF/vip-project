@@ -13,6 +13,9 @@ import org.apache.http.HttpResponse;
 /**
  * This class handles communication with the OMDb API. As such, it
  * only contains methods to connect to and make requests to the API.
+ * It works together with the InfoExtractor class to make API requests 
+ * and get relevant information. Please use the OMDBController to make
+ * requests instead of this class.
  * 
  * The API takes requests in the form of HTTP GET requests. The URI
  * supplied must also follow a certain format that looks like this...
@@ -20,8 +23,8 @@ import org.apache.http.HttpResponse;
  *	  http://www.omdbapi.com/?t=Star+Wars&y=1977&plot=long&r=json
  *
  * ...where t denotes the title and y denotes the year. In addition,
- * we can perform a search by using different parameters in our URI.
- * This class contains methods to do both kinds of requests.
+ * we can perform other types of searches by using different parameters 
+ * in our URI.
  * 
  * @author Cyril Casapao
  */
@@ -37,6 +40,7 @@ public class OMDBConnector {
 	private final String MOVIE_REQUEST;
 	private final String SEARCH_REQUEST;
 	private final String EPISODE_LIST_REQUEST;
+	private final String ID_REQUEST;
 	
 	
 	/**
@@ -50,6 +54,7 @@ public class OMDBConnector {
 		MOVIE_REQUEST = "movie";
 		SEARCH_REQUEST = "search";
 		EPISODE_LIST_REQUEST = "episode list";
+		ID_REQUEST = "id";
 	}
 	
 	
@@ -58,11 +63,30 @@ public class OMDBConnector {
 	 * always be called when the request is finished. It will throw
 	 * an IOException if something goes wrong when closing the
 	 * connection.
+	 * 
+	 * @throws IOException
 	 */
 	public void close() throws IOException {
 		client.close();
 	}
 	
+	
+	/**
+	 * This method gets information about an item by its IMDB ID. The
+	 * info is the same info found in a movie no matter if the item is
+	 * a movie, an episode, or a series. This method will throw an
+	 * IOException if something goes wrong.
+	 * 
+	 * @param id
+	 * 		The IMDB ID of the item
+	 * @return
+	 * 		The JSON response from the API
+	 * @throws IOException
+	 */
+	public String requestById(String id) throws IOException {
+		String formattedUri = buildUri(id, null, "", ID_REQUEST);
+		return makeRequest(formattedUri);
+	}
 	
 	/**
 	 * This method tries to get information about a specified movie from
@@ -71,15 +95,14 @@ public class OMDBConnector {
 	 * @param title
 	 * 		The name of the movie
 	 * @param year
-	 * 		The year the movie came out
-	 * 
-	 * @return String
-	 * 		The response from the API
+	 * 		The year the movie came out (optional)
+	 * @return
+	 * 		The JSON response from the API
+	 * @throws IOException
 	 */
 	public String requestMovie(String title, String year) throws IOException {
 		String formattedUri = buildUri(title, year, "", MOVIE_REQUEST);
-		String apiResponse = makeRequest(formattedUri);
-		return apiResponse;
+		return makeRequest(formattedUri);
 	}
 	
 	
@@ -90,14 +113,13 @@ public class OMDBConnector {
 	 * 		The name of the movie
 	 * @param year
 	 * 		The year the movie came out
-	 * 
-	 * @return String
-	 * 		The response from the API
+	 * @return
+	 * 		The JSON response from the API
+	 * @throws IOException
 	 */
 	public String requestSearch(String title, String year) throws IOException {
 		String formattedUri = buildUri(title, year, "", SEARCH_REQUEST);
-		String apiResponse = makeRequest(formattedUri);
-		return apiResponse;
+		return makeRequest(formattedUri);
 	}
 	
 	
@@ -108,14 +130,13 @@ public class OMDBConnector {
 	 * 		The title of the series
 	 * @param seasonNumber
 	 * 		The season to get an episode list for
-	 * 
-	 * @return String
-	 * 		The response from the API
+	 * @return
+	 * 		The JSON response from the API
+	 * @throws IOException
 	 */
 	public String requestEpisodeList(String title, String seasonNumber) throws IOException {
 		String formattedUri = buildUri(title, "", seasonNumber, EPISODE_LIST_REQUEST);
-		String apiResponse = makeRequest(formattedUri);
-		return apiResponse;
+		return makeRequest(formattedUri);
 	}
 	
 	
@@ -129,12 +150,11 @@ public class OMDBConnector {
 	 * 		The year the movie came out (optional)
 	 * @param seasonNumber
 	 * 		The season to search through when requesting an episode 
-	 * 		list (NECESARY WHEN MAKING AN EPISODE LIST REQUEST!)
+	 * 		list (NECESSARY WHEN MAKING AN EPISODE LIST REQUEST!)
 	 * @param requestType
 	 * 		The type of request to make
-	 * 
-	 * @return String
-	 * 		A string representing the API request
+	 * @return
+	 * 		A formatted String representing the URI
 	 */
 	private String buildUri(
 			String title,
@@ -150,6 +170,7 @@ public class OMDBConnector {
 		boolean isMovieRequest = requestType.equals(MOVIE_REQUEST);
 		boolean isEpisodeListRequest = requestType.equals(EPISODE_LIST_REQUEST);
 		boolean isSearchRequest = requestType.equals(SEARCH_REQUEST);
+		boolean isIdRequest = requestType.equals(ID_REQUEST);
 		
 		// Check if the user requested a specific movie. Otherwise, conduct
 		// a general search using the supplied parameters.
@@ -157,6 +178,8 @@ public class OMDBConnector {
 			uriBuilder.append("?t=");
 		} else if(isSearchRequest) {
 			uriBuilder.append("?s=");
+		} else if(isIdRequest) {
+			uriBuilder.append("?i=");
 		}
 		
 		// Tokenize the title to remove whitespace, then add them to the
@@ -172,7 +195,7 @@ public class OMDBConnector {
 			uriBuilder.append("&season=" + seasonNumber);
 		}
 		
-		if(isMovieRequest) {
+		if(isMovieRequest || isIdRequest) {
 			uriBuilder.append("&plot=long");
 		}
 		
@@ -182,8 +205,8 @@ public class OMDBConnector {
 	
 	
 	/**
-	 * This method removes whitespace from the given String and 
-	 * replaces them with plus signs so the API accepts it.
+	 * This method removes whitespace from the given String and replaces
+	 * them with plus signs so the API accepts it.
 	 * 
 	 * @param toModify
 	 * 		The  String to remove whitespace from
@@ -205,9 +228,11 @@ public class OMDBConnector {
 	 * 
 	 * @param uri
 	 * 		The URI of the API request
-	 * 
-	 * @return String
+	 * @return
 	 * 		The String representing the JSON response received from the API
+	 * @throws IOException
+	 * 
+	 * @TODO Remove debugging print statement
 	 */
 	private String makeRequest(String uri) throws IOException {
 		System.out.println("CONNECTOR: asking " + uri);

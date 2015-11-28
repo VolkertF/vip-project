@@ -15,7 +15,9 @@ import java.io.IOException;
 
 
 /**
-* This class extracts information from an OMDb request.
+* This class extracts information from an OMDb request. It works together with
+* the OMDBConnector class to make API requests and get relevant information.
+* Please use the OMDBController to make requests instead of this class.
 * 
 * @author Cyril Casapao
 * 
@@ -33,15 +35,17 @@ public class InfoExtractor {
 	private final String MOVIE_REQUEST;
 	private final String SEARCH_REQUEST;
 	private final String EPISODE_LIST_REQUEST;
+	private final String ID_REQUEST;
 	
 	/**
-	 * Constructor method.
+	 * Constructor method that initializes an InfoExtractor object
 	 */
 	public InfoExtractor() {
 		scan = new Scanner(System.in);
 		MOVIE_REQUEST = "movie";
 		SEARCH_REQUEST = "search";
 		EPISODE_LIST_REQUEST = "episode list";
+		ID_REQUEST = "id";
 	}
 	
 	
@@ -80,14 +84,12 @@ public class InfoExtractor {
 	 * @param category
 	 * 		The type of information to extract from the API response 
 	 * 		(e.g., genre, director, cast, etc.)
-	 * 
-	 * @return ArrayList
+	 * @return
 	 * 		An ArrayList holding each piece of information
 	 * 		in a separate index.
 	 * 
 	 * @TODO
-	 * We will need to change how Movie objects store information.
-	 * In addition, we'll need to remove these print statements.
+	 * Remove these print statements. They are only used in debugging
 	 */
 	public ArrayList<String> splitCategoryInfoString(
 			String categoryInfo, 
@@ -125,7 +127,7 @@ public class InfoExtractor {
 	 * @param jsonString
 	 * 		The JSON information we receive from OMDb
 	 * 
-	 * @return Map
+	 * @return
 	 * 		A map holding key-value pairs of movie info
 	 */
 	public Map<String, String> extractMovieInfo(String apiResponse) {
@@ -154,7 +156,7 @@ public class InfoExtractor {
 	 * 
 	 * @param apiResponse
 	 * 		A string representing the response from OMDb
-	 * @return ArrayList
+	 * @return
 	 * 		The list of SearchResult objects
 	 */
 	public ArrayList<SearchResult> extractSearchResults(String apiResponse) {
@@ -208,7 +210,7 @@ public class InfoExtractor {
 	 * @param thisResult
 	 * 		A JsonObject containing fields describing a search result
 	 * 
-	 * @return MediaSearchResult
+	 * @return
 	 * 		An object describing a search result
 	 */
 	private MediaSearchResult toMediaSearchResultObject(JsonObject thisResult) {
@@ -231,11 +233,10 @@ public class InfoExtractor {
 	 * @param thisResult
 	 * 		A JsonObject containing fields describing a search result
 	 * 
-	 * @return EpisodeListResult
+	 * @return
 	 * 		An object describing a search result
 	 */
-	public EpisodeListResult toEpisodeListResultObject(JsonObject thisResult) {
-		
+	private EpisodeListResult toEpisodeListResultObject(JsonObject thisResult) {
 		String title = thisResult.get("Title").toString();
 		
 		int episodeNumber = 
@@ -264,7 +265,7 @@ public class InfoExtractor {
 	 * 
 	 * @TODO Remove this method later.
 	 */
-	public void runTest() throws IOException {
+	private void runTest() throws IOException {
 		OMDBConnector connector = new OMDBConnector();
 		
 		System.out.println("Welcome to the OMDb API tester!");
@@ -273,7 +274,8 @@ public class InfoExtractor {
 			
 			System.out.println("Type MOVIE to search for a specific movie. " +
 					"Type SEARCH to perform a search. Type EPISODE LIST to " +
-					" get a list of episodes. Enter nothing to quit.");
+					" get a list of episodes. Type ID to search by ID. " +
+					"Enter nothing to quit.");
 			
 			String requestType = scan.nextLine();
 			if(requestType.isEmpty()){
@@ -286,6 +288,8 @@ public class InfoExtractor {
 					requestType.equals(EPISODE_LIST_REQUEST);
 			boolean isSearchRequest =
 					requestType.equals(SEARCH_REQUEST);
+			boolean isIdRequest =
+					requestType.equals(ID_REQUEST);
 			
 			System.out.println("Enter a title: ");
 			String title = scan.nextLine();
@@ -295,7 +299,7 @@ public class InfoExtractor {
 			
 			System.out.println("If doing a specific movie search, you can"
 					+ "optionally specify the year the movie came out. If "
-					+ "doing a search, enter nothing: ");
+					+ "doing a search (with keywords or ID), enter nothing: ");
 			String year = scan.nextLine();
 			
 			String response = "";
@@ -343,10 +347,19 @@ public class InfoExtractor {
 					System.out.println("Title: " + episodeResult.getTitle());
 					System.out.println("Release date: " + episodeResult.getReleaseDate());
 					System.out.println("Episode number: " + episodeResult.getEpisodeNumber());
-					System.out.println("IMDB Rating: " + episodeResult.getImdbId());
+					System.out.println("IMDB Rating: " + episodeResult.getImdbRating());
 					System.out.println("IMDB ID: " + episodeResult.getImdbId());
 				}
 				
+			} else if(isIdRequest) {
+				response = connector.requestById(title);
+				Map<String, String> infoMap = extractMovieInfo(response);
+				printJson(infoMap);
+				
+				splitCategoryInfoString(infoMap.get("Genre"), "Genre");
+				splitCategoryInfoString(infoMap.get("Director"), "Director");
+				splitCategoryInfoString(infoMap.get("Writer"), "Writer");
+				splitCategoryInfoString(infoMap.get("Actors"), "Actors");
 			} else {
 				System.out.println("Invalid option. Exiting...");
 				break;
@@ -369,7 +382,7 @@ public class InfoExtractor {
 	 * 
 	 * @TODO Remove this method when we implement user OMDb queries
 	 */
-	public void printJson(Map<String, String> information) {
+	private void printJson(Map<String, String> information) {
 		for(Map.Entry<String, String> entry : information.entrySet()) {
 			String key = entry.getKey().toString();
 			String value = entry.getValue();

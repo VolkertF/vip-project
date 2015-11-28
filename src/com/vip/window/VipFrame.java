@@ -591,6 +591,12 @@ public class VipFrame extends JFrame {
 	 * 
 	 */
 	private JMenuItem jmiAddDirectory;
+	
+	/**
+	 * MenuItem which allows the user to save his/her whole progress
+	 * in the database, which will keep everything over to the next boot.
+	 */
+	private JMenuItem jmiSaveAll;
 
 	/**
 	 * MenuItem which allows the user to close the program.
@@ -651,10 +657,12 @@ public class VipFrame extends JFrame {
 		jmiPathVLC = new JMenuItem("Define VLC.exe Path");
 		jmiAddFile = new JMenuItem("Add File ...");
 		jmiAddDirectory = new JMenuItem("Add Directory ...");
+		jmiSaveAll = new JMenuItem("Save All");
 		jmiClose = new JMenuItem("Close");
 		jmFile.add(jmiPathVLC);
 		jmFile.add(jmiAddFile);
 		jmFile.add(jmiAddDirectory);
+		jmFile.add(jmiSaveAll);
 		jmFile.add(jmiClose);
 
 		// MenuHelp
@@ -727,6 +735,13 @@ public class VipFrame extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				String path = getFilePath(2);
 				searchForMovies(path);
+			}
+		});
+		
+		jmiSaveAll.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				dataController.saveVideos();
 			}
 		});
 	}

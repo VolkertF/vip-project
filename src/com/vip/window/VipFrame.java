@@ -290,13 +290,9 @@ public class VipFrame extends JFrame {
 		jpnlIntel.setBorder(BorderFactory.createTitledBorder("Intel"));
 		jpnlIntel.setPreferredSize(new Dimension(1200, 150));
 
-		JPanel tempContainerPanel = new JPanel();
-		tempContainerPanel.setLayout(new GridBagLayout());
-
 		addComponent(0, 0, 1, 2, 0.35, 1.0, jpnlMain, jpnlExplorer, defaultInsets);
-		addComponent(1, 0, 1, 2, 0.65, 1.0, jpnlMain, tempContainerPanel, defaultInsets);
-		addComponent(0, 0, 1, 1, 1, 0.5, tempContainerPanel, jpnlMovie, defaultInsets);
-		addComponent(0, 1, 1, 1, 1, 0.5, tempContainerPanel, jpnlIntel, defaultInsets);
+		addComponent(1, 0, 1, 1, 0.65, 0.5, jpnlMain, jpnlMovie, defaultInsets);
+		addComponent(1, 1, 1, 1, 0.65, 0.5, jpnlMain, jpnlIntel, defaultInsets);
 	}
 
 	/**
@@ -387,6 +383,7 @@ public class VipFrame extends JFrame {
 	 */
 	private void buildMovieGUI() {
 		addComponent(0, 0, 1, 1, 1.0, 0.6, jpnlMovie, controller.getVLC().getCanvas(), defaultInsets);
+		
 
 		JPanel jpnlMovieControls = new JPanel();
 		jpnlMovieControls.setLayout(new GridBagLayout());

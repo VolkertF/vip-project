@@ -58,8 +58,7 @@ public class OMDBController {
 	 * @param year
 	 * 		An optional parameter that specifies the year the movie came out
 	 * @return
-	 * 		A map associating categories (keys) to lists (values). For instance,
-	 * 		the "genre" key 
+	 * 		A map associating categories (keys) to lists (values)
 	 */
 	public Map<String, String> makeApiMovieRequest(String title, String year) {
 		
@@ -108,9 +107,6 @@ public class OMDBController {
 	 * in other methods to get information from. For example, the IMDB ID can
 	 * be extracted to perform a more general search. 
 	 * 
-	 * See the documentation for the OMDBController.makeApiMovieRequest() method
-	 * for more usage information.
-	 * 
 	 * @param title
 	 * 		The series to search for
 	 * @param seasonNumber
@@ -134,11 +130,23 @@ public class OMDBController {
 	
 	/**
 	 * This method requests information about a specific media item based on
-	 * its IMDB ID. Since the information returned by an ID API request is the
+	 * its IMDB ID. 
+	 * 
+	 * We can get the ID by performing a general search or an episode list
+	 * request. This is the recommended way to use this method but it could
+	 * also be used in a GUI field that asks users for an IMDB id.
+	 * 
+	 * Since the information returned by an ID API request is the
 	 * same as the info returned by a movie API request, we can use the
-	 * extractMovieInfo() method to get a map of information. Th
+	 * extractMovieInfo() method to get a map of information.
+	 * 
+	 * See the documentation for the OMDBController.makeApiMovieRequest() method
+	 * for more usage information.
+	 * 
 	 * @param id
+	 * 		The ID of the media item
 	 * @return
+	 * 		A map associating categories (keys) to lists (values)
 	 */
 	public Map<String, String> getById(String id) {
 	

@@ -45,6 +45,14 @@ public class OMDBController {
 	 * in JSON so the map must be parsed out to use information. That is why we
 	 * must call the separate get methods for each field.
 	 * 
+	 * The map returned pairs categories (keys) with information fields (values).
+	 * 
+	 * For example, one entry in the map may look like this...
+	 * 		"genre" (key) -> "Action, Comedy, Adventure" (value)
+	 * 
+	 * To parse the value list, call the appropriate method. In this example, we
+	 * would call getGenreList() to get the ArrayList of genres.
+	 * 
 	 * @param title
 	 * 		The title of the movie
 	 * @param year
@@ -98,7 +106,10 @@ public class OMDBController {
 	 * This method gets a list of episodes for a certain season of a specified
 	 * TV series. It returns a list of SearchResult objects that can be used
 	 * in other methods to get information from. For example, the IMDB ID can
-	 * be extracted to perform a more general search.
+	 * be extracted to perform a more general search. 
+	 * 
+	 * See the documentation for the OMDBController.makeApiMovieRequest() method
+	 * for more usage information.
 	 * 
 	 * @param title
 	 * 		The series to search for
@@ -118,6 +129,27 @@ public class OMDBController {
 		}
 		
 		return extractor.extractSearchResults(response);
+	}
+	
+	
+	/**
+	 * This method requests information about a specific media item based on
+	 * its IMDB ID. Since the information returned by an ID API request is the
+	 * same as the info returned by a movie API request, we can use the
+	 * extractMovieInfo() method to get a map of information. Th
+	 * @param id
+	 * @return
+	 */
+	public Map<String, String> getById(String id) {
+	
+		String apiResponse = "";
+		try {
+			apiResponse = connector.requestById(id);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return extractor.extractMovieInfo(apiResponse);
 	}
 	
 	

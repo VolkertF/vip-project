@@ -21,6 +21,10 @@ public class VLC {
 	/** Minimum volume supported (0 is least) **/
 	private static final int MIN_VOLUME = 0;
 
+	private boolean isMuted = false;
+
+	private int lastVolume = (MAX_VOLUME + MIN_VOLUME) / 2;
+
 	/**
 	 * Percentage of how far a jump in the movie will proceed, must be between 0
 	 * and 1
@@ -213,65 +217,44 @@ public class VLC {
 		}
 	}
 
-	/**
-	 * Increases volume by set rate
-	 */
-	public void volumeUp() {
-		if (mediaPlayerComponent != null && mediaPlayerComponent.getLength() != -1) {
-			if (mediaPlayerComponent.getVolume() <= MAX_VOLUME - VOLUME_STEPS) {
-				mediaPlayerComponent.setVolume(mediaPlayerComponent.getVolume() + VOLUME_STEPS);
-			} else {
-				mediaPlayerComponent.setVolume(MAX_VOLUME);
-			}
-		}
-
+	public boolean isMuted() {
+		return isMuted;
 	}
 
-	/**
-	 * Decreases volume by set rate
-	 */
-	public void volumeDown() {
-		if (mediaPlayerComponent != null && mediaPlayerComponent.getLength() != -1) {
-			if (mediaPlayerComponent.getVolume() >= MIN_VOLUME + VOLUME_STEPS) {
-				mediaPlayerComponent.setVolume(mediaPlayerComponent.getVolume() - VOLUME_STEPS);
-			} else {
-				mediaPlayerComponent.setVolume(MIN_VOLUME);
-			}
+	public void toggleMuted() {
+		if (isMuted) {
+			isMuted = false;
+		} else {
+			isMuted = true;
 		}
-
 	}
 
-	/**
-	 * Increases volume by set rate and returns it new value
-	 * 
-	 * @return the new volume level
-	 */
-	public int getIncreasedVolume() {
-		int newVolume = (MAX_VOLUME + MIN_VOLUME) / 2;
+	public int getlastVolume() {
+		return lastVolume;
+	}
+
+	public void setVolume(int newVolume) {
 		if (mediaPlayerComponent != null && mediaPlayerComponent.getLength() != -1) {
-			if (mediaPlayerComponent.getVolume() <= MAX_VOLUME - VOLUME_STEPS) {
-				newVolume = mediaPlayerComponent.getVolume() + VOLUME_STEPS;
-			} else {
+			if (newVolume > MAX_VOLUME) {
 				newVolume = MAX_VOLUME;
-			}
-		}
-		return newVolume;
-	}
-
-	/**
-	 * Decreases volume by set rate and returns it new value
-	 * 
-	 * @return the new volume level
-	 */
-	public int getDecreasedVolume() {
-		int newVolume = (MAX_VOLUME + MIN_VOLUME) / 2;
-		if (mediaPlayerComponent != null && mediaPlayerComponent.getLength() != -1) {
-			if (mediaPlayerComponent.getVolume() >= MIN_VOLUME + VOLUME_STEPS) {
-				newVolume = mediaPlayerComponent.getVolume() - VOLUME_STEPS;
-			} else {
+			} else if (newVolume < MIN_VOLUME) {
 				newVolume = MIN_VOLUME;
 			}
+			if (newVolume != 0) {
+				isMuted = false;
+			} else {
+				isMuted = true;
+			}
+			mediaPlayerComponent.setVolume(newVolume);
+			lastVolume = newVolume;
 		}
-		return newVolume;
+	}
+
+	public int getVolume() {
+		return mediaPlayerComponent.getVolume();
+	}
+
+	public int getVolumeSteps() {
+		return VOLUME_STEPS;
 	}
 }

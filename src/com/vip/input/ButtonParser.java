@@ -43,9 +43,15 @@ public class ButtonParser implements ActionListener {
 			vlc.jumpBack();
 		if ("jbtnJumpForward".equals(action))
 			vlc.jumpForward();
-		if ("jbtnVolumeDown".equals(action))
-			vlc.volumeDown();
-		if ("jbtnVolumeUp".equals(action))
-			vlc.volumeUp();
+		if ("jbtnVolume".equals(action)) {
+			if (vlc.isMuted()) {
+				vlc.toggleMuted();
+				vlc.getMediaPlayer().setVolume(vlc.getlastVolume());
+			} else {
+				vlc.toggleMuted();
+				vlc.getMediaPlayer().setVolume(0);
+			}
+		}
+
 	}
 }

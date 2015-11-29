@@ -2,8 +2,10 @@ package com.vip.input;
 
 import java.awt.KeyEventDispatcher;
 import java.awt.event.KeyEvent;
+
 import javax.swing.JTextField;
 
+import com.vip.media.VLC;
 import com.vip.window.VipFrame;
 
 /**
@@ -67,25 +69,26 @@ public class KeyParser implements KeyEventDispatcher {
 		// When no textfield is focused and the key is pressed, input will be
 		// processed
 		if (keyState == isPressed && !(ke.getSource() instanceof JTextField) && vipFrame.isFocused()) {
+			VLC vlc = vipFrame.getController().getVLC();
 			if (currentKey == shortcutList[TOGGLE_PLAYBACK]) {
 				if (isValidInput(ke, TOGGLE_PLAYBACK))
-					vipFrame.getController().getVLC().toggleMediaPlayback();
+					vlc.toggleMediaPlayback();
 			}
 			if (currentKey == shortcutList[NEXT_CHAPTER]) {
 				if (isValidInput(ke, NEXT_CHAPTER))
-					vipFrame.getController().getVLC().nextChapter();
+					vlc.nextChapter();
 			}
 			if (currentKey == shortcutList[PREVIOUS_CHAPTER]) {
 				if (isValidInput(ke, PREVIOUS_CHAPTER))
-					vipFrame.getController().getVLC().previousChapter();
+					vlc.previousChapter();
 			}
 			if (currentKey == shortcutList[VOLUME_UP]) {
 				if (isValidInput(ke, VOLUME_UP))
-					vipFrame.getController().getVLC().volumeUp();
+					vlc.setVolume(vlc.getVolume() + vlc.getVolumeSteps());
 			}
 			if (currentKey == shortcutList[VOLUME_DOWN]) {
 				if (isValidInput(ke, VOLUME_DOWN))
-					vipFrame.getController().getVLC().volumeDown();
+					vlc.setVolume(vlc.getVolume() - vlc.getVolumeSteps());
 			}
 			if (currentKey == shortcutList[SEARCH]) {
 				if (isValidInput(ke, SEARCH))

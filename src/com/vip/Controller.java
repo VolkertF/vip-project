@@ -152,10 +152,16 @@ public class Controller {
 		pw.println(SHORTCUT_ENTRY_POINT);
 		pw.println("//Do NOT change order of items\n//It would kill an innocent kitten");
 		pw.println("TOGGLE_PLAYBACK=SPACE");
+		pw.println("NEXT_MOVIE=N");
+		pw.println("PREVIOUS_MOVIE=B");
 		pw.println("NEXT_CHAPTER=N");
 		pw.println("PREVIOUS_CHAPTER=P");
+		pw.println("JUMP_FORWARD=CTRL H");
+		pw.println("JUMP_BACKWARD=CTRL J");
+		pw.println("MUTE_VOLUME=M");
 		pw.println("VOLUME_UP=NUM_PLUS");
 		pw.println("VOLUME_DOWN=NUM_MINUS");
+		pw.println("OPEN_PREFERENCES=CTRL P");
 		pw.println("SEARCH=CTRL F");
 		pw.println();
 

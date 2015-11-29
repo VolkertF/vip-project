@@ -224,8 +224,10 @@ public class VLC {
 	public void toggleMuted() {
 		if (isMuted) {
 			isMuted = false;
+			mediaPlayerComponent.setVolume(lastVolume);
 		} else {
 			isMuted = true;
+			mediaPlayerComponent.setVolume(0);
 		}
 	}
 
@@ -240,13 +242,13 @@ public class VLC {
 			} else if (newVolume < MIN_VOLUME) {
 				newVolume = MIN_VOLUME;
 			}
-			if (newVolume != 0) {
+			if (newVolume > MIN_VOLUME) {
 				isMuted = false;
+				lastVolume = newVolume;
 			} else {
 				isMuted = true;
 			}
 			mediaPlayerComponent.setVolume(newVolume);
-			lastVolume = newVolume;
 		}
 	}
 

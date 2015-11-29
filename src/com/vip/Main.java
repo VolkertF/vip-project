@@ -5,7 +5,7 @@ import com.vip.window.VipFrame;
 public class Main {
 
 	/** ms rate on which the timeline slider is updated **/
-	private static final int UPDATE_RATE = 250;
+	private static final int UPDATE_RATE = 100;
 
 	public static void main(String[] args) {
 		final VipFrame f = new VipFrame();

@@ -1,6 +1,5 @@
 package com.vip.window;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Desktop;
@@ -8,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -290,9 +290,13 @@ public class VipFrame extends JFrame {
 		jpnlIntel.setBorder(BorderFactory.createTitledBorder("Intel"));
 		jpnlIntel.setPreferredSize(new Dimension(1200, 150));
 
-		addComponent(0, 0, 1, 2, 0.45, 1.0, jpnlMain, jpnlExplorer, defaultInsets);
-		addComponent(1, 0, 1, 1, 0.65, 0.65, jpnlMain, jpnlMovie, defaultInsets);
-		addComponent(1, 1, 1, 1, 0.65, 0.45, jpnlMain, jpnlIntel, defaultInsets);
+		JPanel tempContainerPanel = new JPanel();
+		tempContainerPanel.setLayout(new GridBagLayout());
+
+		addComponent(0, 0, 1, 2, 0.35, 1.0, jpnlMain, jpnlExplorer, defaultInsets);
+		addComponent(1, 0, 1, 2, 0.65, 1.0, jpnlMain, tempContainerPanel, defaultInsets);
+		addComponent(0, 0, 1, 1, 1, 0.5, tempContainerPanel, jpnlMovie, defaultInsets);
+		addComponent(0, 1, 1, 1, 1, 0.5, tempContainerPanel, jpnlIntel, defaultInsets);
 	}
 
 	/**
@@ -326,7 +330,6 @@ public class VipFrame extends JFrame {
 		dataController.updateList();
 		jlstFileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jlstFileList.setSelectedIndex(0);
-		// jlstFileList.setPreferredSize(new Dimension(200, 650));
 		JTextArea jtaScrollPaneText = new JTextArea(20, 1);
 		JScrollPane scrollPane = new JScrollPane(jtaScrollPaneText);
 		scrollPane.getViewport().setView(jlstFileList);
@@ -343,7 +346,6 @@ public class VipFrame extends JFrame {
 		jcbSearchCategories.setEditable(false);
 		jcbSearchCategories.setSelectedIndex(0);
 		JScrollPane jspSearchCategories = new JScrollPane(jcbSearchCategories);
-		// jspSearchCategories.setPreferredSize(jcbSearchCategories.getSize());
 
 		jbtnSearchExecute = new JButton("Search");
 
@@ -552,9 +554,11 @@ public class VipFrame extends JFrame {
 		return jtfSearch;
 	}
 
-	JSlider jsliderRating;
+	private JSlider jsliderRating;
 
-	JLabel jlabelRating;
+	private JLabel jlabelRating;
+
+	private JTextArea jtaMediaInfo;
 
 	/**
 	 * Create Sub-sub-components in the intel panel for showing information on
@@ -574,7 +578,9 @@ public class VipFrame extends JFrame {
 				JSlider jslider = (JSlider) me.getSource();
 				BasicSliderUI ui = (BasicSliderUI) jslider.getUI();
 				int newRating = ui.valueForXPosition(me.getX());
-				// TODO pass new rating to video object
+				// TODO pass new rating to video object -> get item from list
+		        // (it's just String right now, so there must be some sort of
+		        // workaround for this)
 			}
 		});
 
@@ -587,7 +593,17 @@ public class VipFrame extends JFrame {
 		jpnlIntelNorth.setBorder(BorderFactory.createTitledBorder("Rating"));
 		jlabelRating.setBorder(BorderFactory.createTitledBorder(""));
 
-		addComponent(0, 0, 1, 1, 1, 1, jpnlIntel, jpnlIntelNorth, defaultInsets);
+		jtaMediaInfo = new JTextArea(20, 1);
+		jtaMediaInfo.setEditable(false);
+		jtaMediaInfo.setLineWrap(true);
+		JScrollPane scrollPane = new JScrollPane(jtaMediaInfo);
+		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+		jtaMediaInfo.setText(
+		        "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labor.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labor.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labor.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labor");
+
+		addComponent(0, 0, 1, 1, 1, 0.1, jpnlIntel, jpnlIntelNorth, defaultInsets);
+		addComponent(0, 1, 1, 1, 1, 0.9, jpnlIntel, scrollPane, defaultInsets);
 	}
 
 	/**

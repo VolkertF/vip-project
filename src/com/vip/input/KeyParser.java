@@ -18,15 +18,21 @@ public class KeyParser implements KeyEventDispatcher {
 
 	private VipFrame vipFrame;
 
-	private int NrOfShortcuts = 6;
+	private int NrOfShortcuts = 12;
 
 	// Index-helpers, defines order in config file:
 	private static final int TOGGLE_PLAYBACK = 0;
-	private static final int NEXT_CHAPTER = 1;
-	private static final int PREVIOUS_CHAPTER = 2;
-	private static final int VOLUME_UP = 3;
-	private static final int VOLUME_DOWN = 4;
-	private static final int SEARCH = 5;
+	private static final int NEXT_MOVIE = 1;
+	private static final int PREVIOUS_MOVIE = 2;
+	private static final int NEXT_CHAPTER = 3;
+	private static final int PREVIOUS_CHAPTER = 4;
+	private static final int JUMP_FORWARD = 5;
+	private static final int JUMP_BACKWARD = 6;
+	private static final int MUTE_VOLUME = 7;
+	private static final int VOLUME_UP = 8;
+	private static final int VOLUME_DOWN = 9;
+	private static final int OPEN_PREFERENCES = 10;
+	private static final int SEARCH = 11;
 
 	private int[] shortcutList = new int[NrOfShortcuts];
 	private boolean[] shortcutCTRLmask = new boolean[NrOfShortcuts];
@@ -93,6 +99,34 @@ public class KeyParser implements KeyEventDispatcher {
 			if (currentKey == shortcutList[SEARCH]) {
 				if (isValidInput(ke, SEARCH))
 					vipFrame.get_jtfSearch().requestFocus();
+			}
+			if (currentKey == shortcutList[NEXT_MOVIE]) {
+				if (isValidInput(ke, NEXT_MOVIE)) {
+					// TODO either change to next list Item or load next movie
+					// in custom playback list into the media player
+				}
+			}
+			if (currentKey == shortcutList[PREVIOUS_MOVIE]) {
+				if (isValidInput(ke, PREVIOUS_MOVIE)) {
+					// TODO either change to previous list Item or load previous
+					// movie
+					// in custom playback list into the media player
+				}
+			}
+			if (currentKey == shortcutList[JUMP_FORWARD]) {
+				if (isValidInput(ke, JUMP_FORWARD)) {
+					vlc.jumpForward();
+				}
+			}
+			if (currentKey == shortcutList[JUMP_BACKWARD]) {
+				if (isValidInput(ke, JUMP_BACKWARD)) {
+					vlc.jumpBack();
+				}
+			}
+			if (currentKey == shortcutList[MUTE_VOLUME]) {
+				if (isValidInput(ke, MUTE_VOLUME)) {
+					vlc.toggleMuted();
+				}
 			}
 		}
 		return false;

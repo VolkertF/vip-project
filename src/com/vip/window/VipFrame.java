@@ -430,7 +430,8 @@ public class VipFrame extends JFrame {
 		jbtnVolume.addActionListener(controller.getButtonParser());
 		jbtnVolume.setActionCommand("jbtnVolume");
 
-		JButton jbtnFullscreen = new JButton("Fullscreen");
+		JButton jbtnFullscreen = new JButton("Fullscreen (to come)");
+		jbtnFullscreen.setEnabled(false);
 		jbtnFullscreen.addActionListener(controller.getButtonParser());
 		jbtnFullscreen.setActionCommand("jbtnFullscreen");
 

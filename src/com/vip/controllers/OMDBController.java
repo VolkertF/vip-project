@@ -20,6 +20,10 @@ import com.vip.extractor.*;
  *    ArrayList<String> genreList = getGenreList(movieInfo);
  *    
  * ...which would store each individual genre in genreList.
+ * 
+ * Little Addition:
+ * I made the OMDBController a singleton to be used anywhere.
+ * I think this makes it even more powerful.
  *
  * @TODO: Figure out how to handle cases when a search fails.
  *    
@@ -29,14 +33,26 @@ public class OMDBController {
 	
 	private OMDBConnector connector;
 	private InfoExtractor extractor;
+	private static OMDBController instance;
 	
 	/**
 	 * This method initializes the controller that allows the GUI to
 	 * deal with OMDb.
 	 */
-	public OMDBController() {
+	private OMDBController() {
 		connector = new OMDBConnector();
 		extractor = new InfoExtractor();
+	}
+	
+	/**
+	 * GetInstance method for returning the OMDBController anywhere it is needed.
+	 * @return
+	 */
+	public static OMDBController getInstance() {
+		if(instance == null) {
+			OMDBController.instance = new OMDBController();
+		}
+		return instance;
 	}
 	
 	

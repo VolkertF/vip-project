@@ -1,7 +1,7 @@
 package com.vip.controllers;
 
+import com.vip.attributes.Video;
 import com.vip.database.VideoTable;
-
 
 /**
  * This class handles all actions that the program want to make,
@@ -15,7 +15,6 @@ public class DatabaseController {
 	/**
 	 * Private instance of the database object
 	 */
-	@SuppressWarnings("unused")
 	private VideoTable database;
 	
 	/**
@@ -27,11 +26,20 @@ public class DatabaseController {
 	}
 	
 	public void saveVideos() {
-		/**for(Video temp : movies) {
+		checkVideoFetchedInformation();
+		for(Video temp : SearchSortController.getInstance().getMovies()) {
 			database.saveVideo(temp);
-		}**/
+		}
 		//Doesn't work for videos which has not already fetched imbd-information
 		System.out.println("Saved All!");
+	}
+	
+	public void checkVideoFetchedInformation() {
+		for(Video temp : SearchSortController.getInstance().getMovies()) {
+			if(!temp.isInfoFetched()) {
+				SearchSortController.getInstance().fetchVideoInformation(temp);
+			}
+		}
 	}
 }
 

@@ -3,8 +3,10 @@ package com.vip.controllers;
 import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 
 import com.vip.attributes.Video;
+import com.vip.window.OmdbRequest;
 
 /**
  * This class stores information about the Videos in the program,
@@ -22,8 +24,7 @@ public class SearchSortController {
 	
 	private SearchSortController() {
 		defaultJList = new DefaultListModel<String>();
-		movies = new ArrayList<Video>();
-		
+		movies = new ArrayList<Video>();	
 	}
 	
 	public static SearchSortController getInstance() {
@@ -81,5 +82,13 @@ public class SearchSortController {
 	 */
 	public Video getVideoByIndex(int index) {
 		return movies.get(index);
+	}
+	
+	public void fetchVideoInformation(Video vid) {
+		//System.out.println("Fetching information for " + vid.getTitle());
+		String searchKey = (String) JOptionPane.showInputDialog("Please enter the name of the Video that is searched for!");
+		OmdbRequest window = new OmdbRequest(OMDBController.getInstance().searchApi(searchKey));
+		window.setEnabled(true);
+		window.setVisible(true);
 	}
 }

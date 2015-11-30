@@ -23,9 +23,8 @@ public class VideoTable {
 
 			statement = c.createStatement();
 			String sql = "CREATE TABLE IF NOT EXISTS VIDEO "
-					+ "(ID				INT		PRIMARY KEY		NOT NULL,"
-					+ "	PATH 			STRING					NOT NULL,"
-					+ " TITLE           STRING 					NOT NULL,"
+					+ "(PATH 			STRING		PRIMARY KEY		NOT NULL,"
+					+ " TITLE           STRING 						NOT NULL,"
 					+ " RELEASE_DATE 	DATETIME," 
 					+ " GENRE			STRING,"
 					+ " DIRECTOR        STRING," 
@@ -36,7 +35,8 @@ public class VideoTable {
 					+ " IMDB_RATING		DOUBLE,"
 					+ " PERSONAL_RATING	DOUBLE," 
 					+ " SEASON			INT,"
-					+ " EPISODE			INT)";
+					+ " EPISODE			INT,"
+					+ " INFO_FETCHED	BOOLEAN)";
 
 			statement.executeUpdate(sql);
 
@@ -60,33 +60,40 @@ public class VideoTable {
 			c = DriverManager.getConnection("jdbc:sqlite:test.db");
 			c.setAutoCommit(false);
 
-			String updateString = "	UPDATE VIDEO"
-					+ " SET (PATH,TITLE,RELEASE_DATE,GENRE,DIRECTOR,CAST,WRITERS,"
-					+ "	PLOT,COUNTRY,IMDB_RATING,PERSONAL_RATING,SEASON,EPISODE) "
-					+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)" + " WHERE ID = ?";
+			String updateString = "	INSERT OR REPLACE INTO VIDEO"
+					+ " (PATH,TITLE,RELEASE_DATE,GENRE,DIRECTOR,CAST,WRITERS,"
+					+ "	PLOT,COUNTRY,IMDB_RATING,PERSONAL_RATING,SEASON,EPISODE,INFO_FETCHED) "
+					+ " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 			statement = c.prepareStatement(updateString);
 
 			statement.setString(1, video.getFilePath());
 			statement.setString(2, video.getTitle());
-			statement.setString(3, video.getReleaseDate().toString());
-			statement.setString(4, video.getGenre().toString()
-					.replace("[", "'")
-					.replace("]", "'"));
+			statement.setDate(3, video.getReleaseDate());
+			
+			if(video.getGenre() != null){
+				statement.setString(4, video.getGenre().toString()
+						.replace("[", "'")
+						.replace("]", "'"));
+			}
 			statement.setString(5, video.getDirector());
-			statement.setString(6, video.getCast().toString()
-							.replace("[", "'")
-							.replace("]", "'"));
-			statement.setString(7, video.getWriters().toString()
-							.replace("[", "'")
-							.replace("]", "'"));
+			if(video.getGenre() != null){
+				statement.setString(6, video.getCast().toString()
+								.replace("[", "'")
+								.replace("]", "'"));
+			}
+			if(video.getGenre() != null){
+				statement.setString(7, video.getWriters().toString()
+								.replace("[", "'")
+								.replace("]", "'"));
+			}
 			statement.setString(8, video.getPlotSummary());
 			statement.setString(9, video.getCountry());
 			statement.setDouble(10, video.getImdbRating());
 			statement.setDouble(11, video.getPersonalRating());
 			statement.setInt(12, video.getSeason());
 			statement.setInt(13, video.getEpisode());
-			statement.setInt(14, video.getID());
+			statement.setBoolean(14, video.isInfoFetched());
 
 			statement.execute();
 
@@ -100,7 +107,7 @@ public class VideoTable {
 		System.out.println("Records created successfully");
 	}
 	
-	public void insertVideo(Video video){
+	/*public void insertVideo(Video video){
 		Connection c = null;
 		PreparedStatement statement = null;
 
@@ -144,9 +151,9 @@ public class VideoTable {
 			System.exit(0);
 		}	
 		
-	}
+	}*/
 
-	public void loadVideos() {
+	public ArrayList<Video> loadVideos() {
 
 		Connection c = null;
 		Statement statement = null;
@@ -164,10 +171,9 @@ public class VideoTable {
 			
 			while (rs.next()) {
 				Video video = new Video();
-				video.setID(rs.getInt("ID"));
 				video.setFilePath(rs.getString("PATH"));
 				video.setTitle(rs.getString("TITLE"));
-				video.setReleaseDate(DateTime.parse(rs.getString("RELEASE_DATE")));
+				video.setReleaseDate(rs.getDate("RELEASE_DATE"));
 				video.setGenre(buildArrayList(rs.getString("GENRE")));
 				video.setDirector(rs.getString("DIRECTOR"));
 				video.setCast(buildArrayList(rs.getString("CAST")));
@@ -185,22 +191,30 @@ public class VideoTable {
 			rs.close();
 			statement.close();
 			c.close();
+			
+			
 		} catch (Exception e) {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 			System.exit(0);
 		}
 		System.out.println("Operation done successfully");
+		return videoList;
 
 	}
 
 	private ArrayList<String> buildArrayList(String string) {
 		
-		String[] array = string.split(",");
 		
-		ArrayList<String> list = new ArrayList<String>(Arrays.asList(array));
-		
-		System.out.println(list);
-		
-		return list;
+		if(string != null){
+			String[] array = string.split(",");
+			
+			ArrayList<String> list = new ArrayList<String>(Arrays.asList(array));
+			
+			System.out.println(list);
+			
+			return list;
+		}
+		return null;
 	}
+	
 }

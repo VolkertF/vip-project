@@ -1,5 +1,6 @@
 package com.vip.attributes;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -7,13 +8,12 @@ import org.joda.time.DateTime;
 
 public class Video {
 	
-	private int ID;
 
 	private String filePath;
 	
 	private String title;
 	
-	private DateTime releaseDate;
+	private Date releaseDate;
 	
 	private ArrayList<String> genre;
 	
@@ -44,15 +44,7 @@ public class Video {
 		this.infoFetched = false;
 	}
 	
-	public Video() {}
-	
-	public int getID() {
-		return ID;
-	}
-
-	public void setID(int iD) {
-		ID = iD;
-	}
+	public Video(){ }
 
 	public String getFilePath() {
 		return filePath;
@@ -70,12 +62,12 @@ public class Video {
 		this.title = title;
 	}
 
-	public DateTime getReleaseDate() {
+	public Date getReleaseDate() {
 		return releaseDate;
 	}
 
-	public void setReleaseDate(DateTime releaseDate) {
-		this.releaseDate = releaseDate;
+	public void setReleaseDate(Date date) {
+		this.releaseDate = date;
 	}
 
 
@@ -165,5 +157,27 @@ public class Video {
 	
 	public void setInfoFetched(boolean infoFetched) {
 		this.infoFetched = infoFetched;
+	}
+	
+	public String toString(){
+		
+		String string = ""
+				+ "\nFile Path: " + this.getFilePath()
+				+ "\nTitle: " + this.getTitle()
+				+ "\nRelease Date: " + this.getReleaseDate()
+				+ "\nGenre: " + this.getGenre()
+				+ "\nDirector: " + this.getDirector()
+				+ "\nCast: " + this.getCast()
+				+ "\nWriters: " + this.getWriters()
+				+ "\nPlot Summary: " + this.getPlotSummary()
+				+ "\nCountry: " + this.getCountry()
+				+ "\nIMDb Rating: " + this.getImdbRating()
+				+ "\nPersonal Rating: " + this.getPersonalRating()
+				+ "\nSeason: " + this.getSeason()
+				+ "\nEpisode: " + this.getEpisode()
+				+ "\nInfo Fetched: " + this.isInfoFetched();
+		
+		
+		return string;
 	}
 }

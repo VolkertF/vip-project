@@ -27,6 +27,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -383,6 +384,39 @@ public class VipFrame extends JFrame {
 	 */
 	private JSlider jsliderMovieProgress;
 
+	private boolean isFullscreen = false;
+
+	private FullscreenDialog fullscreenDialog;
+
+	public boolean isFullscreen() {
+		return isFullscreen;
+	}
+
+	public void setFullscreen(boolean newStatus) {
+		isFullscreen = newStatus;
+	}
+
+	public FullscreenDialog getFullscreen() {
+		return fullscreenDialog;
+	}
+
+	public void createFullscreen() {
+		if (fullscreenDialog != null) {
+			fullscreenDialog = new FullscreenDialog(this);
+		} else {
+			fullscreenDialog.requestFocus();
+		}
+
+	}
+
+	public void disposeFullscreen() {
+		if (fullscreenDialog != null) {
+			fullscreenDialog.dispose();
+			fullscreenDialog = null;
+			this.requestFocus();
+		}
+	}
+
 	/**
 	 * Create Sub-sub- components in the movie panel including the JVLC plugin
 	 * to play movies Maybe also a section to control the movie (play, pause,
@@ -392,7 +426,6 @@ public class VipFrame extends JFrame {
 	 */
 	private void buildMovieGUI() {
 		addComponent(0, 0, 1, 1, 1.0, 0.6, jpnlMovie, controller.getVLC().getCanvas(), defaultInsets);
-		
 
 		JPanel jpnlMovieControls = new JPanel();
 		jpnlMovieControls.setLayout(new GridBagLayout());
@@ -439,8 +472,7 @@ public class VipFrame extends JFrame {
 		jbtnVolume.addActionListener(controller.getButtonParser());
 		jbtnVolume.setActionCommand("jbtnVolume");
 
-		JButton jbtnFullscreen = new JButton("Fullscreen (to come)");
-		jbtnFullscreen.setEnabled(false);
+		JButton jbtnFullscreen = new JButton("Fullscreen");
 		jbtnFullscreen.addActionListener(controller.getButtonParser());
 		jbtnFullscreen.setActionCommand("jbtnFullscreen");
 

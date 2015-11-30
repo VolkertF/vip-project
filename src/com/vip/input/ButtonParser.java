@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import com.vip.media.VLC;
+import com.vip.window.VipFrame;
 
 /**
  * Class is responsible for ActionCommand parsing and delegating to the specific
@@ -11,13 +12,15 @@ import com.vip.media.VLC;
  */
 public class ButtonParser implements ActionListener {
 
+	private VipFrame vipFrame;
 	private VLC vlc;
 
 	/**
 	 * 
 	 */
-	public ButtonParser(VLC vlcInstance) {
+	public ButtonParser(VLC vlcInstance, VipFrame vipFrameInstance) {
 		vlc = vlcInstance;
+		vipFrame = vipFrameInstance;
 	}
 
 	@Override
@@ -52,6 +55,7 @@ public class ButtonParser implements ActionListener {
 				vlc.getMediaPlayer().setVolume(0);
 			}
 		}
-
+		if ("jbtnFullscreen".equals(action))
+			vipFrame.getController().toggleFullscreen();
 	}
 }

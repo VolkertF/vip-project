@@ -18,7 +18,7 @@ public class KeyParser implements KeyEventDispatcher {
 
 	private VipFrame vipFrame;
 
-	private int NrOfShortcuts = 12;
+	private int NrOfShortcuts = 13;
 
 	// Index-helpers, defines order in config file:
 	private static final int TOGGLE_PLAYBACK = 0;
@@ -32,7 +32,8 @@ public class KeyParser implements KeyEventDispatcher {
 	private static final int VOLUME_UP = 8;
 	private static final int VOLUME_DOWN = 9;
 	private static final int OPEN_PREFERENCES = 10;
-	private static final int SEARCH = 11;
+	private static final int FULLSCREEN_TOGGLE = 11;
+	private static final int SEARCH = 12;
 
 	private int[] shortcutList = new int[NrOfShortcuts];
 	private boolean[] shortcutCTRLmask = new boolean[NrOfShortcuts];
@@ -74,7 +75,8 @@ public class KeyParser implements KeyEventDispatcher {
 		int currentKey = ke.getKeyCode();
 		// When no textfield is focused and the key is pressed, input will be
 		// processed
-		if (keyState == isPressed && !(ke.getSource() instanceof JTextField) && vipFrame.isFocused()) {
+		if (keyState == isPressed && !(ke.getSource() instanceof JTextField)
+		        && (vipFrame.isFocused() || (vipFrame.isFullscreen()))) {
 			VLC vlc = vipFrame.getController().getVLC();
 			if (currentKey == shortcutList[TOGGLE_PLAYBACK]) {
 				if (isValidInput(ke, TOGGLE_PLAYBACK))
@@ -126,6 +128,11 @@ public class KeyParser implements KeyEventDispatcher {
 			if (currentKey == shortcutList[MUTE_VOLUME]) {
 				if (isValidInput(ke, MUTE_VOLUME)) {
 					vlc.toggleMuted();
+				}
+			}
+			if (currentKey == shortcutList[FULLSCREEN_TOGGLE]) {
+				if (isValidInput(ke, FULLSCREEN_TOGGLE)) {
+					vipFrame.getController().toggleFullscreen();
 				}
 			}
 		}

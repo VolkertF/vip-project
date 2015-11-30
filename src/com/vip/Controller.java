@@ -1,5 +1,6 @@
 package com.vip;
 
+import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
@@ -51,7 +52,7 @@ public class Controller {
 
 	public Controller(VipFrame newVipFrame) {
 		vipFrame = newVipFrame;
-		buttonParser = new ButtonParser(vlcInstance);
+		buttonParser = new ButtonParser(vlcInstance, vipFrame);
 	}
 
 	/**
@@ -162,6 +163,7 @@ public class Controller {
 		pw.println("VOLUME_UP=NUM_PLUS");
 		pw.println("VOLUME_DOWN=NUM_MINUS");
 		pw.println("OPEN_PREFERENCES=CTRL P");
+		pw.println("FULLSCREEN_TOGGLE=F");
 		pw.println("SEARCH=CTRL F");
 		pw.println();
 
@@ -328,6 +330,22 @@ public class Controller {
 
 	public void setVLC(VLC vlcInstance) {
 		this.vlcInstance = vlcInstance;
+	}
+
+	public void toggleFullscreen() {
+
+		if (vipFrame.isFullscreen()) {
+			System.out.println("Disposed Fullscreen!");
+			vipFrame.disposeFullscreen();
+		} else {
+			System.out.println("Created Fullscreen!");
+			vipFrame.createFullscreen();
+		}
+		vipFrame.setFullscreen(!vipFrame.isFullscreen());
+	}
+
+	public KeyEventDispatcher getKeyParser() {
+		return keyParser;
 	}
 
 }

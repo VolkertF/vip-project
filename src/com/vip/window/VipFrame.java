@@ -7,7 +7,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -52,6 +51,7 @@ import javax.swing.plaf.basic.BasicSliderUI;
 import com.vip.Controller;
 import com.vip.attributes.Video;
 import com.vip.controllers.DatabaseController;
+import com.vip.controllers.SearchSortController;
 import com.vip.media.VLC;
 
 @SuppressWarnings("serial")
@@ -149,6 +149,11 @@ public class VipFrame extends JFrame {
 	 * Controller for saving the movies into a database
 	 */
 	private DatabaseController dataController = new DatabaseController();
+	
+	/**
+	 * Controller for searching and sorting videos
+	 */
+	private SearchSortController ssController = SearchSortController.getInstance();
 
 	/**
 	 * Getter for controller class
@@ -322,8 +327,8 @@ public class VipFrame extends JFrame {
 	 * Create Sub-sub-panels in the explorer panel
 	 */
 	private void buildExplorerGUI() {
-		jlstFileList = new JList<String>(dataController.getList());
-		dataController.updateList();
+		jlstFileList = new JList<String>(ssController.getList());
+		ssController.updateList();
 		jlstFileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jlstFileList.setSelectedIndex(0);
 		JTextArea jtaScrollPaneText = new JTextArea(20, 1);
@@ -341,7 +346,7 @@ public class VipFrame extends JFrame {
 		jcbSearchCategories = new JComboBox<String>(searchCategories);
 		jcbSearchCategories.setEditable(false);
 		jcbSearchCategories.setSelectedIndex(0);
-		JScrollPane jspSearchCategories = new JScrollPane(jcbSearchCategories);
+		//JScrollPane jspSearchCategories = new JScrollPane(jcbSearchCategories);
 
 		jbtnSearchExecute = new JButton("Search");
 
@@ -763,8 +768,8 @@ public class VipFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String path = getFilePath(new FileNameExtensionFilter("Video Files", movieExtensions));
-				dataController.addMovieToList(new Video(path));
-				dataController.updateList();
+				ssController.addMovieToList(new Video(path));
+				ssController.updateList();
 			}
 		});
 
@@ -806,7 +811,7 @@ public class VipFrame extends JFrame {
 			public void mouseClicked(MouseEvent ev) {
 				if (ev.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(ev)) {
 					controller.getVLC()
-		                    .loadMedia(dataController.getVideoByIndex(jlstFileList.getSelectedIndex()).getFilePath());
+		                    .loadMedia(ssController.getVideoByIndex(jlstFileList.getSelectedIndex()).getFilePath());
 					controller.getVLC().toggleMediaPlayback();
 				}
 			}
@@ -846,8 +851,8 @@ public class VipFrame extends JFrame {
 			e.printStackTrace();
 		}
 		for (int i = 0; i < fileList.size(); i++) {
-			dataController.addMovieToList(new Video(fileList.get(i).getAbsolutePath()));
+			ssController.addMovieToList(new Video(fileList.get(i).getAbsolutePath()));
 		}
-		dataController.updateList();
+		ssController.updateList();
 	}
 }

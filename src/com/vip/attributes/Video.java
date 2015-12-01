@@ -4,8 +4,6 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-import org.joda.time.DateTime;
-
 public class Video {
 	
 

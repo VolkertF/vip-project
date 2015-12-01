@@ -51,6 +51,7 @@ import javax.swing.plaf.basic.BasicSliderUI;
 import com.vip.Controller;
 import com.vip.attributes.Video;
 import com.vip.controllers.DatabaseController;
+import com.vip.controllers.OMDBController;
 import com.vip.controllers.SearchSortController;
 import com.vip.media.VLC;
 
@@ -61,6 +62,9 @@ public class VipFrame extends JFrame {
 	 */
 	public VipFrame() {
 		super("VipFrame");
+		OmdbRequest testReq = new OmdbRequest(OMDBController.getInstance().searchApi("Star Wars"));
+		testReq.setVisible(true);
+		testReq.setEnabled(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setMinimumSize(new Dimension(1280, 720));
 		defaultInsets = new Insets(2, 2, 2, 2);

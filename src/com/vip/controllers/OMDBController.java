@@ -221,6 +221,9 @@ public class OMDBController {
 	/**
 	 * This method extracts the URL leading to a poster from a general media 
 	 * search object.
+	 * Edit: Fixed a little issue in which the method return the URL with
+	 * (") in the front and the back which make the URL Reader unable to
+	 * read the file properly
 	 * 
 	 * @param result
 	 * 		The MediaSearchResult object we want info from
@@ -228,7 +231,9 @@ public class OMDBController {
 	 * 		The URL to the poster for this item
 	 */
 	public String getMediaResultPoster(MediaSearchResult mediaResult) {
-		return mediaResult.getPoster();
+		String poster = mediaResult.getPoster();
+		String[] posterarray = poster.split("\"");		
+		return posterarray[1];
 	}
 	
 	

@@ -1,18 +1,11 @@
 package com.vip.window;
 
-import java.awt.BorderLayout;
-import java.awt.image.BufferedImage;
-import java.net.URL;
+import java.awt.Dimension;
 import java.util.ArrayList;
 
-import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-
-import com.vip.controllers.OMDBController;
 import com.vip.extractor.MediaSearchResult;
 import com.vip.extractor.SearchResult;
 
@@ -22,26 +15,24 @@ public class OmdbRequest extends JFrame {
 	
 	public OmdbRequest(ArrayList<SearchResult> results) {
 		super("Search-Results");
-		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		buildPanels();
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.searchResult = switchArrayList(results);
+		this.setPreferredSize(new Dimension(600, 400));
+		buildPanels();
+		this.pack();
 	}
 	
 	private void buildPanels() {
-		JPanel panel = new JPanel(new BoxLayout(rootPane, BoxLayout.PAGE_AXIS));
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 		for(MediaSearchResult temp : searchResult) {
 			try {
-				BufferedImage image = ImageIO.read(new URL(OMDBController.getInstance().getMediaResultPoster(temp)));
-				JPanel singleVideoPanel = new JPanel(new BorderLayout());
-				JLabel pictureLabel = new JLabel(new ImageIcon(image));
-				panel.add(singleVideoPanel);
-				singleVideoPanel.add(pictureLabel);
-				JLabel informationLabel = new JLabel();
-				informationLabel.setText(("Title of the Video: " + temp.getTitle() + "\nYear of Release: " + temp.getYear()));
+				panel.add(new SingleVideoPanel(temp));
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
 		}
+		this.getContentPane().add(panel);
 	}
 	
 	private ArrayList<MediaSearchResult> switchArrayList(ArrayList<SearchResult> searchResults) {

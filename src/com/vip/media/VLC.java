@@ -12,6 +12,8 @@ import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
  */
 public class VLC {
 
+	private boolean vlcFound = false;
+
 	/** Rate of volume change when pressing a shortcut **/
 	private static final int VOLUME_STEPS = 10;
 
@@ -48,19 +50,21 @@ public class VLC {
 	 * Initializes vlc plugin,finds vlc installation, sets canvas up.
 	 */
 	public VLC() {
-		boolean found = new NativeDiscovery().discover();
+		vlcFound = new NativeDiscovery().discover();
 		// If VLC cannot be found, we will inform the user of manual
 		// possibilities
-		if (!found) {
-			// TODO VLC not found, open JDialog and give hint to manually add
-			// the path
-		}
 
 		canvas = new Canvas();
 		canvas.setBackground(Color.BLACK);
-		mediaPlayerFactory = new MediaPlayerFactory();
-		mediaPlayerComponent = mediaPlayerFactory.newEmbeddedMediaPlayer();
-		mediaPlayerComponent.setVideoSurface(mediaPlayerFactory.newVideoSurface(canvas));
+
+		if (vlcFound) {
+			mediaPlayerFactory = new MediaPlayerFactory();
+			mediaPlayerComponent = mediaPlayerFactory.newEmbeddedMediaPlayer();
+			mediaPlayerComponent.setVideoSurface(mediaPlayerFactory.newVideoSurface(canvas));
+		} else {
+			// TODO VLC not found, open JDialog and give hint to manually add
+			// the path
+		}
 	}
 
 	/**
@@ -71,6 +75,10 @@ public class VLC {
 	 */
 	public boolean shouldInitMedia() {
 		return initMedia;
+	}
+
+	public boolean isVLCInstalled() {
+		return vlcFound;
 	}
 
 	public void setMediaInitState(boolean newInit) {

@@ -154,7 +154,7 @@ public class VipFrame extends JFrame {
 	 * Controller for saving the movies into a database
 	 */
 	private DatabaseController dataController = new DatabaseController();
-	
+
 	/**
 	 * Controller for searching and sorting videos
 	 */
@@ -351,7 +351,8 @@ public class VipFrame extends JFrame {
 		jcbSearchCategories = new JComboBox<String>(searchCategories);
 		jcbSearchCategories.setEditable(false);
 		jcbSearchCategories.setSelectedIndex(0);
-		//JScrollPane jspSearchCategories = new JScrollPane(jcbSearchCategories);
+		// JScrollPane jspSearchCategories = new
+		// JScrollPane(jcbSearchCategories);
 
 		jbtnSearchExecute = new JButton("Search");
 
@@ -490,6 +491,17 @@ public class VipFrame extends JFrame {
 		jlabelMovieTimer = new JLabel();
 		jlabelMovieTimer.setHorizontalAlignment(SwingConstants.CENTER);
 		jlabelMovieTimer.setText("00:00:00 / 00:00:00   0%");
+
+		if (!controller.getVLC().isVLCInstalled()) {
+			jbtnPlayMovie.setEnabled(false);
+			jbtnStopMovie.setEnabled(false);
+			jbtnNextChapter.setEnabled(false);
+			jbtnPreviousChapter.setEnabled(false);
+			jbtnNextMovie.setEnabled(false);
+			jbtnPreviousMovie.setEnabled(false);
+			jbtnFullscreen.setEnabled(false);
+			jbtnVolume.setEnabled(false);
+		}
 
 		addComponent(0, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnPlayMovie, defaultInsets);
 		addComponent(1, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnStopMovie, defaultInsets);

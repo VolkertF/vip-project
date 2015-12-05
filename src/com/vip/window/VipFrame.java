@@ -427,6 +427,8 @@ public class VipFrame extends JFrame {
 	 */
 	private void buildMovieGUI() {
 		addComponent(0, 0, 1, 1, 1.0, 0.6, jpnlMovie, controller.getVLC().getCanvas(), defaultInsets);
+		// controller.getVLC().getCanvas().setMaximumSize(new
+		// Dimension(jpnlMovie.getWidth(),jpnlMovie.getHeight()));
 
 		JPanel jpnlMovieControls = new JPanel();
 		jpnlMovieControls.setLayout(new GridBagLayout());

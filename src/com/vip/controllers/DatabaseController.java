@@ -1,5 +1,7 @@
 package com.vip.controllers;
 
+import java.util.ArrayList;
+
 import com.vip.attributes.Video;
 import com.vip.database.VideoTable;
 
@@ -25,13 +27,16 @@ public class DatabaseController {
 		database.createTable();
 	}
 	
-	public void saveVideos() {
-		checkVideoFetchedInformation();
-		for(Video temp : SearchSortController.getInstance().getMovies()) {
-			database.saveVideo(temp);
+	public void save(Video video){
+		
+		database.saveVideo(video);
+	}
+	
+	public void saveAll(ArrayList<Video> videos){
+		
+		for(Video video:videos){
+			database.saveVideo(video);
 		}
-		//Doesn't work for videos which has not already fetched imbd-information
-		System.out.println("Saved All!");
 	}
 	
 	public void checkVideoFetchedInformation() {
@@ -41,6 +46,7 @@ public class DatabaseController {
 			}
 		}
 	}
+	
 }
 
 

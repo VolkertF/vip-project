@@ -63,7 +63,8 @@ public class VipFrame extends JFrame {
 	 */
 	public VipFrame() {
 		super("VipFrame");
-		OmdbRequest testReq = new OmdbRequest(OMDBController.getInstance().searchApi("Star Wars"));
+		OmdbRequest testReq = new OmdbRequest(OMDBController.getInstance()
+				.searchApi("Star Wars"));
 		testReq.setVisible(true);
 		testReq.setEnabled(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -88,7 +89,8 @@ public class VipFrame extends JFrame {
 	 * determined or has to be declared by the user
 	 */
 	private void selectRootFolder() {
-		JOptionPane.showMessageDialog(this, "You have to select a root folder for you video collection!");
+		JOptionPane.showMessageDialog(this,
+				"You have to select a root folder for you video collection!");
 		rootFolderPath = getFilePath(2);
 	}
 
@@ -96,9 +98,8 @@ public class VipFrame extends JFrame {
 	 * Method for getting the path of a selected folder
 	 * 
 	 * @return Absolute path to the file
-	 * @param int
-	 *            type Integer for choosing a different selection type of the
-	 *            open dialog
+	 * @param int type Integer for choosing a different selection type of the
+	 *        open dialog
 	 */
 	private String getFilePath(int type) {
 		JFileChooser chooser = new JFileChooser();
@@ -138,7 +139,8 @@ public class VipFrame extends JFrame {
 	/**
 	 * String Array for filtering the right files
 	 */
-	private final String[] movieExtensions = { "avi", "mp4", "webm", "flv", "mkv", "ogg", "mov", "wmv", "m4v" };
+	private final String[] movieExtensions = { "avi", "mp4", "webm", "flv",
+			"mkv", "ogg", "mov", "wmv", "m4v" };
 
 	/**
 	 * String for the root-folder path
@@ -158,7 +160,8 @@ public class VipFrame extends JFrame {
 	/**
 	 * Controller for searching and sorting videos
 	 */
-	private SearchSortController ssController = SearchSortController.getInstance();
+	private SearchSortController ssController = SearchSortController
+			.getInstance();
 
 	/**
 	 * Getter for controller class
@@ -222,8 +225,9 @@ public class VipFrame extends JFrame {
 	 * @param insets
 	 *            Distances round the component that is added
 	 */
-	private static void addComponent(int x, int y, int width, int height, double weightx, double weighty,
-	        Container cont, Component comp, Insets insets) {
+	private static void addComponent(int x, int y, int width, int height,
+			double weightx, double weighty, Container cont, Component comp,
+			Insets insets) {
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.gridx = x;
@@ -247,7 +251,8 @@ public class VipFrame extends JFrame {
 	 *            The URL that should open when you click the MenuItem
 	 * @throws URISyntaxException
 	 */
-	private static void addURLActionListenerToMenuBarItem(JMenuItem menuItem, final URI url) throws URISyntaxException {
+	private static void addURLActionListenerToMenuBarItem(JMenuItem menuItem,
+			final URI url) throws URISyntaxException {
 		ActionListener al = new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
@@ -300,7 +305,8 @@ public class VipFrame extends JFrame {
 		jpnlIntel.setBorder(BorderFactory.createTitledBorder("Intel"));
 		jpnlIntel.setPreferredSize(new Dimension(1200, 150));
 
-		addComponent(0, 0, 1, 2, 0.35, 1.0, jpnlMain, jpnlExplorer, defaultInsets);
+		addComponent(0, 0, 1, 2, 0.35, 1.0, jpnlMain, jpnlExplorer,
+				defaultInsets);
 		addComponent(1, 0, 1, 1, 0.65, 0.5, jpnlMain, jpnlMovie, defaultInsets);
 		addComponent(1, 1, 1, 1, 0.65, 0.5, jpnlMain, jpnlIntel, defaultInsets);
 	}
@@ -333,7 +339,7 @@ public class VipFrame extends JFrame {
 	 */
 	private void buildExplorerGUI() {
 		jlstFileList = new JList<String>(ssController.getList());
-		ssController.updateList();
+		ssController.updateList(ssController.getMovies());
 		jlstFileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jlstFileList.setSelectedIndex(0);
 		JTextArea jtaScrollPaneText = new JTextArea(20, 1);
@@ -344,9 +350,9 @@ public class VipFrame extends JFrame {
 		jtfSearch = new JTextField(20);
 
 		String[] searchCategories = { "By Length, increasing", // Index 0
-		        "By length, decreasing", // Index 1
-		        "By rating, increasing", // Index 2
-		        "By rating, decreasing", }; // Index 3
+				"By length, decreasing", // Index 1
+				"By rating, increasing", // Index 2
+				"By rating, decreasing", }; // Index 3
 
 		jcbSearchCategories = new JComboBox<String>(searchCategories);
 		jcbSearchCategories.setEditable(false);
@@ -358,12 +364,17 @@ public class VipFrame extends JFrame {
 
 		JPanel jpnlSearchControls = new JPanel();
 		jpnlSearchControls.setLayout(new GridBagLayout());
-		addComponent(0, 0, 2, 1, 1.0, 0.1, jpnlSearchControls, jtfSearch, defaultInsets);
-		addComponent(0, 2, 1, 1, 0.5, 0.1, jpnlSearchControls, jcbSearchCategories, defaultInsets);
-		addComponent(1, 2, 1, 1, 0.5, 0.1, jpnlSearchControls, jbtnSearchExecute, defaultInsets);
+		addComponent(0, 0, 2, 1, 1.0, 0.1, jpnlSearchControls, jtfSearch,
+				defaultInsets);
+		addComponent(0, 2, 1, 1, 0.5, 0.1, jpnlSearchControls,
+				jcbSearchCategories, defaultInsets);
+		addComponent(1, 2, 1, 1, 0.5, 0.1, jpnlSearchControls,
+				jbtnSearchExecute, defaultInsets);
 
-		addComponent(0, 0, 1, 1, 1, 0.05, jpnlExplorer, jpnlSearchControls, defaultInsets);
-		addComponent(0, 1, 1, 1, 1, 0.95, jpnlExplorer, scrollPane, defaultInsets);
+		addComponent(0, 0, 1, 1, 1, 0.05, jpnlExplorer, jpnlSearchControls,
+				defaultInsets);
+		addComponent(0, 1, 1, 1, 1, 0.95, jpnlExplorer, scrollPane,
+				defaultInsets);
 
 	}
 
@@ -426,13 +437,15 @@ public class VipFrame extends JFrame {
 	 * @author Fabian Volkert
 	 */
 	private void buildMovieGUI() {
-		addComponent(0, 0, 1, 1, 1.0, 0.6, jpnlMovie, controller.getVLC().getCanvas(), defaultInsets);
+		addComponent(0, 0, 1, 1, 1.0, 0.6, jpnlMovie, controller.getVLC()
+				.getCanvas(), defaultInsets);
 		// controller.getVLC().getCanvas().setMaximumSize(new
 		// Dimension(jpnlMovie.getWidth(),jpnlMovie.getHeight()));
 
 		JPanel jpnlMovieControls = new JPanel();
 		jpnlMovieControls.setLayout(new GridBagLayout());
-		addComponent(0, 1, 1, 1, 1.0, 0.4, jpnlMovie, jpnlMovieControls, defaultInsets);
+		addComponent(0, 1, 1, 1, 1.0, 0.4, jpnlMovie, jpnlMovieControls,
+				defaultInsets);
 
 		// jpnlMovie.add(jpnlMovieControls, BorderLayout.SOUTH);
 
@@ -460,8 +473,9 @@ public class VipFrame extends JFrame {
 		jbtnNextChapter.addActionListener(controller.getButtonParser());
 		jbtnNextChapter.setActionCommand("jbtnJumpForward");
 
-		jsliderVolume = new JSlider(JSlider.HORIZONTAL, VLC.getMinVolume(), VLC.getMaxVolume(),
-		        ((VLC.getMinVolume() + VLC.getMaxVolume()) / 2));
+		jsliderVolume = new JSlider(JSlider.HORIZONTAL, VLC.getMinVolume(),
+				VLC.getMaxVolume(),
+				((VLC.getMinVolume() + VLC.getMaxVolume()) / 2));
 		jsliderVolume.addMouseListener(new MouseAdapter() {
 			public void mouseReleased(MouseEvent me) {
 				JSlider jslider = (JSlider) me.getSource();
@@ -471,7 +485,8 @@ public class VipFrame extends JFrame {
 			}
 		});
 
-		jbtnVolume = new JButton(Integer.toString(((VLC.getMinVolume() + VLC.getMaxVolume()) / 2)) + "%");
+		jbtnVolume = new JButton(Integer.toString(((VLC.getMinVolume() + VLC
+				.getMaxVolume()) / 2)) + "%");
 		jbtnVolume.addActionListener(controller.getButtonParser());
 		jbtnVolume.setActionCommand("jbtnVolume");
 
@@ -505,21 +520,33 @@ public class VipFrame extends JFrame {
 			jbtnVolume.setEnabled(false);
 		}
 
-		addComponent(0, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnPlayMovie, defaultInsets);
-		addComponent(1, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnStopMovie, defaultInsets);
-		addComponent(2, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnPreviousMovie, defaultInsets);
-		addComponent(3, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnNextMovie, defaultInsets);
-		addComponent(4, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnPreviousChapter, defaultInsets);
-		addComponent(5, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnNextChapter, defaultInsets);
-		addComponent(6, 1, 2, 1, 1, 1, jpnlMovieControls, jsliderVolume, defaultInsets);
-		addComponent(8, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnVolume, defaultInsets);
-		addComponent(9, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnFullscreen, defaultInsets);
-		addComponent(0, 0, 9, 1, 1, 1, jpnlMovieControls, jsliderMovieProgress, defaultInsets);
-		addComponent(9, 0, 1, 1, 0, 1, jpnlMovieControls, jlabelMovieTimer, defaultInsets);
+		addComponent(0, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnPlayMovie,
+				defaultInsets);
+		addComponent(1, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnStopMovie,
+				defaultInsets);
+		addComponent(2, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnPreviousMovie,
+				defaultInsets);
+		addComponent(3, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnNextMovie,
+				defaultInsets);
+		addComponent(4, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnPreviousChapter,
+				defaultInsets);
+		addComponent(5, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnNextChapter,
+				defaultInsets);
+		addComponent(6, 1, 2, 1, 1, 1, jpnlMovieControls, jsliderVolume,
+				defaultInsets);
+		addComponent(8, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnVolume,
+				defaultInsets);
+		addComponent(9, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnFullscreen,
+				defaultInsets);
+		addComponent(0, 0, 9, 1, 1, 1, jpnlMovieControls, jsliderMovieProgress,
+				defaultInsets);
+		addComponent(9, 0, 1, 1, 0, 1, jpnlMovieControls, jlabelMovieTimer,
+				defaultInsets);
 	}
 
 	private void initProgressBar() {
-		int movieLength = (int) controller.getVLC().getMediaPlayer().getLength();
+		int movieLength = (int) controller.getVLC().getMediaPlayer()
+				.getLength();
 		jsliderMovieProgress.setMaximum(movieLength);
 		jsliderMovieProgress.setMinimum(0);
 		revalidate();
@@ -546,7 +573,8 @@ public class VipFrame extends JFrame {
 				updateVolumeSlider();
 				updateRatingSlider();
 
-				int currentMovieTime = (int) controller.getVLC().getMediaPlayer().getTime();
+				int currentMovieTime = (int) controller.getVLC()
+						.getMediaPlayer().getTime();
 				jsliderMovieProgress.setValue(currentMovieTime);
 			}
 		} else {
@@ -558,8 +586,9 @@ public class VipFrame extends JFrame {
 	 * TODO @author Fabian Volkert
 	 */
 	private void updateTimelineLabels() {
-		Double procentualProgress = ((double) controller.getVLC().getMediaPlayer().getTime()
-		        / controller.getVLC().getMediaPlayer().getLength()) * 100;
+		Double procentualProgress = ((double) controller.getVLC()
+				.getMediaPlayer().getTime() / controller.getVLC()
+				.getMediaPlayer().getLength()) * 100;
 		// is newTime is not a valid Number, we display a default Text
 		int hoursPassed = 0;
 		int minutesPassed = 0;
@@ -575,15 +604,19 @@ public class VipFrame extends JFrame {
 		secondsTotal = (int) (controller.getVLC().getMediaPlayer().getLength() / 1000 % 60);
 
 		if (procentualProgress.isNaN() || procentualProgress.isInfinite()) {
-			String newLabelText = String.format("%02d:%02d:%02d / %02d:%02d:%02d   000,0", hoursPassed, minutesPassed,
-			        secondsPassed, hoursTotal, minutesTotal, secondsTotal, procentualProgress);
+			String newLabelText = String.format(
+					"%02d:%02d:%02d / %02d:%02d:%02d   000,0", hoursPassed,
+					minutesPassed, secondsPassed, hoursTotal, minutesTotal,
+					secondsTotal, procentualProgress);
 			jlabelMovieTimer.setText(newLabelText + "%");
 		} else {
 			if (procentualProgress > 100) {
 				procentualProgress = 100.0;
 			}
-			String newLabelText = String.format("%02d:%02d:%02d / %02d:%02d:%02d   %4.1f", hoursPassed, minutesPassed,
-			        secondsPassed, hoursTotal, minutesTotal, secondsTotal, procentualProgress);
+			String newLabelText = String.format(
+					"%02d:%02d:%02d / %02d:%02d:%02d   %4.1f", hoursPassed,
+					minutesPassed, secondsPassed, hoursTotal, minutesTotal,
+					secondsTotal, procentualProgress);
 			jlabelMovieTimer.setText(newLabelText + "%");
 		}
 	}
@@ -592,12 +625,15 @@ public class VipFrame extends JFrame {
 	 * TODO @author Fabian Volkert
 	 */
 	public void updateVolumeSlider() {
-		jbtnVolume.setText(controller.getVLC().getMediaPlayer().getVolume() + "%");
-		jsliderVolume.setValue(controller.getVLC().getMediaPlayer().getVolume());
+		jbtnVolume.setText(controller.getVLC().getMediaPlayer().getVolume()
+				+ "%");
+		jsliderVolume
+				.setValue(controller.getVLC().getMediaPlayer().getVolume());
 	}
 
 	public void updateRatingSlider() {
-		jlabelRating.setText(Double.toString(((double) jsliderRating.getValue() / 2.0)));
+		jlabelRating
+				.setText(Double.toString(((double) jsliderRating.getValue() / 2.0)));
 	}
 
 	/**
@@ -632,16 +668,18 @@ public class VipFrame extends JFrame {
 				BasicSliderUI ui = (BasicSliderUI) jslider.getUI();
 				int newRating = ui.valueForXPosition(me.getX());
 				// TODO pass new rating to video object -> get item from list
-		        // (it's just String right now, so there must be some sort of
-		        // workaround for this)
+				// (it's just String right now, so there must be some sort of
+				// workaround for this)
 			}
 		});
 
 		jlabelRating = new JLabel(Integer.toString(jsliderRating.getValue()));
 		jlabelRating.setHorizontalAlignment(SwingConstants.CENTER);
 
-		addComponent(0, 0, 9, 1, 0.9, 1, jpnlIntelNorth, jsliderRating, defaultInsets);
-		addComponent(9, 0, 1, 1, 0.1, 1, jpnlIntelNorth, jlabelRating, defaultInsets);
+		addComponent(0, 0, 9, 1, 0.9, 1, jpnlIntelNorth, jsliderRating,
+				defaultInsets);
+		addComponent(9, 0, 1, 1, 0.1, 1, jpnlIntelNorth, jlabelRating,
+				defaultInsets);
 
 		jpnlIntelNorth.setBorder(BorderFactory.createTitledBorder("Rating"));
 		jlabelRating.setBorder(BorderFactory.createTitledBorder(""));
@@ -650,12 +688,14 @@ public class VipFrame extends JFrame {
 		jtaMediaInfo.setEditable(false);
 		jtaMediaInfo.setLineWrap(true);
 		JScrollPane scrollPane = new JScrollPane(jtaMediaInfo);
-		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane
+				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-		jtaMediaInfo.setText(
-		        "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labor.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labor.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labor.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labor");
+		jtaMediaInfo
+				.setText("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labor.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labor.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labor.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labor");
 
-		addComponent(0, 0, 1, 1, 1, 0.1, jpnlIntel, jpnlIntelNorth, defaultInsets);
+		addComponent(0, 0, 1, 1, 1, 0.1, jpnlIntel, jpnlIntelNorth,
+				defaultInsets);
 		addComponent(0, 1, 1, 1, 1, 0.9, jpnlIntel, scrollPane, defaultInsets);
 	}
 
@@ -789,20 +829,25 @@ public class VipFrame extends JFrame {
 		jmiPathVLC.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				JOptionPane.showMessageDialog(rootPane, "In order to run the 'Video Information Program' smoothly "
-		                + "you have to install the 64-Bit Version of Video Lan Player! "
-		                + "\n It can be found on the Website: http://www.videolan.org/vlc/download-windows.html");
+				JOptionPane
+						.showMessageDialog(
+								rootPane,
+								"In order to run the 'Video Information Program' smoothly "
+										+ "you have to install the 64-Bit Version of Video Lan Player! "
+										+ "\n It can be found on the Website: http://www.videolan.org/vlc/download-windows.html");
 			}
 		});
 
 		// Adding ActionListeners with URLs
 		try {
-			addURLActionListenerToMenuBarItem(jmiWebsite, new URI("http://cyril-casapao.github.io/vip-project/"));
-			addURLActionListenerToMenuBarItem(jmiMeetTheTeam,
-			        new URI("http://cyril-casapao.github.io/vip-project/team.html"));
-			addURLActionListenerToMenuBarItem(jmiWatchCode, new URI("https://github.com/cyril-casapao/vip-project"));
-			addURLActionListenerToMenuBarItem(jmiJournals,
-			        new URI("http://cyril-casapao.github.io/vip-project/journals.html"));
+			addURLActionListenerToMenuBarItem(jmiWebsite, new URI(
+					"http://cyril-casapao.github.io/vip-project/"));
+			addURLActionListenerToMenuBarItem(jmiMeetTheTeam, new URI(
+					"http://cyril-casapao.github.io/vip-project/team.html"));
+			addURLActionListenerToMenuBarItem(jmiWatchCode, new URI(
+					"https://github.com/cyril-casapao/vip-project"));
+			addURLActionListenerToMenuBarItem(jmiJournals, new URI(
+					"http://cyril-casapao.github.io/vip-project/journals.html"));
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
@@ -817,9 +862,10 @@ public class VipFrame extends JFrame {
 		jmiAddFile.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				String path = getFilePath(new FileNameExtensionFilter("Video Files", movieExtensions));
+				String path = getFilePath(new FileNameExtensionFilter(
+						"Video Files", movieExtensions));
 				ssController.addMovieToList(new Video(path));
-				ssController.updateList();
+				ssController.updateList(ssController.getMovies());
 			}
 		});
 
@@ -834,7 +880,7 @@ public class VipFrame extends JFrame {
 		jmiSaveAll.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				dataController.saveVideos();
+				dataController.saveAll(ssController.getMovies());
 			}
 		});
 	}
@@ -859,9 +905,12 @@ public class VipFrame extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent ev) {
-				if (ev.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(ev)) {
-					controller.getVLC()
-		                    .loadMedia(ssController.getVideoByIndex(jlstFileList.getSelectedIndex()).getFilePath());
+				if (ev.getClickCount() == 2
+						&& SwingUtilities.isLeftMouseButton(ev)) {
+					controller.getVLC().loadMedia(
+							ssController.getVideoByIndex(
+									jlstFileList.getSelectedIndex())
+									.getFilePath());
 					controller.getVLC().toggleMediaPlayback();
 				}
 			}
@@ -890,9 +939,11 @@ public class VipFrame extends JFrame {
 					searchForMovies(entry.toString());
 				}
 				String tempFilePath = entry.toString();
-				String[] tempFilePathSplitted = tempFilePath.split(Pattern.quote("."));
+				String[] tempFilePathSplitted = tempFilePath.split(Pattern
+						.quote("."));
 				for (int i = 0; i < movieExtensions.length; i++) {
-					if (tempFilePathSplitted[tempFilePathSplitted.length - 1].equalsIgnoreCase(movieExtensions[i])) {
+					if (tempFilePathSplitted[tempFilePathSplitted.length - 1]
+							.equalsIgnoreCase(movieExtensions[i])) {
 						fileList.add(entry.toFile());
 					}
 				}
@@ -901,8 +952,10 @@ public class VipFrame extends JFrame {
 			e.printStackTrace();
 		}
 		for (int i = 0; i < fileList.size(); i++) {
-			ssController.addMovieToList(new Video(fileList.get(i).getAbsolutePath()));
+			ssController.addMovieToList(new Video(fileList.get(i)
+					.getAbsolutePath()));
 		}
-		ssController.updateList();
+		
+		ssController.updateList(ssController.getMovies());
 	}
 }

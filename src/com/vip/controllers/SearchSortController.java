@@ -1,6 +1,12 @@
 package com.vip.controllers;
 
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
@@ -24,7 +30,7 @@ public class SearchSortController {
 	
 	private SearchSortController() {
 		defaultJList = new DefaultListModel<String>();
-		movies = new ArrayList<Video>();	
+		movies = new ArrayList<Video>();
 	}
 	
 	public static SearchSortController getInstance() {
@@ -56,10 +62,10 @@ public class SearchSortController {
 	 * is actually showing the newest version of all movies stored 
 	 * in the movies ArrayList
 	 */
-	public void updateList() {
+	public void updateList(ArrayList<Video> currentList) {
 		defaultJList.add(0, null);
 		defaultJList.clear();
-		for (Video temp : movies) {
+		for (Video temp : currentList) {
 			defaultJList.addElement(temp.getTitle());
 		}
 	}
@@ -84,11 +90,239 @@ public class SearchSortController {
 		return movies.get(index);
 	}
 	
+	
 	public void fetchVideoInformation(Video vid) {
 		//System.out.println("Fetching information for " + vid.getTitle());
 		String searchKey = (String) JOptionPane.showInputDialog("Please enter the name of the Video that is searched for!");
 		OmdbRequest window = new OmdbRequest(OMDBController.getInstance().searchApi(searchKey));
 		window.setEnabled(true);
 		window.setVisible(true);
+	}
+	
+	
+	/**
+	 * Sorts list by title
+	 */
+	public void sortByTitle(){
+		
+		Collections.sort(movies, new Comparator<Video>() {
+			    public int compare(Video one, Video other) {
+			        return one.getTitle().compareTo(other.getTitle());
+			    }
+		});
+		updateList(movies);
+	}
+	
+	/**
+	 * Sorts list by country
+	 */
+	public void sortByCountry(){
+		
+		Collections.sort(movies, new Comparator<Video>() {
+			    public int compare(Video one, Video other) {
+			        return one.getCountry().compareTo(other.getCountry());
+			    }
+		});
+		updateList(movies);
+	}
+	
+	/**
+	 * Sorts list by personal rating
+	 */
+	public void sortByPersonalRating(){
+		
+		Collections.sort(movies, new Comparator<Video>() {
+			    public int compare(Video one, Video other) {
+			        return Double.compare(one.getPersonalRating(), other.getPersonalRating());
+			    }
+		});
+		updateList(movies);
+	}
+	
+	/**
+	 * Sorts list by imdb rating
+	 */
+	public void sortByImdbRating(){
+		
+		Collections.sort(movies, new Comparator<Video>() {
+			    public int compare(Video one, Video other) {
+			        return Double.compare(one.getImdbRating(), other.getImdbRating());
+			    }
+		});
+		updateList(movies);
+	}
+	
+	/**
+	 * Sorts list by release date
+	 */
+	public void sortByReleaseDate(){
+		
+		Collections.sort(movies, new Comparator<Video>() {
+			    public int compare(Video one, Video other) {
+			        return one.getReleaseDate().compareTo(other.getReleaseDate());
+			    }
+		});
+		updateList(movies);
+	}
+	
+	
+	/**
+	 * Search by anything in the object and update the list being displayed.
+	 * 
+	 * @param searchText
+	 */
+	public void searchAll(String searchText){
+		ArrayList<Video> results = new ArrayList<Video>();
+		
+		for(Video vid:movies){
+			if(vid.toString().contains(searchText)){
+				results.add(vid);
+			}
+		}
+		updateList(results);
+	}
+	
+	/**
+	 * Search by title and update the list being displayed.
+	 * 
+	 * @param searchText
+	 */
+	public void searchByTitle(String searchText){
+		ArrayList<Video> results = new ArrayList<Video>();
+		
+		for(Video vid:movies){
+			if(vid.getTitle() != null){
+				if(vid.getTitle().contains(searchText)){
+					results.add(vid);
+				}
+			}
+		}
+		updateList(results);
+	}
+	
+	/**
+	 * Search by director and update the list being displayed.
+	 * 
+	 * @param searchText
+	 */
+	public void searchByDirector(String searchText){
+		ArrayList<Video> results = new ArrayList<Video>();
+		
+		for(Video vid:movies){
+			if(vid.getDirector() != null){
+				if(vid.getDirector().contains(searchText)){
+					results.add(vid);
+				}
+			}
+		}
+		updateList(results);
+	}
+	
+	/**
+	 * Search by country and update the list being displayed.
+	 * 
+	 * @param searchText
+	 */
+	public void searchByCountry(String searchText){
+		ArrayList<Video> results = new ArrayList<Video>();
+		
+		for(Video vid:movies){
+			if(vid.getCountry() != null){
+				if(vid.getCountry().contains(searchText)){
+					results.add(vid);
+				}
+			}
+		}
+		updateList(results);
+	}
+	
+	/**
+	 * Search by cast and update the list being displayed.
+	 * 
+	 * @param searchText
+	 */
+	public void searchByCast(String searchText){
+		ArrayList<Video> results = new ArrayList<Video>();
+		
+		for(Video vid:movies){
+			if(vid.getCast() != null){
+				if(vid.getTitle().contains(searchText)){
+					results.add(vid);
+				}
+			}
+		}
+		updateList(results);
+	}
+	
+	/**
+	 * Search by genre and update the list being displayed.
+	 * 
+	 * @param searchText
+	 */
+	public void searchByGenre(String searchText){
+		ArrayList<Video> results = new ArrayList<Video>();
+		
+		for(Video vid:movies){
+			if(vid.getGenre() != null){
+				if(vid.getGenre().contains(searchText)){
+					results.add(vid);
+				}
+			}
+		}
+		updateList(results);
+	}
+	
+	/**
+	 * Search by writers and update the list being displayed.
+	 * 
+	 * @param searchText
+	 */
+	public void searchByWriters(String searchText){
+		ArrayList<Video> results = new ArrayList<Video>();
+		
+		for(Video vid:movies){
+			if(vid.getWriters() != null){
+				if(vid.getWriters().contains(searchText)){
+					results.add(vid);
+				}
+			}
+		}
+		updateList(results);
+	}
+	
+	/**
+	 * Search by release date and update the list being displayed.
+	 * 
+	 * @param searchText
+	 */
+	public void searchByReleaseDate(String searchText){
+		ArrayList<Video> results = new ArrayList<Video>();
+		
+		for(Video vid:movies){
+			if(vid.getReleaseDate() != null){
+				if(vid.getReleaseDate().toString().contains(searchText)){
+					results.add(vid);
+				}
+			}
+		}
+		updateList(results);
+	}
+	
+	/**
+	 * Search by plot summary and update the list being displayed.
+	 * 
+	 * @param searchText
+	 */
+	public void searchByPlot(String searchText){
+		ArrayList<Video> results = new ArrayList<Video>();
+		
+		for(Video vid:movies){
+			if(vid.getPlotSummary() != null){
+				if(vid.getPlotSummary().contains(searchText)){
+					results.add(vid);
+				}
+			}
+		}
+		updateList(results);
 	}
 }

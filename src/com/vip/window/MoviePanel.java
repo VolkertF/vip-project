@@ -38,10 +38,17 @@ public class MoviePanel extends JPanel implements ComponentListener {
 		        .createCompatibleImage(width, height);
 	}
 
+	public MoviePanel(VLC vlc, long time, String mediaPath, boolean shouldPlay) {
+		this(vlc);
+		lastTime = time;
+		currentPath = mediaPath;
+		this.shouldPlay = shouldPlay;
+	}
+
 	private class MovieBufferFormatCallback implements BufferFormatCallback {
 		@Override
 		public BufferFormat getBufferFormat(int sourceWidth, int sourceHeight) {
-			System.out.println("BufferFormat: " + width + " x " + height);
+			// System.out.println("BufferFormat: " + width + " x " + height);
 			return new RV32BufferFormat(width, height);
 		}
 	};
@@ -61,7 +68,7 @@ public class MoviePanel extends JPanel implements ComponentListener {
 
 		private MovieRenderCallbackAdapter() {
 			super(new int[width * height]);
-			System.out.println("Buffersize: " + width + " x " + height);
+			// System.out.println("Buffersize: " + width + " x " + height);
 		}
 
 		@Override
@@ -81,20 +88,14 @@ public class MoviePanel extends JPanel implements ComponentListener {
 
 	public void updateVideoSurface() {
 		if (this.getWidth() != width && this.getHeight() != height) {
-			System.out.println("Res: " + width + " x " + height);
+			// System.out.println("Res: " + width + " x " + height);
 			width = this.getWidth();
 			height = this.getHeight();
 			image = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration()
 			        .createCompatibleImage(width, height);
-			System.out.println("Image res: " + image.getWidth() + " x " + image.getHeight());
+			// System.out.println("Image res: " + image.getWidth() + " x " +
+			// image.getHeight());
 			vlcInstance.invokeMediaPlayerCreation();
-			// if (vlcInstance.getMediaPlayer() != null &&
-			// vlcInstance.getCurrentPlaybackPath() != null) {
-			// long time = vlcInstance.getMediaPlayer().getTime();
-			// System.out.println("Time is: " + time);
-			// boolean shouldPlay = vlcInstance.getMediaPlayer().isPlaying();
-			//
-			// }
 		}
 
 	}
@@ -108,19 +109,27 @@ public class MoviePanel extends JPanel implements ComponentListener {
 	}
 
 	private long lastTime = 0;
-	private String lastPath = null;
+	private String currentPath = null;
 	private boolean shouldPlay = false;
+
+	public void setCurrentMediaPath(String path) {
+		currentPath = path;
+	}
 
 	@Override
 	public void componentResized(ComponentEvent e) {
 		if (vlcInstance.getMediaPlayer() != null && vlcInstance.getCurrentPlaybackPath() != null) {
-			if (lastPath != vlcInstance.getCurrentPlaybackPath()) {
-				lastPath = vlcInstance.getCurrentPlaybackPath();
+			// System.out.println("Saved is:" + currentPath + ".\nCorrect is: "
+			// + vlcInstance.getCurrentPlaybackPath());
+			if (currentPath != vlcInstance.getCurrentPlaybackPath()) {
+				currentPath = vlcInstance.getCurrentPlaybackPath();
 				lastTime = 0;
 				shouldPlay = true;
 			} else {
 				long currentTime = vlcInstance.getMediaPlayer().getTime();
 				if (currentTime > 0L) {
+					// System.out.println("Saved is:" + lastTime + ".\nCorrect
+					// is: " + currentTime);
 					lastTime = currentTime;
 				}
 				shouldPlay = vlcInstance.getMediaPlayer().isPlaying();
@@ -130,8 +139,8 @@ public class MoviePanel extends JPanel implements ComponentListener {
 		}
 		updateVideoSurface();
 
-		if (lastPath != null) {
-			vlcInstance.loadMedia(lastPath);
+		if (currentPath != null) {
+			vlcInstance.loadMedia(currentPath);
 			vlcInstance.playMedia();
 			vlcInstance.getMediaPlayer().setTime(lastTime);
 			if (!shouldPlay) {

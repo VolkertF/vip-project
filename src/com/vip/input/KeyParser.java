@@ -21,24 +21,28 @@ public class KeyParser implements KeyEventDispatcher {
 	private int NrOfShortcuts = 13;
 
 	// Index-helpers, defines order in config file:
-	private static final int TOGGLE_PLAYBACK = 0;
-	private static final int NEXT_MOVIE = 1;
-	private static final int PREVIOUS_MOVIE = 2;
-	private static final int NEXT_CHAPTER = 3;
-	private static final int PREVIOUS_CHAPTER = 4;
-	private static final int JUMP_FORWARD = 5;
-	private static final int JUMP_BACKWARD = 6;
-	private static final int MUTE_VOLUME = 7;
-	private static final int VOLUME_UP = 8;
-	private static final int VOLUME_DOWN = 9;
-	private static final int OPEN_PREFERENCES = 10;
-	private static final int FULLSCREEN_TOGGLE = 11;
-	private static final int SEARCH = 12;
+	public static final int TOGGLE_PLAYBACK = 0;
+	public static final int NEXT_MOVIE = 1;
+	public static final int PREVIOUS_MOVIE = 2;
+	public static final int NEXT_CHAPTER = 3;
+	public static final int PREVIOUS_CHAPTER = 4;
+	public static final int JUMP_FORWARD = 5;
+	public static final int JUMP_BACKWARD = 6;
+	public static final int MUTE_VOLUME = 7;
+	public static final int VOLUME_UP = 8;
+	public static final int VOLUME_DOWN = 9;
+	public static final int OPEN_PREFERENCES = 10;
+	public static final int FULLSCREEN_TOGGLE = 11;
+	public static final int SEARCH = 12;
 
 	private int[] shortcutList = new int[NrOfShortcuts];
 	private boolean[] shortcutCTRLmask = new boolean[NrOfShortcuts];
 	private boolean[] shortcutSHIFTmask = new boolean[NrOfShortcuts];
 
+	public int[] getShortcutList(){
+		return shortcutList;
+	}
+	
 	/**
 	 * TODO comment
 	 */
@@ -71,12 +75,11 @@ public class KeyParser implements KeyEventDispatcher {
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent ke) {
 		int keyState = ke.getID();
-		int isPressed = KeyEvent.KEY_PRESSED;
+		int isReleased = KeyEvent.KEY_RELEASED;
 		int currentKey = ke.getKeyCode();
 		// When no textfield is focused and the key is pressed, input will be
 		// processed
-		if (keyState == isPressed && !(ke.getSource() instanceof JTextField)
-		        && (vipFrame.isFocused() || (vipFrame.isFullscreen()))) {
+		if (keyState == isReleased && !(ke.getSource() instanceof JTextField) && vipFrame.isFocused()) {
 			VLC vlc = vipFrame.getController().getVLC();
 			if (currentKey == shortcutList[TOGGLE_PLAYBACK]) {
 				if (isValidInput(ke, TOGGLE_PLAYBACK))
@@ -150,7 +153,7 @@ public class KeyParser implements KeyEventDispatcher {
 	 * @return <code>true</code> if the input is a valid shortcut <br />
 	 *         <code>false</code> if the input didn't match the requierements
 	 */
-	private boolean isValidInput(KeyEvent ke, int index) {
+	public boolean isValidInput(KeyEvent ke, int index) {
 		// Not Valid if CTRL should be pressed but is not
 		if (shortcutCTRLmask[index] && (ke.getModifiers() & KeyEvent.CTRL_MASK) == 0) {
 			return false;

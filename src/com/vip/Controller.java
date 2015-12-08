@@ -11,6 +11,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.swing.JPanel;
+
 import com.vip.input.ButtonParser;
 import com.vip.input.KeyParser;
 import com.vip.media.VLC;
@@ -333,18 +335,14 @@ public class Controller {
 	}
 
 	public void toggleFullscreen() {
-
 		if (vipFrame.isFullscreen()) {
-			System.out.println("Disposed Fullscreen!");
 			vipFrame.disposeFullscreen();
 		} else {
-			System.out.println("Created Fullscreen!");
 			vipFrame.createFullscreen();
 		}
-		vipFrame.setFullscreen(!vipFrame.isFullscreen());
 	}
 
-	public KeyEventDispatcher getKeyParser() {
+	public KeyParser getKeyParser() {
 		return keyParser;
 	}
 

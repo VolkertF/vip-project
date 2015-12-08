@@ -66,7 +66,7 @@ public class VLC {
 		// If VLC cannot be found, we will inform the user of manual
 		// possibilities
 
-//		 vlcFound = false;
+		// vlcFound = false;
 
 		if (vlcFound) {
 			invokeMediaPlayerCreation();
@@ -146,6 +146,7 @@ public class VLC {
 			directMediaPlayerComponent.prepareMedia(mediaPath);
 			setMediaInitState(true);
 			currentPathPlaying = mediaPath;
+			jpnlVideoSurface.setCurrentMediaPath(mediaPath);
 		}
 	}
 
@@ -295,4 +296,10 @@ public class VLC {
 	public void invokeMediaPlayerCreation() {
 		directMediaPlayerComponent = jpnlVideoSurface.createMediaPlayer().getMediaPlayer();
 	}
+
+	public void setSurface(MoviePanel newPanel) {
+		jpnlVideoSurface = newPanel;
+		invokeMediaPlayerCreation();
+	}
+
 }

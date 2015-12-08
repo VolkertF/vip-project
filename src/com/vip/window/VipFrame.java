@@ -405,20 +405,30 @@ public class VipFrame extends JFrame {
 	}
 
 	public void createFullscreen() {
-		if (fullscreenDialog != null) {
-			fullscreenDialog = new FullscreenDialog(this);
-		} else {
-			fullscreenDialog.requestFocus();
-		}
+		isFullscreen = true;
 
+		MoviePanel jpnlVideoSurface = new MoviePanel(controller.getVLC(),
+		        controller.getVLC().getMediaPlayer().getTime(), controller.getVLC().getCurrentPlaybackPath(),
+		        controller.getVLC().getMediaPlayer().isPlaying());
+		controller.getVLC().stopMedia();
+		jpnlMovie.remove(controller.getVLC().getVideoSurface());
+		fullscreenDialog = new FullscreenDialog(this, controller.getVLC(), controller.getKeyParser(), jpnlVideoSurface);
+		fullscreenDialog.getSurface().componentResized(null);
 	}
 
 	public void disposeFullscreen() {
-		if (fullscreenDialog != null) {
-			fullscreenDialog.dispose();
-			fullscreenDialog = null;
-			this.requestFocus();
-		}
+		MoviePanel jpnlVideoSurface = new MoviePanel(controller.getVLC(),
+		        controller.getVLC().getMediaPlayer().getTime(), controller.getVLC().getCurrentPlaybackPath(),
+		        controller.getVLC().getMediaPlayer().isPlaying());
+		fullscreenDialog.getVLC().getMediaPlayer().stop();
+		fullscreenDialog.dispose();
+		fullscreenDialog = null;
+		controller.getVLC().setSurface(jpnlVideoSurface);
+		addComponent(0, 0, 1, 1, 1.0, 0.95, jpnlMovie, controller.getVLC().getVideoSurface(), defaultInsets);
+		this.revalidate();
+		controller.getVLC().getVideoSurface().componentResized(null);
+		this.requestFocus();
+		isFullscreen = false;
 	}
 
 	/**

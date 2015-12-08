@@ -53,7 +53,9 @@ public class VLC {
 		vlcFound = new NativeDiscovery().discover();
 		// If VLC cannot be found, we will inform the user of manual
 		// possibilities
-
+		
+		vlcFound = false;	
+		
 		canvas = new Canvas();
 		canvas.setBackground(Color.BLACK);
 
@@ -118,11 +120,21 @@ public class VLC {
 	 * @return the mediaplayer
 	 */
 	public EmbeddedMediaPlayer getMediaPlayer() {
-		return mediaPlayerComponent;
+		if (vlcFound) {
+			return mediaPlayerComponent;
+		} else {
+			return null;
+		}
+
 	}
 
 	public MediaPlayerFactory getMediaPlayerFactory() {
-		return mediaPlayerFactory;
+		if (vlcFound) {
+			return mediaPlayerFactory;
+		} else {
+			return null;
+		}
+
 	}
 
 	/**
@@ -132,7 +144,7 @@ public class VLC {
 	 *            Path to the media file to be loaded
 	 */
 	public void loadMedia(String Media_path) {
-		if (mediaPlayerComponent != null) {
+		if (vlcFound && mediaPlayerComponent != null) {
 			mediaPlayerComponent.prepareMedia(Media_path);
 			setMediaInitState(true);
 		}
@@ -148,7 +160,7 @@ public class VLC {
 	 * Toggles media playback
 	 */
 	public void toggleMediaPlayback() {
-		if (mediaPlayerComponent != null) {
+		if (vlcFound && mediaPlayerComponent != null) {
 			if (getMediaPlayer().isPlaying()) {
 				pauseMedia();
 			} else {
@@ -161,42 +173,47 @@ public class VLC {
 	 * Starts media playback
 	 */
 	public void playMedia() {
-		mediaPlayerComponent.play();
+		if (vlcFound && mediaPlayerComponent != null)
+			mediaPlayerComponent.play();
 	}
 
 	/**
 	 * Pauses media playback
 	 */
 	public void pauseMedia() {
-		mediaPlayerComponent.pause();
+		if (vlcFound && mediaPlayerComponent != null)
+			mediaPlayerComponent.pause();
 	}
 
 	/**
 	 * Stops media playback
 	 */
 	public void stopMedia() {
-		mediaPlayerComponent.stop();
+		if (vlcFound && mediaPlayerComponent != null)
+			mediaPlayerComponent.stop();
 	}
 
 	/**
 	 * Jumps to the next chapter
 	 */
 	public void nextChapter() {
-		mediaPlayerComponent.nextChapter();
+		if (vlcFound && mediaPlayerComponent != null)
+			mediaPlayerComponent.nextChapter();
 	}
 
 	/**
 	 * Jumps to the previous Chapter
 	 */
 	public void previousChapter() {
-		mediaPlayerComponent.previousChapter();
+		if (vlcFound && mediaPlayerComponent != null)
+			mediaPlayerComponent.previousChapter();
 	}
 
 	/**
 	 * Jumps forward in the media file a given percentage
 	 */
 	public void jumpForward() {
-		if (mediaPlayerComponent != null && mediaPlayerComponent.getLength() != -1) {
+		if (vlcFound && mediaPlayerComponent != null && mediaPlayerComponent.getLength() != -1) {
 			if (JUMP_PERCENTAGE >= 0 && JUMP_PERCENTAGE <= 1) {
 				int changeRate = (int) (mediaPlayerComponent.getLength() * JUMP_PERCENTAGE);
 				int newTime = (int) (mediaPlayerComponent.getTime() + changeRate);
@@ -214,7 +231,7 @@ public class VLC {
 	 * Jumps back in the media file a given percentage
 	 */
 	public void jumpBack() {
-		if (mediaPlayerComponent != null && mediaPlayerComponent.getLength() != -1) {
+		if (vlcFound && mediaPlayerComponent != null && mediaPlayerComponent.getLength() != -1) {
 			if (JUMP_PERCENTAGE >= 0 && JUMP_PERCENTAGE <= 1) {
 				int changeRate = (int) (mediaPlayerComponent.getLength() * JUMP_PERCENTAGE);
 				int newTime = (int) (mediaPlayerComponent.getTime() - changeRate);
@@ -231,11 +248,15 @@ public class VLC {
 
 	public void toggleMuted() {
 		if (isMuted) {
-			isMuted = false;
-			mediaPlayerComponent.setVolume(lastVolume);
+			if (vlcFound && mediaPlayerComponent != null) {
+				isMuted = false;
+				mediaPlayerComponent.setVolume(lastVolume);
+			}
 		} else {
-			isMuted = true;
-			mediaPlayerComponent.setVolume(0);
+			if (vlcFound && mediaPlayerComponent != null) {
+				isMuted = true;
+				mediaPlayerComponent.setVolume(0);
+			}
 		}
 	}
 
@@ -244,7 +265,7 @@ public class VLC {
 	}
 
 	public void setVolume(int newVolume) {
-		if (mediaPlayerComponent != null && mediaPlayerComponent.getLength() != -1) {
+		if (vlcFound && mediaPlayerComponent != null && mediaPlayerComponent.getLength() != -1) {
 			if (newVolume > MAX_VOLUME) {
 				newVolume = MAX_VOLUME;
 			} else if (newVolume < MIN_VOLUME) {
@@ -261,7 +282,11 @@ public class VLC {
 	}
 
 	public int getVolume() {
-		return mediaPlayerComponent.getVolume();
+		if (vlcFound && mediaPlayerComponent != null) {
+			return mediaPlayerComponent.getVolume();
+		} else {
+			return 0;
+		}
 	}
 
 	public int getVolumeSteps() {

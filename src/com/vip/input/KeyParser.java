@@ -39,13 +39,11 @@ public class KeyParser implements KeyEventDispatcher {
 	private boolean[] shortcutCTRLmask = new boolean[NrOfShortcuts];
 	private boolean[] shortcutSHIFTmask = new boolean[NrOfShortcuts];
 
-	public int[] getShortcutList(){
+	public int[] getShortcutList() {
 		return shortcutList;
 	}
-	
-	/**
-	 * TODO comment
-	 */
+
+
 	public KeyParser() {
 		// Initialize arrays with default values
 		for (int i = 0; i < NrOfShortcuts; i++) {
@@ -55,11 +53,7 @@ public class KeyParser implements KeyEventDispatcher {
 		}
 	}
 
-	/**
-	 * TODO comment
-	 * 
-	 * @param newVipFrame
-	 */
+
 	public KeyParser(VipFrame newVipFrame) {
 		this();
 		vipFrame = newVipFrame;
@@ -69,9 +63,6 @@ public class KeyParser implements KeyEventDispatcher {
 		vipFrame = newVipFrame;
 	}
 
-	// (TODO What if a JDialog is opened? Add more conditions! -> frame focused)
-	// TODO refactor methods, disable vipframe reference, let the controller
-	// class to the work
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent ke) {
 		int keyState = ke.getID();
@@ -79,7 +70,7 @@ public class KeyParser implements KeyEventDispatcher {
 		int currentKey = ke.getKeyCode();
 		// When no textfield is focused and the key is pressed, input will be
 		// processed
-		if (keyState == isReleased && !(ke.getSource() instanceof JTextField) && vipFrame.isFocused()) {
+		if (keyState == isReleased && !(ke.getSource() instanceof JTextField)) {
 			VLC vlc = vipFrame.getController().getVLC();
 			if (currentKey == shortcutList[TOGGLE_PLAYBACK]) {
 				if (isValidInput(ke, TOGGLE_PLAYBACK))

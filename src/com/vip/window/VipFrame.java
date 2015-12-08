@@ -1,6 +1,5 @@
 package com.vip.window;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -14,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -29,7 +29,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -69,7 +68,14 @@ public class VipFrame extends JFrame {
 		OmdbRequest testReq = new OmdbRequest(OMDBController.getInstance().searchApi("Star Wars"));
 		testReq.setVisible(true);
 		testReq.setEnabled(true);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		this.addWindowListener(new WindowAdapter(){
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent we){
+				//TODO catch exit wish of user.
+				// save stuff
+			}
+		});
 		setMinimumSize(new Dimension(1280, 720));
 		defaultInsets = new Insets(2, 2, 2, 2);
 		changeGUILook();

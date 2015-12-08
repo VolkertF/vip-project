@@ -60,6 +60,9 @@ import com.vip.media.VLC;
 
 @SuppressWarnings("serial")
 public class VipFrame extends JFrame {
+
+	private VipFrame thisFrame=this;
+
 	/**
 	 * Constructor for building the frame and initialize all event handlers.
 	 */
@@ -69,11 +72,13 @@ public class VipFrame extends JFrame {
 		testReq.setVisible(true);
 		testReq.setEnabled(true);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		this.addWindowListener(new WindowAdapter(){
+		this.addWindowListener(new WindowAdapter() {
 			@Override
-			public void windowClosing(java.awt.event.WindowEvent we){
-				//TODO catch exit wish of user.
-				// save stuff
+			public void windowClosing(java.awt.event.WindowEvent we) {
+				thisFrame.dispose();
+				System.exit(0);
+				// TODO catch exit wish of user.
+		        // save stuff
 			}
 		});
 		setMinimumSize(new Dimension(1280, 720));

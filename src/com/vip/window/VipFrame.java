@@ -1,5 +1,6 @@
 package com.vip.window;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -303,8 +304,8 @@ public class VipFrame extends JFrame {
 		jpnlIntel.setPreferredSize(new Dimension(1200, 150));
 
 		addComponent(0, 0, 1, 2, 0.35, 1.0, jpnlMain, jpnlExplorer, defaultInsets);
-		addComponent(1, 0, 1, 1, 0.65, 0.5, jpnlMain, jpnlMovie, defaultInsets);
-		addComponent(1, 1, 1, 1, 0.65, 0.5, jpnlMain, jpnlIntel, defaultInsets);
+		addComponent(1, 0, 1, 1, 0.65, 0.7, jpnlMain, jpnlMovie, defaultInsets);
+		addComponent(1, 1, 1, 1, 0.65, 0.3, jpnlMain, jpnlIntel, defaultInsets);
 	}
 
 	/**
@@ -428,15 +429,11 @@ public class VipFrame extends JFrame {
 	 * @author Fabian Volkert
 	 */
 	private void buildMovieGUI() {
-		addComponent(0, 0, 1, 1, 1.0, 0.6, jpnlMovie, controller.getVLC().getCanvas(), defaultInsets);
-		// controller.getVLC().getCanvas().setMaximumSize(new
-		// Dimension(jpnlMovie.getWidth(),jpnlMovie.getHeight()));
+		addComponent(0, 0, 1, 1, 1.0, 0.95, jpnlMovie, controller.getVLC().getVideoSurface(), defaultInsets);
 
 		JPanel jpnlMovieControls = new JPanel();
 		jpnlMovieControls.setLayout(new GridBagLayout());
-		addComponent(0, 1, 1, 1, 1.0, 0.4, jpnlMovie, jpnlMovieControls, defaultInsets);
-
-		// jpnlMovie.add(jpnlMovieControls, BorderLayout.SOUTH);
+		addComponent(0, 1, 1, 1, 1.0, 0.05, jpnlMovie, jpnlMovieControls, defaultInsets);
 
 		JButton jbtnPlayMovie = new JButton("Play/Pause");
 		jbtnPlayMovie.addActionListener(controller.getButtonParser());
@@ -508,7 +505,7 @@ public class VipFrame extends JFrame {
 			jsliderVolume.setEnabled(false);
 			jsliderMovieProgress.setEnabled(false);
 			jlabelMovieTimer.setText("");
-			controller.getVLC().getCanvas().setBackground(Color.GRAY);
+			controller.getVLC().getVideoSurface().setBackground(Color.GRAY);
 			TitledBorder titledBorderMoviePanel = BorderFactory.createTitledBorder("Movie");
 			titledBorderMoviePanel.setTitleColor(Color.GRAY);
 			jpnlMovie.setBorder(titledBorderMoviePanel);
@@ -539,18 +536,20 @@ public class VipFrame extends JFrame {
 	 * Updates the state of the nominators for current progress in media file
 	 */
 	public void updateGUI() {
-		if (controller.getVLC().getMediaPlayer().getLength() != -1) {
+		VLC vlcInstance = controller.getVLC();
+
+		if (vlcInstance.isVLCInstalled() && vlcInstance.getMediaPlayer() != null
+		        && vlcInstance.getMediaPlayer().getLength() != -1) {
 			if (controller.getVLC().shouldInitMedia()) {
 				initProgressBar();
 				controller.getVLC().setMediaInitState(false);
 			} else {
+
 				// If initialization fails: retry
 				if (jsliderMovieProgress.getMaximum() == 0) {
 					controller.getVLC().setMediaInitState(true);
 				}
-				// Might be -1, means you cannot move the slider on invalid
-				// movie file
-				// on purpose!
+
 				updateTimelineLabels();
 				updateVolumeSlider();
 				updateRatingSlider();
@@ -559,12 +558,14 @@ public class VipFrame extends JFrame {
 				jsliderMovieProgress.setValue(currentMovieTime);
 			}
 		} else {
-			jlabelMovieTimer.setText("00:00:00 / 00:00:00   0%");
+			if (vlcInstance.isVLCInstalled()) {
+				jlabelMovieTimer.setText("00:00:00 / 00:00:00   0%");
+			}
 		}
 	}
 
 	/**
-	 * TODO @author Fabian Volkert
+	 *
 	 */
 	private void updateTimelineLabels() {
 		Double procentualProgress = ((double) controller.getVLC().getMediaPlayer().getTime()
@@ -598,7 +599,7 @@ public class VipFrame extends JFrame {
 	}
 
 	/**
-	 * TODO @author Fabian Volkert
+	 * 
 	 */
 	public void updateVolumeSlider() {
 		jbtnVolume.setText(controller.getVLC().getMediaPlayer().getVolume() + "%");

@@ -3,8 +3,14 @@ package com.vip.media;
 import java.awt.Canvas;
 import java.awt.Color;
 
+import javax.swing.JPanel;
+
+import com.vip.attributes.Video;
+import com.vip.window.MoviePanel;
+
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
+import uk.co.caprica.vlcj.player.direct.DirectMediaPlayer;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 /**
@@ -12,7 +18,7 @@ import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
  */
 public class VLC {
 
-	private boolean vlcFound = false;
+	private final boolean vlcFound;
 
 	/** Rate of volume change when pressing a shortcut **/
 	private static final int VOLUME_STEPS = 10;
@@ -27,6 +33,12 @@ public class VLC {
 
 	private int lastVolume = (MAX_VOLUME + MIN_VOLUME) / 2;
 
+	private String currentPathPlaying = null;
+
+	public String getCurrentPlaybackPath() {
+		return currentPathPlaying;
+	}
+
 	/**
 	 * Percentage of how far a jump in the movie will proceed, must be between 0
 	 * and 1
@@ -34,12 +46,12 @@ public class VLC {
 	private static final double JUMP_PERCENTAGE = 0.05;
 
 	/** The mediaplayer that is responsible for playback **/
-	private EmbeddedMediaPlayer mediaPlayerComponent;
-
-	private MediaPlayerFactory mediaPlayerFactory;
+	private DirectMediaPlayer directMediaPlayerComponent;
 
 	/** Canvas on which the mediaplayer plays media on **/
-	private Canvas canvas;
+	// private Canvas canvas;
+
+	private MoviePanel jpnlVideoSurface = new MoviePanel(this);
 
 	/**
 	 * True on Initialization of a media
@@ -53,16 +65,11 @@ public class VLC {
 		vlcFound = new NativeDiscovery().discover();
 		// If VLC cannot be found, we will inform the user of manual
 		// possibilities
-		
-		vlcFound = false;	
-		
-		canvas = new Canvas();
-		canvas.setBackground(Color.BLACK);
+
+//		 vlcFound = false;
 
 		if (vlcFound) {
-			mediaPlayerFactory = new MediaPlayerFactory();
-			mediaPlayerComponent = mediaPlayerFactory.newEmbeddedMediaPlayer();
-			mediaPlayerComponent.setVideoSurface(mediaPlayerFactory.newVideoSurface(canvas));
+			invokeMediaPlayerCreation();
 		} else {
 			// TODO VLC not found, open JDialog and give hint to manually add
 			// the path
@@ -92,8 +99,8 @@ public class VLC {
 	 * 
 	 * @return the canvas that displays the Movie
 	 */
-	public Canvas getCanvas() {
-		return canvas;
+	public MoviePanel getVideoSurface() {
+		return jpnlVideoSurface;
 	}
 
 	/**
@@ -119,18 +126,9 @@ public class VLC {
 	 * 
 	 * @return the mediaplayer
 	 */
-	public EmbeddedMediaPlayer getMediaPlayer() {
+	public DirectMediaPlayer getMediaPlayer() {
 		if (vlcFound) {
-			return mediaPlayerComponent;
-		} else {
-			return null;
-		}
-
-	}
-
-	public MediaPlayerFactory getMediaPlayerFactory() {
-		if (vlcFound) {
-			return mediaPlayerFactory;
+			return directMediaPlayerComponent;
 		} else {
 			return null;
 		}
@@ -143,10 +141,11 @@ public class VLC {
 	 * @param media_path
 	 *            Path to the media file to be loaded
 	 */
-	public void loadMedia(String Media_path) {
-		if (vlcFound && mediaPlayerComponent != null) {
-			mediaPlayerComponent.prepareMedia(Media_path);
+	public void loadMedia(String mediaPath) {
+		if (vlcFound && directMediaPlayerComponent != null) {
+			directMediaPlayerComponent.prepareMedia(mediaPath);
 			setMediaInitState(true);
+			currentPathPlaying = mediaPath;
 		}
 	}
 
@@ -160,7 +159,7 @@ public class VLC {
 	 * Toggles media playback
 	 */
 	public void toggleMediaPlayback() {
-		if (vlcFound && mediaPlayerComponent != null) {
+		if (vlcFound && directMediaPlayerComponent != null) {
 			if (getMediaPlayer().isPlaying()) {
 				pauseMedia();
 			} else {
@@ -173,54 +172,54 @@ public class VLC {
 	 * Starts media playback
 	 */
 	public void playMedia() {
-		if (vlcFound && mediaPlayerComponent != null)
-			mediaPlayerComponent.play();
+		if (vlcFound && directMediaPlayerComponent != null)
+			directMediaPlayerComponent.play();
 	}
 
 	/**
 	 * Pauses media playback
 	 */
 	public void pauseMedia() {
-		if (vlcFound && mediaPlayerComponent != null)
-			mediaPlayerComponent.pause();
+		if (vlcFound && directMediaPlayerComponent != null)
+			directMediaPlayerComponent.pause();
 	}
 
 	/**
 	 * Stops media playback
 	 */
 	public void stopMedia() {
-		if (vlcFound && mediaPlayerComponent != null)
-			mediaPlayerComponent.stop();
+		if (vlcFound && directMediaPlayerComponent != null)
+			directMediaPlayerComponent.stop();
 	}
 
 	/**
 	 * Jumps to the next chapter
 	 */
 	public void nextChapter() {
-		if (vlcFound && mediaPlayerComponent != null)
-			mediaPlayerComponent.nextChapter();
+		if (vlcFound && directMediaPlayerComponent != null)
+			directMediaPlayerComponent.nextChapter();
 	}
 
 	/**
 	 * Jumps to the previous Chapter
 	 */
 	public void previousChapter() {
-		if (vlcFound && mediaPlayerComponent != null)
-			mediaPlayerComponent.previousChapter();
+		if (vlcFound && directMediaPlayerComponent != null)
+			directMediaPlayerComponent.previousChapter();
 	}
 
 	/**
 	 * Jumps forward in the media file a given percentage
 	 */
 	public void jumpForward() {
-		if (vlcFound && mediaPlayerComponent != null && mediaPlayerComponent.getLength() != -1) {
+		if (vlcFound && directMediaPlayerComponent != null && directMediaPlayerComponent.getLength() != -1) {
 			if (JUMP_PERCENTAGE >= 0 && JUMP_PERCENTAGE <= 1) {
-				int changeRate = (int) (mediaPlayerComponent.getLength() * JUMP_PERCENTAGE);
-				int newTime = (int) (mediaPlayerComponent.getTime() + changeRate);
-				if (newTime >= mediaPlayerComponent.getLength()) {
+				int changeRate = (int) (directMediaPlayerComponent.getLength() * JUMP_PERCENTAGE);
+				int newTime = (int) (directMediaPlayerComponent.getTime() + changeRate);
+				if (newTime >= directMediaPlayerComponent.getLength()) {
 					stopMedia();
 				} else {
-					mediaPlayerComponent.setTime(newTime);
+					directMediaPlayerComponent.setTime(newTime);
 
 				}
 			}
@@ -231,13 +230,13 @@ public class VLC {
 	 * Jumps back in the media file a given percentage
 	 */
 	public void jumpBack() {
-		if (vlcFound && mediaPlayerComponent != null && mediaPlayerComponent.getLength() != -1) {
+		if (vlcFound && directMediaPlayerComponent != null && directMediaPlayerComponent.getLength() != -1) {
 			if (JUMP_PERCENTAGE >= 0 && JUMP_PERCENTAGE <= 1) {
-				int changeRate = (int) (mediaPlayerComponent.getLength() * JUMP_PERCENTAGE);
-				int newTime = (int) (mediaPlayerComponent.getTime() - changeRate);
+				int changeRate = (int) (directMediaPlayerComponent.getLength() * JUMP_PERCENTAGE);
+				int newTime = (int) (directMediaPlayerComponent.getTime() - changeRate);
 				if (newTime < 0)
 					newTime = 0;
-				mediaPlayerComponent.setTime(newTime);
+				directMediaPlayerComponent.setTime(newTime);
 			}
 		}
 	}
@@ -248,14 +247,14 @@ public class VLC {
 
 	public void toggleMuted() {
 		if (isMuted) {
-			if (vlcFound && mediaPlayerComponent != null) {
+			if (vlcFound && directMediaPlayerComponent != null) {
 				isMuted = false;
-				mediaPlayerComponent.setVolume(lastVolume);
+				directMediaPlayerComponent.setVolume(lastVolume);
 			}
 		} else {
-			if (vlcFound && mediaPlayerComponent != null) {
+			if (vlcFound && directMediaPlayerComponent != null) {
 				isMuted = true;
-				mediaPlayerComponent.setVolume(0);
+				directMediaPlayerComponent.setVolume(0);
 			}
 		}
 	}
@@ -265,7 +264,7 @@ public class VLC {
 	}
 
 	public void setVolume(int newVolume) {
-		if (vlcFound && mediaPlayerComponent != null && mediaPlayerComponent.getLength() != -1) {
+		if (vlcFound && directMediaPlayerComponent != null && directMediaPlayerComponent.getLength() != -1) {
 			if (newVolume > MAX_VOLUME) {
 				newVolume = MAX_VOLUME;
 			} else if (newVolume < MIN_VOLUME) {
@@ -277,13 +276,13 @@ public class VLC {
 			} else {
 				isMuted = true;
 			}
-			mediaPlayerComponent.setVolume(newVolume);
+			directMediaPlayerComponent.setVolume(newVolume);
 		}
 	}
 
 	public int getVolume() {
-		if (vlcFound && mediaPlayerComponent != null) {
-			return mediaPlayerComponent.getVolume();
+		if (vlcFound && directMediaPlayerComponent != null) {
+			return directMediaPlayerComponent.getVolume();
 		} else {
 			return 0;
 		}
@@ -291,5 +290,9 @@ public class VLC {
 
 	public int getVolumeSteps() {
 		return VOLUME_STEPS;
+	}
+
+	public void invokeMediaPlayerCreation() {
+		directMediaPlayerComponent = jpnlVideoSurface.createMediaPlayer().getMediaPlayer();
 	}
 }

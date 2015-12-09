@@ -159,8 +159,8 @@ public class Controller {
 		pw.println("PREVIOUS_MOVIE=B");
 		pw.println("NEXT_CHAPTER=N");
 		pw.println("PREVIOUS_CHAPTER=P");
-		pw.println("JUMP_FORWARD=CTRL H");
-		pw.println("JUMP_BACKWARD=CTRL J");
+		pw.println("JUMP_FORWARD=CTRL J");
+		pw.println("JUMP_BACKWARD=CTRL H");
 		pw.println("MUTE_VOLUME=M");
 		pw.println("VOLUME_UP=NUM_PLUS");
 		pw.println("VOLUME_DOWN=NUM_MINUS");

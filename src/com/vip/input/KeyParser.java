@@ -43,7 +43,6 @@ public class KeyParser implements KeyEventDispatcher {
 		return shortcutList;
 	}
 
-
 	public KeyParser() {
 		// Initialize arrays with default values
 		for (int i = 0; i < NrOfShortcuts; i++) {
@@ -52,7 +51,6 @@ public class KeyParser implements KeyEventDispatcher {
 			shortcutSHIFTmask[i] = false;
 		}
 	}
-
 
 	public KeyParser(VipFrame newVipFrame) {
 		this();
@@ -72,6 +70,10 @@ public class KeyParser implements KeyEventDispatcher {
 		// processed
 		if (keyState == isReleased && !(ke.getSource() instanceof JTextField)) {
 			VLC vlc = vipFrame.getController().getVLC();
+			if (vlc.isFullscreen()) {
+				vlc.getVideoSurface().setDrawOverlay(true);
+				vlc.getVideoSurface().setDisplayStates(true, true, false, false);
+			}
 			if (currentKey == shortcutList[TOGGLE_PLAYBACK]) {
 				if (isValidInput(ke, TOGGLE_PLAYBACK))
 					vlc.toggleMediaPlayback();
@@ -85,12 +87,16 @@ public class KeyParser implements KeyEventDispatcher {
 					vlc.previousChapter();
 			}
 			if (currentKey == shortcutList[VOLUME_UP]) {
-				if (isValidInput(ke, VOLUME_UP))
+				if (isValidInput(ke, VOLUME_UP)) {
+					vlc.getVideoSurface().setDisplayStates(true, false, false, false);
 					vlc.setVolume(vlc.getVolume() + vlc.getVolumeSteps());
+				}
 			}
 			if (currentKey == shortcutList[VOLUME_DOWN]) {
-				if (isValidInput(ke, VOLUME_DOWN))
+				if (isValidInput(ke, VOLUME_DOWN)) {
+					vlc.getVideoSurface().setDisplayStates(true, false, false, false);
 					vlc.setVolume(vlc.getVolume() - vlc.getVolumeSteps());
+				}
 			}
 			if (currentKey == shortcutList[SEARCH]) {
 				if (isValidInput(ke, SEARCH))
@@ -131,6 +137,7 @@ public class KeyParser implements KeyEventDispatcher {
 					vipFrame.getController().toggleFullscreen();
 				}
 			}
+			return true;
 		}
 		return false;
 	}
@@ -147,15 +154,21 @@ public class KeyParser implements KeyEventDispatcher {
 	 *         <code>false</code> if the input didn't match the requierements
 	 */
 	public boolean isValidInput(KeyEvent ke, int index) {
+		int modifiers = ke.getModifiers();
+		System.out.println("Pressed:" + (char) ke.getKeyCode() + ". Index has: " + shortcutList[index]);
+		System.out.println("Modifiers are: " + modifiers + ". Should be Ctrl? " + shortcutCTRLmask[index]
+		        + ". Should be Shift? " + shortcutSHIFTmask[index]);
+		System.out.println("Mod intersection is: " + (modifiers & KeyEvent.CTRL_MASK));
 		// Not Valid if CTRL should be pressed but is not
-		if (shortcutCTRLmask[index] && (ke.getModifiers() & KeyEvent.CTRL_MASK) == 0) {
+		if (shortcutCTRLmask[index] && ((modifiers & KeyEvent.CTRL_MASK) != KeyEvent.CTRL_MASK)) {
 			return false;
-		} else if (shortcutCTRLmask[index] && (ke.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
+		} else if (!shortcutCTRLmask[index] && ((modifiers & KeyEvent.CTRL_MASK) == KeyEvent.CTRL_MASK)) {
+			return false;
 		}
-		// Not Valid if SHIFT should be pressed but is not
-		if (shortcutSHIFTmask[index] && (ke.getModifiers() & KeyEvent.SHIFT_MASK) == 0) {
+		if (shortcutSHIFTmask[index] && ((modifiers & KeyEvent.SHIFT_MASK) != KeyEvent.SHIFT_MASK)) {
 			return false;
-		} else if (shortcutSHIFTmask[index] && (ke.getModifiers() & KeyEvent.SHIFT_MASK) != 0) {
+		} else if (!shortcutSHIFTmask[index] && ((modifiers & KeyEvent.SHIFT_MASK) == KeyEvent.SHIFT_MASK)) {
+
 		}
 		return true;
 	}

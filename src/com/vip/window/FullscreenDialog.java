@@ -57,6 +57,6 @@ public class FullscreenDialog extends JDialog implements MouseMotionListener {
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
 		jpnlVideoSurface.setDrawOverlay(true);
-		jpnlVideoSurface.setDisplayStates(true, true, true, true);
+		jpnlVideoSurface.setDisplayStates(true, true, false, true);
 	}
 }

@@ -178,7 +178,7 @@ public class Video {
 	}
 
 	public double getPersonalRating() {
-		return personalRating / 2;
+		return personalRating;
 	}
 
 	public void setPersonalRating(double personalRating) {
@@ -215,7 +215,7 @@ public class Video {
 		        + this.getReleaseDateString() + "\nGenre: " + this.getGenreString() + "\nDirector: "
 		        + this.getDirector() + "\nCast: " + this.getCastString() + "\nWriters: " + this.getWritersString()
 		        + "\nPlot Summary: " + this.getPlotSummary() + "\nCountry: " + this.getCountry() + "\nIMDb Rating: "
-		        + this.getImdbRating() + "\nPersonal Rating: " + this.getPersonalRating() + "\nSeason: "
+		        + this.getImdbRating() + "\nPersonal Rating: " + this.getPersonalRating() / 2 + "\nSeason: "
 		        + this.getSeason() + "\nEpisode: " + this.getEpisode() + "\nInfo Fetched: " + this.isInfoFetched();
 
 		return string;

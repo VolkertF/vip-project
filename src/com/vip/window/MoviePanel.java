@@ -31,7 +31,7 @@ import uk.co.caprica.vlcj.player.direct.format.RV32BufferFormat;
 public class MoviePanel extends JPanel implements ComponentListener {
 
 	// just approx.!
-	private final int OVERLAY_DISPLAY_TIME = 3;
+	private final int OVERLAY_DISPLAY_TIME = 2;
 	private int overlayTimer = OVERLAY_DISPLAY_TIME;
 
 	private final double ASPECT_RATIO = 16.0 / 9.0;
@@ -63,9 +63,7 @@ public class MoviePanel extends JPanel implements ComponentListener {
 	private class MovieBufferFormatCallback implements BufferFormatCallback {
 		@Override
 		public BufferFormat getBufferFormat(int sourceWidth, int sourceHeight) {
-			System.out.println("Ratio of Panel: " + imageWidth + " x " + imageHeight);
 			calcAspectRatio();
-			System.out.println("Ratio used: " + imageWidth + " x " + imageHeight);
 			return new RV32BufferFormat(imageWidth, imageHeight);
 		}
 	};
@@ -111,7 +109,7 @@ public class MoviePanel extends JPanel implements ComponentListener {
 	private boolean drawFps = false;
 	private boolean drawTitle = false;
 
-	private final Font font = new Font("Arial", Font.BOLD, 40);
+	private final Font font = new Font("Tahoma", Font.BOLD, 40);
 
 	long lastUpdateTime = System.currentTimeMillis();
 	int updatedTicks = 0;
@@ -144,23 +142,25 @@ public class MoviePanel extends JPanel implements ComponentListener {
 			g2.setFont(font);
 			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 			String toDisplay = "";
-			if (drawFps) {
-				toDisplay += String.format("%03d  ", averageFps);
-			}
 			if (drawTitle) {
 				if (vlcInstance.getMediaPlayer() != null && vlcInstance.getCurrentPlaybackPath() != null) {
-					toDisplay += String.format("\"%.50s\"  ", vlcInstance.getCurrentTitle());
+					toDisplay += String.format("\"%.40s\"  ", vlcInstance.getCurrentTitle());
 				}
 			}
 			if (drawTime) {
-				toDisplay += vlcInstance.getUpdatedTimeToString() + "  ";
+				String tmpString = vlcInstance.getUpdatedTimeToString();
+				tmpString = tmpString.substring(0, tmpString.lastIndexOf(" "));
+				toDisplay += tmpString + "  ";
 			}
 			if (drawVolume) {
 				int volume = vlcInstance.getMediaPlayer().getVolume();
 				if (volume < 0) {
 					volume = 0;
 				}
-				toDisplay += String.format("Volume: %03d", volume) + "%";
+				toDisplay += String.format("Vol.: %03d", volume) + "%  ";
+			}
+			if (drawFps) {
+				toDisplay += String.format("%03dFps  ", averageFps);
 			}
 			drawOutlineText(g2, toDisplay, image.getWidth(), image.getHeight());
 		}
@@ -223,7 +223,6 @@ public class MoviePanel extends JPanel implements ComponentListener {
 		AffineTransform affineTransform = new AffineTransform();
 		affineTransform = g2.getTransform();
 		affineTransform.translate(x, y);
-		System.out.println("Coords: " + x + " x " + y);
 		g2.transform(affineTransform);
 		g2.setColor(Color.WHITE);
 		g2.fill(shape);

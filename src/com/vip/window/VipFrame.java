@@ -554,6 +554,7 @@ public class VipFrame extends JFrame {
 	 */
 	public void updateGUI() {
 		VLC vlcInstance = controller.getVLC();
+		updateRatingSlider();
 
 		if (vlcInstance.isVLCInstalled() && vlcInstance.getMediaPlayer() != null
 		        && vlcInstance.getMediaPlayer().getLength() != -1) {
@@ -567,7 +568,6 @@ public class VipFrame extends JFrame {
 					controller.getVLC().setMediaInitState(true);
 				}
 				updateVolumeSlider();
-				updateRatingSlider();
 				updateTimelineLabels();
 
 				int currentMovieTime = (int) controller.getVLC().getMediaPlayer().getTime();
@@ -597,7 +597,8 @@ public class VipFrame extends JFrame {
 	}
 
 	public void updateRatingSlider() {
-		jlabelRating.setText(Double.toString(((double) jsliderRating.getValue() / 2.0)));
+		String ratingString = String.format("%3.1f", (jsliderRating.getValue() / 2.0));
+		jlabelRating.setText(ratingString);
 	}
 
 	/**
@@ -625,15 +626,21 @@ public class VipFrame extends JFrame {
 		jpnlIntelNorth.setLayout(new GridBagLayout());
 
 		jsliderRating = new JSlider(0, 20, 0);
-		jsliderRating.setMajorTickSpacing(0);
+		jsliderRating.setMajorTickSpacing(1);
+		jsliderRating.setMinorTickSpacing(1);
+		jsliderRating.setPaintTicks(true);
 		jsliderRating.addMouseListener(new MouseAdapter() {
 			public void mouseReleased(MouseEvent me) {
 				JSlider jslider = (JSlider) me.getSource();
 				BasicSliderUI ui = (BasicSliderUI) jslider.getUI();
 				int newRating = ui.valueForXPosition(me.getX());
-				Video videoInstance = ssController.getVideoByIndex(jlstFileList.getSelectedIndex());
-				videoInstance.setPersonalRating(newRating);
-				jtaMediaInfo.setText(videoInstance.toString());
+				if (jlstFileList.getSelectedIndex() >= 0) {
+					Video videoInstance = ssController.getVideoByIndex(jlstFileList.getSelectedIndex());
+					videoInstance.setPersonalRating(newRating);
+					int position = jtaMediaInfo.getCaretPosition();
+					jtaMediaInfo.setText(videoInstance.toString());
+					jtaMediaInfo.setCaretPosition(position);
+				}
 			}
 		});
 
@@ -648,8 +655,13 @@ public class VipFrame extends JFrame {
 
 		jtaMediaInfo = new JTextArea(20, 1);
 		jtaMediaInfo.setEditable(false);
+		jtaMediaInfo.setFocusable(false);
 		jtaMediaInfo.setLineWrap(true);
+
 		JScrollPane scrollPane = new JScrollPane(jtaMediaInfo);
+		jtaMediaInfo.setOpaque(false);
+		jtaMediaInfo.setBackground(new Color(0, 0, 0, 0));
+		scrollPane.getViewport().setOpaque(false);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
 		// TODO create extended intel
@@ -858,20 +870,21 @@ public class VipFrame extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent ev) {
+				Video videoInstance = ssController.getVideoByIndex(jlstFileList.getSelectedIndex());
+				double personalRating = videoInstance.getPersonalRating();
+				if (personalRating < 0) {
+					videoInstance.setPersonalRating(0);
+				} else if (personalRating > 20) {
+					videoInstance.setPersonalRating(20);
+				}
+				jsliderRating.setValue((int) personalRating);
+				int position = jtaMediaInfo.getCaretPosition();
+				jtaMediaInfo.setText(videoInstance.toString());
+				jtaMediaInfo.setCaretPosition(position);
 				if (ev.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(ev)) {
-					Video videoInstance = ssController.getVideoByIndex(jlstFileList.getSelectedIndex());
+					controller.getVLC().stopMedia();
 					controller.getVLC().loadMedia(videoInstance.getFilePath());
 					controller.getVLC().setCurrentTitle(videoInstance.getTitle());
-					double personalRating = videoInstance.getPersonalRating();
-					if (personalRating <= 0) {
-						videoInstance.setPersonalRating(0);
-					} else if (personalRating > 100) {
-						videoInstance.setPersonalRating(100);
-					}
-					jsliderRating.setValue((int) personalRating);
-					jtaMediaInfo.setText(videoInstance.toString());
-					// TODO load intel into text area
-
 					controller.getVLC().toggleMediaPlayback();
 				}
 			}

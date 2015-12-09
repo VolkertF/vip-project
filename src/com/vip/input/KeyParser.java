@@ -98,12 +98,14 @@ public class KeyParser implements KeyEventDispatcher {
 			}
 			if (currentKey == shortcutList[NEXT_MOVIE]) {
 				if (isValidInput(ke, NEXT_MOVIE)) {
+					vlc.switchMediaFile("F:\\Videos\\The Saga Of Bjorn-HD.mp4");
 					// TODO either change to next list Item or load next movie
 					// in custom playback list into the media player
 				}
 			}
 			if (currentKey == shortcutList[PREVIOUS_MOVIE]) {
 				if (isValidInput(ke, PREVIOUS_MOVIE)) {
+					vlc.switchMediaFile("F:\\Videos\\Dji. Death Sails-HD.mp4");
 					// TODO either change to previous list Item or load previous
 					// movie
 					// in custom playback list into the media player

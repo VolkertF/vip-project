@@ -58,6 +58,17 @@ public class VLC {
 	 */
 	private boolean initMedia = true;
 
+	private boolean isFullscreen = false;
+
+	public boolean isFullscreen() {
+		return isFullscreen;
+	}
+
+	public void setFullscreen(boolean newStatus) {
+		isFullscreen = newStatus;
+	}
+
+	
 	/**
 	 * Initializes vlc plugin,finds vlc installation, sets canvas up.
 	 */

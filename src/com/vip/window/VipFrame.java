@@ -10,6 +10,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -61,7 +62,7 @@ import com.vip.media.VLC;
 @SuppressWarnings("serial")
 public class VipFrame extends JFrame {
 
-	private VipFrame thisFrame=this;
+	private VipFrame thisFrame = this;
 
 	/**
 	 * Constructor for building the frame and initialize all event handlers.
@@ -399,24 +400,14 @@ public class VipFrame extends JFrame {
 	 */
 	private JSlider jsliderMovieProgress;
 
-	private boolean isFullscreen = false;
-
 	private FullscreenDialog fullscreenDialog;
-
-	public boolean isFullscreen() {
-		return isFullscreen;
-	}
-
-	public void setFullscreen(boolean newStatus) {
-		isFullscreen = newStatus;
-	}
 
 	public FullscreenDialog getFullscreen() {
 		return fullscreenDialog;
 	}
 
 	public void createFullscreen() {
-		isFullscreen = true;
+		controller.getVLC().setFullscreen(true);
 
 		MoviePanel jpnlVideoSurface = new MoviePanel(controller.getVLC(),
 		        controller.getVLC().getMediaPlayer().getTime(), controller.getVLC().getCurrentPlaybackPath(),
@@ -425,6 +416,7 @@ public class VipFrame extends JFrame {
 		jpnlMovie.remove(controller.getVLC().getVideoSurface());
 		fullscreenDialog = new FullscreenDialog(this, controller.getVLC(), controller.getKeyParser(), jpnlVideoSurface);
 		fullscreenDialog.getSurface().componentResized(null);
+		fullscreenDialog.getSurface().setDrawOverlay(true);
 	}
 
 	public void disposeFullscreen() {
@@ -436,10 +428,12 @@ public class VipFrame extends JFrame {
 		fullscreenDialog = null;
 		controller.getVLC().setSurface(jpnlVideoSurface);
 		addComponent(0, 0, 1, 1, 1.0, 0.95, jpnlMovie, controller.getVLC().getVideoSurface(), defaultInsets);
+		controller.getVLC().getVideoSurface().addComponentListener(controller.getVLC().getVideoSurface());
 		this.revalidate();
 		controller.getVLC().getVideoSurface().componentResized(null);
+		controller.getVLC().getVideoSurface().setDrawOverlay(false);
 		this.requestFocus();
-		isFullscreen = false;
+		controller.getVLC().setFullscreen(false);
 	}
 
 	/**
@@ -451,6 +445,7 @@ public class VipFrame extends JFrame {
 	 */
 	private void buildMovieGUI() {
 		addComponent(0, 0, 1, 1, 1.0, 0.95, jpnlMovie, controller.getVLC().getVideoSurface(), defaultInsets);
+		controller.getVLC().getVideoSurface().addComponentListener(controller.getVLC().getVideoSurface());
 
 		JPanel jpnlMovieControls = new JPanel();
 		jpnlMovieControls.setLayout(new GridBagLayout());
@@ -483,6 +478,7 @@ public class VipFrame extends JFrame {
 		jsliderVolume = new JSlider(JSlider.HORIZONTAL, VLC.getMinVolume(), VLC.getMaxVolume(),
 		        ((VLC.getMinVolume() + VLC.getMaxVolume()) / 2));
 		jsliderVolume.addMouseListener(new MouseAdapter() {
+
 			public void mouseReleased(MouseEvent me) {
 				JSlider jslider = (JSlider) me.getSource();
 				BasicSliderUI ui = (BasicSliderUI) jslider.getUI();
@@ -502,6 +498,7 @@ public class VipFrame extends JFrame {
 		jsliderMovieProgress = new JSlider(0, 100, 0);
 		jsliderMovieProgress.setMajorTickSpacing(5);
 		jsliderMovieProgress.addMouseListener(new MouseAdapter() {
+
 			public void mouseReleased(MouseEvent me) {
 				JSlider jslider = (JSlider) me.getSource();
 				BasicSliderUI ui = (BasicSliderUI) jslider.getUI();
@@ -570,10 +567,9 @@ public class VipFrame extends JFrame {
 				if (jsliderMovieProgress.getMaximum() == 0) {
 					controller.getVLC().setMediaInitState(true);
 				}
-
-				updateTimelineLabels();
 				updateVolumeSlider();
 				updateRatingSlider();
+				updateTimelineLabels();
 
 				int currentMovieTime = (int) controller.getVLC().getMediaPlayer().getTime();
 				jsliderMovieProgress.setValue(currentMovieTime);
@@ -589,6 +585,12 @@ public class VipFrame extends JFrame {
 	 *
 	 */
 	private void updateTimelineLabels() {
+		String newLabelText = getUpdatedTimeToString();
+		jlabelMovieTimer.setText(newLabelText + "%");
+	}
+
+	public String getUpdatedTimeToString() {
+		String strUpdatedTime = null;
 		Double procentualProgress = ((double) controller.getVLC().getMediaPlayer().getTime()
 		        / controller.getVLC().getMediaPlayer().getLength()) * 100;
 		// is newTime is not a valid Number, we display a default Text
@@ -604,19 +606,17 @@ public class VipFrame extends JFrame {
 		hoursTotal = (int) (controller.getVLC().getMediaPlayer().getLength() / 3600000);
 		minutesTotal = (int) (controller.getVLC().getMediaPlayer().getLength() / 60000 % 60);
 		secondsTotal = (int) (controller.getVLC().getMediaPlayer().getLength() / 1000 % 60);
-
 		if (procentualProgress.isNaN() || procentualProgress.isInfinite()) {
-			String newLabelText = String.format("%02d:%02d:%02d / %02d:%02d:%02d   000,0", hoursPassed, minutesPassed,
+			strUpdatedTime = String.format("%02d:%02d:%02d / %02d:%02d:%02d   000,0", hoursPassed, minutesPassed,
 			        secondsPassed, hoursTotal, minutesTotal, secondsTotal, procentualProgress);
-			jlabelMovieTimer.setText(newLabelText + "%");
 		} else {
 			if (procentualProgress > 100) {
 				procentualProgress = 100.0;
 			}
-			String newLabelText = String.format("%02d:%02d:%02d / %02d:%02d:%02d   %4.1f", hoursPassed, minutesPassed,
+			strUpdatedTime = String.format("%02d:%02d:%02d / %02d:%02d:%02d   %4.1f", hoursPassed, minutesPassed,
 			        secondsPassed, hoursTotal, minutesTotal, secondsTotal, procentualProgress);
-			jlabelMovieTimer.setText(newLabelText + "%");
 		}
+		return strUpdatedTime;
 	}
 
 	/**

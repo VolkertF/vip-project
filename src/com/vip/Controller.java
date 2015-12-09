@@ -335,7 +335,7 @@ public class Controller {
 	}
 
 	public void toggleFullscreen() {
-		if (vipFrame.isFullscreen()) {
+		if (getVLC().isFullscreen()) {
 			vipFrame.disposeFullscreen();
 		} else {
 			vipFrame.createFullscreen();

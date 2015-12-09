@@ -12,9 +12,6 @@ public class Main {
 	public static void main(String[] args) {
 		final VipFrame f = new VipFrame();
 		f.setVisible(true);
-		// Add Resize-listener to video surface
-		f.getController().getVLC().getVideoSurface()
-		        .addComponentListener((ComponentListener) f.getController().getVLC().getVideoSurface());
 		// Update the canvas size on start-up
 		f.getController().getVLC().getVideoSurface().updateVideoSurface();
 

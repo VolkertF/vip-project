@@ -3,8 +3,8 @@ package com.vip.window;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -12,7 +12,7 @@ import javax.swing.JFrame;
 import com.vip.input.KeyParser;
 import com.vip.media.VLC;
 
-public class FullscreenDialog extends JDialog{
+public class FullscreenDialog extends JDialog implements MouseMotionListener {
 
 	private KeyParser parser;
 
@@ -40,12 +40,21 @@ public class FullscreenDialog extends JDialog{
 		jpnlVideoSurface.updateVideoSurface();
 		this.requestFocus();
 	}
-	
+
 	public MoviePanel getSurface() {
 		return jpnlVideoSurface;
 	}
 
 	public VLC getVLC() {
 		return vlcInstance;
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent arg0) {
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
+		
 	}
 }

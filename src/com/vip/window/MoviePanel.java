@@ -232,13 +232,10 @@ public class MoviePanel extends JPanel implements ComponentListener {
 
 	public void updateVideoSurface() {
 		if (this.getWidth() != imageWidth && this.getHeight() != imageHeight) {
-			// System.out.println("Res: " + imageWidth + " x " + imageHeight);
 			imageWidth = this.getWidth();
 			imageHeight = this.getHeight();
 			image = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration()
 			        .createCompatibleImage(imageWidth, imageHeight);
-			// System.out.println("Image res: " + image.getWidth() + " x " +
-			// image.getHeight());
 			vlcInstance.invokeMediaPlayerCreation();
 		}
 
@@ -263,8 +260,6 @@ public class MoviePanel extends JPanel implements ComponentListener {
 	@Override
 	public void componentResized(ComponentEvent e) {
 		if (vlcInstance.getMediaPlayer() != null && vlcInstance.getCurrentPlaybackPath() != null) {
-			// System.out.println("Saved is:" + currentPath + ".\nCorrect is: "
-			// + vlcInstance.getCurrentPlaybackPath());
 			if (currentPath != vlcInstance.getCurrentPlaybackPath()) {
 				currentPath = vlcInstance.getCurrentPlaybackPath();
 				lastTime = 0;
@@ -272,8 +267,6 @@ public class MoviePanel extends JPanel implements ComponentListener {
 			} else {
 				long currentTime = vlcInstance.getMediaPlayer().getTime();
 				if (currentTime > 0L) {
-					// System.out.println("Saved is:" + lastTime + ".\nCorrect
-					// is: " + currentTime);
 					lastTime = currentTime;
 				}
 				shouldPlay = vlcInstance.getMediaPlayer().isPlaying();

@@ -631,7 +631,9 @@ public class VipFrame extends JFrame {
 				JSlider jslider = (JSlider) me.getSource();
 				BasicSliderUI ui = (BasicSliderUI) jslider.getUI();
 				int newRating = ui.valueForXPosition(me.getX());
-				ssController.getVideoByIndex(jlstFileList.getSelectedIndex()).setPersonalRating(newRating);
+				Video videoInstance = ssController.getVideoByIndex(jlstFileList.getSelectedIndex());
+				videoInstance.setPersonalRating(newRating);
+				jtaMediaInfo.setText(videoInstance.toString());
 			}
 		});
 
@@ -650,9 +652,8 @@ public class VipFrame extends JFrame {
 		JScrollPane scrollPane = new JScrollPane(jtaMediaInfo);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-		jtaMediaInfo.setText(
-		        "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labor.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labor.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labor.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labor");
-
+		// TODO create extended intel
+		jtaMediaInfo.setText("");
 		addComponent(0, 0, 1, 1, 1, 0.1, jpnlIntel, jpnlIntelNorth, defaultInsets);
 		addComponent(0, 1, 1, 1, 1, 0.9, jpnlIntel, scrollPane, defaultInsets);
 	}
@@ -858,10 +859,19 @@ public class VipFrame extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent ev) {
 				if (ev.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(ev)) {
-					controller.getVLC()
-		                    .loadMedia(ssController.getVideoByIndex(jlstFileList.getSelectedIndex()).getFilePath());
-					controller.getVLC()
-		                    .setCurrentTitle(ssController.getVideoByIndex(jlstFileList.getSelectedIndex()).getTitle());
+					Video videoInstance = ssController.getVideoByIndex(jlstFileList.getSelectedIndex());
+					controller.getVLC().loadMedia(videoInstance.getFilePath());
+					controller.getVLC().setCurrentTitle(videoInstance.getTitle());
+					double personalRating = videoInstance.getPersonalRating();
+					if (personalRating <= 0) {
+						videoInstance.setPersonalRating(0);
+					} else if (personalRating > 100) {
+						videoInstance.setPersonalRating(100);
+					}
+					jsliderRating.setValue((int) personalRating);
+					jtaMediaInfo.setText(videoInstance.toString());
+					// TODO load intel into text area
+
 					controller.getVLC().toggleMediaPlayback();
 				}
 			}

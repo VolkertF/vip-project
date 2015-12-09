@@ -5,47 +5,52 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class Video {
-	
 
 	private String filePath;
-	
+
 	private String title;
-	
+
 	private Date releaseDate;
-	
+
 	private ArrayList<String> genre;
-	
+
 	private String director;
-	
+
 	private ArrayList<String> cast;
-	
+
 	private ArrayList<String> writers;
-	
+
 	private String plotSummary;
-	
+
 	private String country;
-	
+
 	private double imdbRating;
-	
+
 	private double personalRating;
-	
+
 	private int season;
-	
+
 	private int episode;
-	
+
 	private boolean infoFetched;
-	
+
 	public Video(String path) {
 		this.filePath = path;
 		String[] temp = path.split(Pattern.quote("\\"));
-		this.title = temp[temp.length-1];
+		this.title = temp[temp.length - 1];
 		this.infoFetched = false;
 	}
-	
-	public Video(){ }
+
+	public Video() {
+	}
 
 	public String getFilePath() {
-		return filePath;
+		if (filePath != null) {
+			return filePath;
+		} else {
+			// well...how would this happen? But for completion's sake...
+			return "Unknown";
+		}
 	}
 
 	public void setFilePath(String filePath) {
@@ -53,7 +58,11 @@ public class Video {
 	}
 
 	public String getTitle() {
-		return title;
+		if (title != null) {
+			return title;
+		} else {
+			return "Unknown";
+		}
 	}
 
 	public void setTitle(String title) {
@@ -64,13 +73,28 @@ public class Video {
 		return releaseDate;
 	}
 
+	public String getReleaseDateString() {
+		if (releaseDate != null) {
+			return releaseDate.toString();
+		} else {
+			return "Unknown";
+		}
+	}
+
 	public void setReleaseDate(Date date) {
 		this.releaseDate = date;
 	}
 
-
 	public ArrayList<String> getGenre() {
 		return genre;
+	}
+
+	public String getGenreString() {
+		if (genre != null) {
+			return genre.toString();
+		} else {
+			return "Unknown";
+		}
 	}
 
 	public void setGenre(ArrayList<String> genre) {
@@ -78,7 +102,11 @@ public class Video {
 	}
 
 	public String getDirector() {
-		return director;
+		if (director != null) {
+			return director;
+		} else {
+			return "Unknown";
+		}
 	}
 
 	public void setDirector(String director) {
@@ -89,6 +117,14 @@ public class Video {
 		return cast;
 	}
 
+	public String getCastString() {
+		if (cast != null) {
+			return cast.toString();
+		} else {
+			return "Unknown";
+		}
+	}
+
 	public void setCast(ArrayList<String> cast) {
 		this.cast = cast;
 	}
@@ -97,12 +133,24 @@ public class Video {
 		return writers;
 	}
 
+	public String getWritersString() {
+		if (writers != null) {
+			return writers.toString();
+		} else {
+			return "Unknown";
+		}
+	}
+
 	public void setWriters(ArrayList<String> writers) {
 		this.writers = writers;
 	}
 
 	public String getPlotSummary() {
-		return plotSummary;
+		if (plotSummary != null) {
+			return plotSummary;
+		} else {
+			return "Unknown";
+		}
 	}
 
 	public void setPlotSummary(String plotSummary) {
@@ -110,7 +158,11 @@ public class Video {
 	}
 
 	public String getCountry() {
-		return country;
+		if (country != null) {
+			return country;
+		} else {
+			return "Unknown";
+		}
 	}
 
 	public void setCountry(String country) {
@@ -126,13 +178,13 @@ public class Video {
 	}
 
 	public double getPersonalRating() {
-		return personalRating;
+		return personalRating / 2;
 	}
 
 	public void setPersonalRating(double personalRating) {
 		this.personalRating = personalRating;
 	}
-	
+
 	public int getSeason() {
 		return season;
 	}
@@ -148,34 +200,24 @@ public class Video {
 	public void setEpisode(int episode) {
 		this.episode = episode;
 	}
-	
+
 	public boolean isInfoFetched() {
 		return infoFetched;
 	}
-	
+
 	public void setInfoFetched(boolean infoFetched) {
 		this.infoFetched = infoFetched;
 	}
-	
-	public String toString(){
-		
-		String string = ""
-				+ "\nFile Path: " + this.getFilePath()
-				+ "\nTitle: " + this.getTitle()
-				+ "\nRelease Date: " + this.getReleaseDate()
-				+ "\nGenre: " + this.getGenre()
-				+ "\nDirector: " + this.getDirector()
-				+ "\nCast: " + this.getCast()
-				+ "\nWriters: " + this.getWriters()
-				+ "\nPlot Summary: " + this.getPlotSummary()
-				+ "\nCountry: " + this.getCountry()
-				+ "\nIMDb Rating: " + this.getImdbRating()
-				+ "\nPersonal Rating: " + this.getPersonalRating()
-				+ "\nSeason: " + this.getSeason()
-				+ "\nEpisode: " + this.getEpisode()
-				+ "\nInfo Fetched: " + this.isInfoFetched();
-		
-		
+
+	public String toString() {
+
+		String string = "File Path: " + this.getFilePath() + "\nTitle: " + this.getTitle() + "\nRelease Date: "
+		        + this.getReleaseDateString() + "\nGenre: " + this.getGenreString() + "\nDirector: "
+		        + this.getDirector() + "\nCast: " + this.getCastString() + "\nWriters: " + this.getWritersString()
+		        + "\nPlot Summary: " + this.getPlotSummary() + "\nCountry: " + this.getCountry() + "\nIMDb Rating: "
+		        + this.getImdbRating() + "\nPersonal Rating: " + this.getPersonalRating() + "\nSeason: "
+		        + this.getSeason() + "\nEpisode: " + this.getEpisode() + "\nInfo Fetched: " + this.isInfoFetched();
+
 		return string;
 	}
 }

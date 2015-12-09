@@ -24,6 +24,7 @@ public class FullscreenDialog extends JDialog implements MouseMotionListener {
 
 	public FullscreenDialog(VipFrame parentFrame, VLC vlcInstance, KeyParser parser, MoviePanel jpnlMovie) {
 		super(parentFrame, true);
+		this.addMouseMotionListener(this);
 		this.parentFrame = parentFrame;
 		this.parser = parser;
 		this.setSize(Toolkit.getDefaultToolkit().getScreenSize());
@@ -55,6 +56,7 @@ public class FullscreenDialog extends JDialog implements MouseMotionListener {
 
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
-		
+		jpnlVideoSurface.setDrawOverlay(true);
+		jpnlVideoSurface.setDisplayStates(true, true, true, true);
 	}
 }

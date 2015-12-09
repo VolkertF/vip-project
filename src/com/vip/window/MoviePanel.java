@@ -31,7 +31,8 @@ import uk.co.caprica.vlcj.player.direct.format.RV32BufferFormat;
 public class MoviePanel extends JPanel implements ComponentListener {
 
 	// just approx.!
-	private int overlayTimeSecond = 0;
+	private final int OVERLAY_DISPLAY_TIME = 3;
+	private int overlayTimer = OVERLAY_DISPLAY_TIME;
 
 	private final double ASPECT_RATIO = 16.0 / 9.0;
 
@@ -104,7 +105,12 @@ public class MoviePanel extends JPanel implements ComponentListener {
 		}
 	}
 
-	private boolean shouldDrawOverlay = true;
+	private boolean shouldDrawOverlay = false;
+	private boolean drawVolume = false;
+	private boolean drawTime = false;
+	private boolean drawFps = false;
+	private boolean drawTitle = false;
+
 	private final Font font = new Font("Arial", Font.BOLD, 40);
 
 	long lastUpdateTime = System.currentTimeMillis();
@@ -120,11 +126,14 @@ public class MoviePanel extends JPanel implements ComponentListener {
 			lastUpdateTime = time;
 			averageFps = updatedTicks;
 			updatedTicks = 0;
-			overlayTimeSecond--;
+			if (shouldDrawOverlay) {
+				overlayTimer--;
+			}
 		}
 
-		if (overlayTimeSecond <= 0) {
-			// shouldDrawOverlay = false;
+		if (overlayTimer <= 0) {
+			shouldDrawOverlay = false;
+			overlayTimer = OVERLAY_DISPLAY_TIME;
 		}
 
 		g2.setColor(Color.BLACK);
@@ -134,21 +143,59 @@ public class MoviePanel extends JPanel implements ComponentListener {
 		if (shouldDrawOverlay) {
 			g2.setFont(font);
 			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-			int volume = vlcInstance.getMediaPlayer().getVolume();
-			if (volume < 0) {
-				volume = 0;
+			String toDisplay = "";
+			if (drawFps) {
+				toDisplay += String.format("%03d  ", averageFps);
 			}
-			String strVolume = String.format("Volume: %03d", volume) + " %" + String.format("  %03d", averageFps);
-			drawOutlineText(g2, strVolume, image.getWidth(), image.getHeight());
+			if (drawTitle) {
+				if (vlcInstance.getMediaPlayer() != null && vlcInstance.getCurrentPlaybackPath() != null) {
+					toDisplay += String.format("\"%.50s\"  ", vlcInstance.getCurrentTitle());
+				}
+			}
+			if (drawTime) {
+				toDisplay += vlcInstance.getUpdatedTimeToString() + "  ";
+			}
+			if (drawVolume) {
+				int volume = vlcInstance.getMediaPlayer().getVolume();
+				if (volume < 0) {
+					volume = 0;
+				}
+				toDisplay += String.format("Volume: %03d", volume) + "%";
+			}
+			drawOutlineText(g2, toDisplay, image.getWidth(), image.getHeight());
 		}
 	}
 
 	public void setDrawOverlay(boolean state) {
 		shouldDrawOverlay = state;
+		overlayTimer = OVERLAY_DISPLAY_TIME;
 	}
 
 	public boolean getDrawOverlay() {
 		return shouldDrawOverlay;
+	}
+
+	public void setVolumeDisplayState(boolean state) {
+		drawVolume = state;
+	}
+
+	public void setTitleDisplayState(boolean state) {
+		drawTitle = state;
+	}
+
+	public void setFpsDisplayState(boolean state) {
+		drawFps = state;
+	}
+
+	public void setTimeDisplayState(boolean state) {
+		drawTime = state;
+	}
+
+	public void setDisplayStates(boolean stateVolume, boolean stateTime, boolean stateFps, boolean stateTitle) {
+		drawVolume = stateVolume;
+		drawTime = stateTime;
+		drawFps = stateFps;
+		drawTitle = stateTitle;
 	}
 
 	public Rectangle getRectFromString(Graphics2D g2, String text) {

@@ -416,7 +416,6 @@ public class VipFrame extends JFrame {
 		jpnlMovie.remove(controller.getVLC().getVideoSurface());
 		fullscreenDialog = new FullscreenDialog(this, controller.getVLC(), controller.getKeyParser(), jpnlVideoSurface);
 		fullscreenDialog.getSurface().componentResized(null);
-		fullscreenDialog.getSurface().setDrawOverlay(true);
 	}
 
 	public void disposeFullscreen() {
@@ -585,38 +584,8 @@ public class VipFrame extends JFrame {
 	 *
 	 */
 	private void updateTimelineLabels() {
-		String newLabelText = getUpdatedTimeToString();
+		String newLabelText = controller.getVLC().getUpdatedTimeToString();
 		jlabelMovieTimer.setText(newLabelText + "%");
-	}
-
-	public String getUpdatedTimeToString() {
-		String strUpdatedTime = null;
-		Double procentualProgress = ((double) controller.getVLC().getMediaPlayer().getTime()
-		        / controller.getVLC().getMediaPlayer().getLength()) * 100;
-		// is newTime is not a valid Number, we display a default Text
-		int hoursPassed = 0;
-		int minutesPassed = 0;
-		int secondsPassed = 0;
-		int hoursTotal = 0;
-		int minutesTotal = 0;
-		int secondsTotal = 0;
-		hoursPassed = (int) (controller.getVLC().getMediaPlayer().getTime() / 3600000);
-		minutesPassed = (int) (controller.getVLC().getMediaPlayer().getTime() / 60000 % 60);
-		secondsPassed = (int) (controller.getVLC().getMediaPlayer().getTime() / 1000 % 60);
-		hoursTotal = (int) (controller.getVLC().getMediaPlayer().getLength() / 3600000);
-		minutesTotal = (int) (controller.getVLC().getMediaPlayer().getLength() / 60000 % 60);
-		secondsTotal = (int) (controller.getVLC().getMediaPlayer().getLength() / 1000 % 60);
-		if (procentualProgress.isNaN() || procentualProgress.isInfinite()) {
-			strUpdatedTime = String.format("%02d:%02d:%02d / %02d:%02d:%02d   000,0", hoursPassed, minutesPassed,
-			        secondsPassed, hoursTotal, minutesTotal, secondsTotal, procentualProgress);
-		} else {
-			if (procentualProgress > 100) {
-				procentualProgress = 100.0;
-			}
-			strUpdatedTime = String.format("%02d:%02d:%02d / %02d:%02d:%02d   %4.1f", hoursPassed, minutesPassed,
-			        secondsPassed, hoursTotal, minutesTotal, secondsTotal, procentualProgress);
-		}
-		return strUpdatedTime;
 	}
 
 	/**
@@ -662,9 +631,7 @@ public class VipFrame extends JFrame {
 				JSlider jslider = (JSlider) me.getSource();
 				BasicSliderUI ui = (BasicSliderUI) jslider.getUI();
 				int newRating = ui.valueForXPosition(me.getX());
-				// TODO pass new rating to video object -> get item from list
-		        // (it's just String right now, so there must be some sort of
-		        // workaround for this)
+				ssController.getVideoByIndex(jlstFileList.getSelectedIndex()).setPersonalRating(newRating);
 			}
 		});
 
@@ -893,6 +860,8 @@ public class VipFrame extends JFrame {
 				if (ev.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(ev)) {
 					controller.getVLC()
 		                    .loadMedia(ssController.getVideoByIndex(jlstFileList.getSelectedIndex()).getFilePath());
+					controller.getVLC()
+		                    .setCurrentTitle(ssController.getVideoByIndex(jlstFileList.getSelectedIndex()).getTitle());
 					controller.getVLC().toggleMediaPlayback();
 				}
 			}

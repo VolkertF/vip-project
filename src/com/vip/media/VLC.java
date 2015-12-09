@@ -35,8 +35,18 @@ public class VLC {
 
 	private String currentPathPlaying = null;
 
+	private String currentTile = null;
+
 	public String getCurrentPlaybackPath() {
 		return currentPathPlaying;
+	}
+
+	public void setCurrentTitle(String newTitle) {
+		currentTile = newTitle;
+	}
+
+	public String getCurrentTitle() {
+		return currentTile;
 	}
 
 	/**
@@ -68,7 +78,6 @@ public class VLC {
 		isFullscreen = newStatus;
 	}
 
-	
 	/**
 	 * Initializes vlc plugin,finds vlc installation, sets canvas up.
 	 */
@@ -158,6 +167,10 @@ public class VLC {
 			setMediaInitState(true);
 			currentPathPlaying = mediaPath;
 			jpnlVideoSurface.setCurrentMediaPath(mediaPath);
+			if (isFullscreen) {
+				jpnlVideoSurface.setDrawOverlay(true);
+				jpnlVideoSurface.setDisplayStates(true, true, false, true);
+			}
 		}
 	}
 
@@ -311,6 +324,36 @@ public class VLC {
 	public void setSurface(MoviePanel newPanel) {
 		jpnlVideoSurface = newPanel;
 		invokeMediaPlayerCreation();
+	}
+
+	public String getUpdatedTimeToString() {
+		String strUpdatedTime = null;
+		Double procentualProgress = ((double) directMediaPlayerComponent.getTime()
+		        / directMediaPlayerComponent.getLength()) * 100;
+		// is newTime is not a valid Number, we display a default Text
+		int hoursPassed = 0;
+		int minutesPassed = 0;
+		int secondsPassed = 0;
+		int hoursTotal = 0;
+		int minutesTotal = 0;
+		int secondsTotal = 0;
+		hoursPassed = (int) (directMediaPlayerComponent.getTime() / 3600000);
+		minutesPassed = (int) (directMediaPlayerComponent.getTime() / 60000 % 60);
+		secondsPassed = (int) (directMediaPlayerComponent.getTime() / 1000 % 60);
+		hoursTotal = (int) (directMediaPlayerComponent.getLength() / 3600000);
+		minutesTotal = (int) (directMediaPlayerComponent.getLength() / 60000 % 60);
+		secondsTotal = (int) (directMediaPlayerComponent.getLength() / 1000 % 60);
+		if (procentualProgress.isNaN() || procentualProgress.isInfinite()) {
+			strUpdatedTime = String.format("%02d:%02d:%02d / %02d:%02d:%02d   000,0", hoursPassed, minutesPassed,
+			        secondsPassed, hoursTotal, minutesTotal, secondsTotal, procentualProgress);
+		} else {
+			if (procentualProgress > 100) {
+				procentualProgress = 100.0;
+			}
+			strUpdatedTime = String.format("%02d:%02d:%02d / %02d:%02d:%02d   %4.1f", hoursPassed, minutesPassed,
+			        secondsPassed, hoursTotal, minutesTotal, secondsTotal, procentualProgress);
+		}
+		return strUpdatedTime;
 	}
 
 }

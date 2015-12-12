@@ -1,6 +1,5 @@
 package com.vip;
 
-import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
@@ -10,8 +9,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-
-import javax.swing.JPanel;
 
 import com.vip.input.ButtonParser;
 import com.vip.input.KeyParser;

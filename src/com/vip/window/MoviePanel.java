@@ -28,6 +28,7 @@ import uk.co.caprica.vlcj.player.direct.RenderCallback;
 import uk.co.caprica.vlcj.player.direct.RenderCallbackAdapter;
 import uk.co.caprica.vlcj.player.direct.format.RV32BufferFormat;
 
+@SuppressWarnings("serial")
 public class MoviePanel extends JPanel implements ComponentListener {
 
 	// just approx.!

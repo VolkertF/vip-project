@@ -1,17 +1,9 @@
 package com.vip.media;
 
-import java.awt.Canvas;
-import java.awt.Color;
-
-import javax.swing.JPanel;
-
-import com.vip.attributes.Video;
 import com.vip.window.MoviePanel;
 
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
-import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.direct.DirectMediaPlayer;
-import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 /**
  * VLC Class. Controls media playback.

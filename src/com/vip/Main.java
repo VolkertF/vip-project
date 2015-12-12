@@ -1,7 +1,5 @@
 package com.vip;
 
-import java.awt.event.ComponentListener;
-
 import com.vip.window.VipFrame;
 
 public class Main {

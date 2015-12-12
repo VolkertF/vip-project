@@ -171,7 +171,7 @@ public class SearchSortController {
 		ArrayList<Video> results = new ArrayList<Video>();
 		
 		for(Video vid:movies){
-			if(vid.toString().contains(searchText)){
+			if(vid.toString().toLowerCase().contains(searchText.toLowerCase())){
 				results.add(vid);
 			}
 		}
@@ -188,7 +188,7 @@ public class SearchSortController {
 		
 		for(Video vid:movies){
 			if(vid.getTitle() != null){
-				if(vid.getTitle().contains(searchText)){
+				if(vid.getTitle().toLowerCase().contains(searchText.toLowerCase())){
 					results.add(vid);
 				}
 			}
@@ -206,7 +206,7 @@ public class SearchSortController {
 		
 		for(Video vid:movies){
 			if(vid.getDirector() != null){
-				if(vid.getDirector().contains(searchText)){
+				if(vid.getDirector().toLowerCase().contains(searchText.toLowerCase())){
 					results.add(vid);
 				}
 			}
@@ -224,7 +224,7 @@ public class SearchSortController {
 		
 		for(Video vid:movies){
 			if(vid.getCountry() != null){
-				if(vid.getCountry().contains(searchText)){
+				if(vid.getCountry().toLowerCase().contains(searchText.toLowerCase())){
 					results.add(vid);
 				}
 			}
@@ -242,7 +242,7 @@ public class SearchSortController {
 		
 		for(Video vid:movies){
 			if(vid.getCast() != null){
-				if(vid.getTitle().contains(searchText)){
+				if(vid.getTitle().toLowerCase().contains(searchText.toLowerCase())){
 					results.add(vid);
 				}
 			}
@@ -314,7 +314,7 @@ public class SearchSortController {
 		
 		for(Video vid:movies){
 			if(vid.getPlotSummary() != null){
-				if(vid.getPlotSummary().contains(searchText)){
+				if(vid.getPlotSummary().toLowerCase().contains(searchText.toLowerCase())){
 					results.add(vid);
 				}
 			}

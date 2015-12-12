@@ -55,7 +55,6 @@ import com.vip.Controller;
 import com.vip.attributes.Video;
 import com.vip.controllers.DatabaseController;
 import com.vip.controllers.OMDBController;
-import com.vip.controllers.SearchSortController;
 import com.vip.media.VLC;
 
 @SuppressWarnings("serial")
@@ -168,11 +167,6 @@ public class VipFrame extends JFrame {
 	 * Controller for saving the movies into a database
 	 */
 	private DatabaseController dataController = new DatabaseController();
-
-	/**
-	 * Controller for searching and sorting videos
-	 */
-	private SearchSortController ssController = SearchSortController.getInstance();
 
 	/**
 	 * Getter for controller class
@@ -346,8 +340,8 @@ public class VipFrame extends JFrame {
 	 * Create Sub-sub-panels in the explorer panel
 	 */
 	private void buildExplorerGUI() {
-		jlstFileList = new JList<String>(ssController.getList());
-		ssController.updateList(ssController.getMovies());
+		jlstFileList = new JList<String>(com.vip.controllers.SearchSortController.getInstance().getList());
+		com.vip.controllers.SearchSortController.getInstance().updateList(com.vip.controllers.SearchSortController.getInstance().getMovies());
 		jlstFileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jlstFileList.setSelectedIndex(0);
 		JTextArea jtaScrollPaneText = new JTextArea(20, 1);
@@ -369,6 +363,11 @@ public class VipFrame extends JFrame {
 		// JScrollPane(jcbSearchCategories);
 
 		jbtnSearchExecute = new JButton("Search");
+		jbtnSearchExecute.addActionListener(new ActionListener() {
+			@Override public void actionPerformed(ActionEvent arg0) {
+				com.vip.controllers.SearchSortController.getInstance().searchAll(jtfSearch.getText());
+			}
+		});
 
 		JPanel jpnlSearchControls = new JPanel();
 		jpnlSearchControls.setLayout(new GridBagLayout());
@@ -634,7 +633,7 @@ public class VipFrame extends JFrame {
 				BasicSliderUI ui = (BasicSliderUI) jslider.getUI();
 				int newRating = ui.valueForXPosition(me.getX());
 				if (jlstFileList.getSelectedIndex() >= 0) {
-					Video videoInstance = ssController.getVideoByIndex(jlstFileList.getSelectedIndex());
+					Video videoInstance = com.vip.controllers.SearchSortController.getInstance().getVideoByIndex(jlstFileList.getSelectedIndex());
 					videoInstance.setPersonalRating(newRating);
 					int position = jtaMediaInfo.getCaretPosition();
 					jtaMediaInfo.setText(videoInstance.toString());
@@ -828,8 +827,8 @@ public class VipFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String path = getFilePath(new FileNameExtensionFilter("Video Files", movieExtensions));
-				ssController.addMovieToList(new Video(path));
-				ssController.updateList(ssController.getMovies());
+				com.vip.controllers.SearchSortController.getInstance().addMovieToList(new Video(path));
+				com.vip.controllers.SearchSortController.getInstance().updateList(com.vip.controllers.SearchSortController.getInstance().getMovies());
 			}
 		});
 
@@ -844,7 +843,7 @@ public class VipFrame extends JFrame {
 		jmiSaveAll.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				dataController.saveAll(ssController.getMovies());
+				dataController.saveAll(com.vip.controllers.SearchSortController.getInstance().getMovies());
 			}
 		});
 	}
@@ -869,7 +868,7 @@ public class VipFrame extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent ev) {
-				Video videoInstance = ssController.getVideoByIndex(jlstFileList.getSelectedIndex());
+				Video videoInstance = com.vip.controllers.SearchSortController.getInstance().getVideoByIndex(jlstFileList.getSelectedIndex());
 				double personalRating = videoInstance.getPersonalRating();
 				if (personalRating < 0) {
 					videoInstance.setPersonalRating(0);
@@ -923,9 +922,9 @@ public class VipFrame extends JFrame {
 			e.printStackTrace();
 		}
 		for (int i = 0; i < fileList.size(); i++) {
-			ssController.addMovieToList(new Video(fileList.get(i).getAbsolutePath()));
+			com.vip.controllers.SearchSortController.getInstance().addMovieToList(new Video(fileList.get(i).getAbsolutePath()));
 		}
 
-		ssController.updateList(ssController.getMovies());
+		com.vip.controllers.SearchSortController.getInstance().updateList(com.vip.controllers.SearchSortController.getInstance().getMovies());
 	}
 }

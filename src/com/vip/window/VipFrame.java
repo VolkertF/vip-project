@@ -68,7 +68,7 @@ public class VipFrame extends JFrame {
 	 */
 	public VipFrame() {
 		super("VipFrame");
-		OmdbRequest testReq = new OmdbRequest(OMDBController.getInstance().searchApi("Star Wars"));
+		OmdbRequest testReq = new OmdbRequest(OMDBController.getInstance().searchApi("Lord of the Rings"));
 		testReq.setVisible(true);
 		testReq.setEnabled(true);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);

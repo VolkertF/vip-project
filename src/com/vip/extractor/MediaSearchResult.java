@@ -44,6 +44,7 @@ public class MediaSearchResult extends SearchResult {
 	}
 
 	public String getPoster() {
-		return poster;
+		String[] posterSplit = poster.split("\"");
+		return posterSplit[1];
 	}
 }

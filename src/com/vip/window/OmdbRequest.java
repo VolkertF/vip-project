@@ -1,38 +1,65 @@
 package com.vip.window;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.image.BufferedImage;
+import java.net.URL;
 import java.util.ArrayList;
 
-import javax.swing.BoxLayout;
+import javax.imageio.ImageIO;
+import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+
 import com.vip.extractor.MediaSearchResult;
 import com.vip.extractor.SearchResult;
 
 @SuppressWarnings("serial")
 public class OmdbRequest extends JFrame {
 	private ArrayList<MediaSearchResult> searchResult;
+	public ArrayList<String> imageUrls;
+	private ArrayList<ImageIcon> icons = new ArrayList<ImageIcon>();
+	@SuppressWarnings("rawtypes")
+	private DefaultListModel iconListModel = new DefaultListModel();
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private JList resultList = new JList(iconListModel);
 	
-	public OmdbRequest(ArrayList<SearchResult> results) {
-		super("Search-Results");
-		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		this.searchResult = switchArrayList(results);
-		this.setPreferredSize(new Dimension(600, 400));
-		buildPanels();
-		this.pack();
-	}
-	
-	private void buildPanels() {
-		JPanel panel = new JPanel();
-		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-		for(MediaSearchResult temp : searchResult) {
+	@SuppressWarnings("unchecked")
+	public OmdbRequest(ArrayList<SearchResult> searchResults) {
+		this.searchResult = switchArrayList(searchResults);
+		this.imageUrls = fillArrayListFromArrayList(this.searchResult);
+		
+		this.setLayout(new BorderLayout());
+		this.add(new JScrollPane(resultList), BorderLayout.LINE_START);
+		
+		this.add(new JPanel(), BorderLayout.CENTER);
+		for(String imageURL : imageUrls) {
+			BufferedImage img;
 			try {
-				panel.add(new SingleVideoPanel(temp));
-			} catch(Exception e) {
+				img = ImageIO.read(new URL(imageURL));
+				img = ImageUtil.createScaledImage(img);
+				ImageIcon icon = new ImageIcon(img, imageURL);
+				icons.add(icon);
+				iconListModel.addElement(icon);
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		this.getContentPane().add(panel);
+		resultList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		this.setPreferredSize(new Dimension(400, 500));
+		this.pack();
+	}
+
+	private ArrayList<String> fillArrayListFromArrayList(ArrayList<MediaSearchResult> searchResult) {
+		ArrayList<String> urlList = new ArrayList<String>();
+		for(MediaSearchResult temp : searchResult) {
+			urlList.add(temp.getPoster());
+		}
+		return urlList;
 	}
 	
 	private ArrayList<MediaSearchResult> switchArrayList(ArrayList<SearchResult> searchResults) {

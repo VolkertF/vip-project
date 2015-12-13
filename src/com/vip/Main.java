@@ -9,9 +9,8 @@ public class Main {
 
 	public static void main(String[] args) {
 		final VipFrame f = new VipFrame();
-		f.setVisible(true);
 		// Update the canvas size on start-up
-		f.getController().getVLC().getVideoSurface().updateVideoSurface();
+		
 
 		Thread t = new Thread(new Runnable() {
 			public void run() {

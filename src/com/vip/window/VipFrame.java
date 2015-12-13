@@ -10,6 +10,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -45,32 +47,31 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicSliderUI;
 
-import com.vip.Controller;
 import com.vip.attributes.Video;
+import com.vip.controllers.Controller;
 import com.vip.controllers.DatabaseController;
-import com.vip.controllers.OMDBController;
 import com.vip.controllers.SearchSortController;
 import com.vip.media.VLC;
 
 @SuppressWarnings("serial")
-public class VipFrame extends JFrame {
+public class VipFrame extends JFrame implements ComponentListener {
 
 	private VipFrame thisFrame = this;
+
+	private final int RESIZE_REFRESH_RATE = 50;
 
 	/**
 	 * Constructor for building the frame and initialize all event handlers.
 	 */
 	public VipFrame() {
 		super("VipFrame");
-		OmdbRequest testReq = new OmdbRequest(OMDBController.getInstance().searchApi("Lord of the Rings"));
-		testReq.setVisible(true);
-		testReq.setEnabled(true);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {
 			@Override
@@ -95,6 +96,8 @@ public class VipFrame extends JFrame {
 		searchForMovies(rootFolderPath);
 		pack();
 		requestFocus();
+		setVisible(true);
+		controller.getVLC().switchSurface(mainMoviePanel, false);
 	}
 
 	/**
@@ -436,40 +439,7 @@ public class VipFrame extends JFrame {
 	 */
 	private JSlider jsliderMovieProgress;
 
-	private FullscreenDialog fullscreenDialog;
-
-	public FullscreenDialog getFullscreen() {
-		return fullscreenDialog;
-	}
-
-	public void createFullscreen() {
-		controller.getVLC().setFullscreen(true);
-
-		MoviePanel jpnlVideoSurface = new MoviePanel(controller.getVLC(),
-		        controller.getVLC().getMediaPlayer().getTime(), controller.getVLC().getCurrentPlaybackPath(),
-		        controller.getVLC().getMediaPlayer().isPlaying());
-		controller.getVLC().stopMedia();
-		jpnlMovie.remove(controller.getVLC().getVideoSurface());
-		fullscreenDialog = new FullscreenDialog(this, controller.getVLC(), controller.getKeyParser(), jpnlVideoSurface);
-		fullscreenDialog.getSurface().componentResized(null);
-	}
-
-	public void disposeFullscreen() {
-		MoviePanel jpnlVideoSurface = new MoviePanel(controller.getVLC(),
-		        controller.getVLC().getMediaPlayer().getTime(), controller.getVLC().getCurrentPlaybackPath(),
-		        controller.getVLC().getMediaPlayer().isPlaying());
-		fullscreenDialog.getVLC().getMediaPlayer().stop();
-		fullscreenDialog.dispose();
-		fullscreenDialog = null;
-		controller.getVLC().setSurface(jpnlVideoSurface);
-		addComponent(0, 0, 1, 1, 1.0, 0.95, jpnlMovie, controller.getVLC().getVideoSurface(), defaultInsets);
-		controller.getVLC().getVideoSurface().addComponentListener(controller.getVLC().getVideoSurface());
-		this.revalidate();
-		controller.getVLC().getVideoSurface().componentResized(null);
-		controller.getVLC().getVideoSurface().setDrawOverlay(false);
-		this.requestFocus();
-		controller.getVLC().setFullscreen(false);
-	}
+	private MoviePanel mainMoviePanel;
 
 	/**
 	 * Create Sub-sub- components in the movie panel including the JVLC plugin
@@ -479,8 +449,9 @@ public class VipFrame extends JFrame {
 	 * @author Fabian Volkert
 	 */
 	private void buildMovieGUI() {
-		addComponent(0, 0, 1, 1, 1.0, 0.95, jpnlMovie, controller.getVLC().getVideoSurface(), defaultInsets);
-		controller.getVLC().getVideoSurface().addComponentListener(controller.getVLC().getVideoSurface());
+		mainMoviePanel = new MoviePanel(controller.getVLC());
+		addComponent(0, 0, 1, 1, 1.0, 0.95, jpnlMovie, mainMoviePanel, defaultInsets);
+		addComponentListener(this);
 
 		JPanel jpnlMovieControls = new JPanel();
 		jpnlMovieControls.setLayout(new GridBagLayout());
@@ -558,7 +529,7 @@ public class VipFrame extends JFrame {
 			jsliderVolume.setEnabled(false);
 			jsliderMovieProgress.setEnabled(false);
 			jlabelMovieTimer.setText("");
-			controller.getVLC().getVideoSurface().setBackground(Color.GRAY);
+			mainMoviePanel.setBackground(Color.GRAY);
 			TitledBorder titledBorderMoviePanel = BorderFactory.createTitledBorder("Movie");
 			titledBorderMoviePanel.setTitleColor(Color.GRAY);
 			jpnlMovie.setBorder(titledBorderMoviePanel);
@@ -590,18 +561,18 @@ public class VipFrame extends JFrame {
 	 */
 	public void updateGUI() {
 		VLC vlcInstance = controller.getVLC();
-		updateRatingSlider();
+		// updateRatingSlider();
 
 		if (vlcInstance.isVLCInstalled() && vlcInstance.getMediaPlayer() != null
 		        && vlcInstance.getMediaPlayer().getLength() != -1) {
-			if (controller.getVLC().shouldInitMedia()) {
+			if (controller.getVLC().shouldInitProgressBar()) {
 				initProgressBar();
-				controller.getVLC().setMediaInitState(false);
+				controller.getVLC().setProgressBarInitState(false);
 			} else {
 
 				// If initialization fails: retry
 				if (jsliderMovieProgress.getMaximum() == 0) {
-					controller.getVLC().setMediaInitState(true);
+					controller.getVLC().setProgressBarInitState(true);
 				}
 				updateVolumeSlider();
 				updateTimelineLabels();
@@ -620,7 +591,7 @@ public class VipFrame extends JFrame {
 	 *
 	 */
 	private void updateTimelineLabels() {
-		String newLabelText = controller.getVLC().getUpdatedTimeToString();
+		String newLabelText = controller.getVLC().getFormattedTimeToString();
 		jlabelMovieTimer.setText(newLabelText + "%");
 	}
 
@@ -929,14 +900,13 @@ public class VipFrame extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent ev) {
-				Video videoInstance = com.vip.controllers.SearchSortController.getInstance()
-		                .getVideoByIndex(jlstFileList.getSelectedIndex());
-				controller.updateIntel(videoInstance);
-				if (ev.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(ev)) {
-					controller.getVLC().stopMedia();
-					controller.getVLC().loadMedia(videoInstance.getFilePath());
-					controller.getVLC().setCurrentTitle(videoInstance.getTitle());
-					controller.getVLC().toggleMediaPlayback();
+				if (jlstFileList.getSelectedIndex() >= 0) {
+					Video videoInstance = com.vip.controllers.SearchSortController.getInstance()
+		                    .getVideoByIndex(jlstFileList.getSelectedIndex());
+					controller.updateIntel(videoInstance);
+					if (ev.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(ev)) {
+						controller.getVLC().switchMediaFile(videoInstance);
+					}
 				}
 			}
 
@@ -985,5 +955,39 @@ public class VipFrame extends JFrame {
 
 	public JTextArea getIntelTextArea() {
 		return jtaMediaInfo;
+	}
+
+	@Override
+	public void componentHidden(ComponentEvent arg0) {
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent arg0) {
+	}
+
+	private Timer resizeTimer = new Timer(RESIZE_REFRESH_RATE, new TimerListener());
+
+	private class TimerListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			System.out.println("Frame resized! " + thisFrame.getWidth() + " x " + thisFrame.getHeight());
+			controller.getVLC().switchSurface(mainMoviePanel, true);
+			resizeTimer.stop();
+		}
+
+	}
+
+	@Override
+	public void componentResized(ComponentEvent arg0) {
+		resizeTimer.restart();
+	}
+
+	@Override
+	public void componentShown(ComponentEvent arg0) {
+	}
+
+	public MoviePanel getMoviePanel() {
+		return mainMoviePanel;
 	}
 }

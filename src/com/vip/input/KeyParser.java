@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.JTextField;
 
 import com.vip.attributes.Video;
+import com.vip.controllers.Controller;
 import com.vip.media.VLC;
 import com.vip.window.VipFrame;
 
@@ -17,7 +18,7 @@ import com.vip.window.VipFrame;
  */
 public class KeyParser implements KeyEventDispatcher {
 
-	private VipFrame vipFrame;
+	private final Controller controller;
 
 	private int NrOfShortcuts = 13;
 
@@ -44,22 +45,15 @@ public class KeyParser implements KeyEventDispatcher {
 		return shortcutList;
 	}
 
-	public KeyParser() {
+	public KeyParser(Controller newController) {
+		controller = newController;
+
 		// Initialize arrays with default values
 		for (int i = 0; i < NrOfShortcuts; i++) {
 			shortcutList[i] = -1;
 			shortcutCTRLmask[i] = false;
 			shortcutSHIFTmask[i] = false;
 		}
-	}
-
-	public KeyParser(VipFrame newVipFrame) {
-		this();
-		vipFrame = newVipFrame;
-	}
-
-	public void setVipFrame(VipFrame newVipFrame) {
-		vipFrame = newVipFrame;
 	}
 
 	@Override
@@ -70,10 +64,10 @@ public class KeyParser implements KeyEventDispatcher {
 		// When no textfield is focused and the key is pressed, input will be
 		// processed
 		if (keyState == isReleased && !(ke.getSource() instanceof JTextField)) {
-			VLC vlc = vipFrame.getController().getVLC();
-			if (vlc.isFullscreen()) {
-				vlc.getVideoSurface().setDrawOverlay(true);
-				vlc.getVideoSurface().setDisplayStates(true, true, false, false);
+			VLC vlc = controller.getVLC();
+			if (controller.isFullscreen()) {
+				controller.getFullscreen().getSurface().setDrawOverlay(true);
+				controller.getFullscreen().getSurface().setDisplayStates(true, true, false, false);
 			}
 			if (currentKey == shortcutList[TOGGLE_PLAYBACK]) {
 				if (isValidInput(ke, TOGGLE_PLAYBACK))
@@ -89,49 +83,32 @@ public class KeyParser implements KeyEventDispatcher {
 			}
 			if (currentKey == shortcutList[VOLUME_UP]) {
 				if (isValidInput(ke, VOLUME_UP)) {
-					vlc.getVideoSurface().setDisplayStates(true, false, false, false);
+					if(controller.isFullscreen()){
+						controller.getFullscreen().getSurface().setDisplayStates(true, false, false, false);
+					}
 					vlc.setVolume(vlc.getVolume() + vlc.getVolumeSteps());
 				}
 			}
 			if (currentKey == shortcutList[VOLUME_DOWN]) {
 				if (isValidInput(ke, VOLUME_DOWN)) {
-					vlc.getVideoSurface().setDisplayStates(true, false, false, false);
+					if(controller.isFullscreen()){
+						controller.getFullscreen().getSurface().setDisplayStates(true, false, false, false);
+					}
 					vlc.setVolume(vlc.getVolume() - vlc.getVolumeSteps());
 				}
 			}
 			if (currentKey == shortcutList[SEARCH]) {
 				if (isValidInput(ke, SEARCH))
-					vipFrame.get_jtfSearch().requestFocus();
+					controller.getFrame().get_jtfSearch().requestFocus();
 			}
 			if (currentKey == shortcutList[NEXT_MOVIE]) {
 				if (isValidInput(ke, NEXT_MOVIE)) {
-					int oldIndex = vipFrame.getFileList().getSelectedIndex();
-					int newIndex = oldIndex + 1;
-					// If reached end of list
-					if (newIndex >= (vipFrame.getFileList().getModel().getSize())) {
-						newIndex = 0;
-					}
-					vipFrame.getFileList().setSelectedIndex(newIndex);
-					Video videoInstance = com.vip.controllers.SearchSortController.getInstance()
-					        .getVideoByIndex(newIndex);
-					vipFrame.getController().updateIntel(videoInstance);
-					vlc.switchMediaFile(videoInstance.getFilePath());
+					controller.setToNextListItem();
 				}
 			}
 			if (currentKey == shortcutList[PREVIOUS_MOVIE]) {
 				if (isValidInput(ke, PREVIOUS_MOVIE)) {
-					int oldIndex = vipFrame.getFileList().getSelectedIndex();
-					int newIndex = oldIndex - 1;
-					// If reached pre-beginning of list
-					if (newIndex < 0) {
-						newIndex = (vipFrame.getFileList().getModel().getSize() - 1);
-						vipFrame.getFileList().setSelectedIndex(newIndex);
-					}
-					vipFrame.getFileList().setSelectedIndex(newIndex);
-					Video videoInstance = com.vip.controllers.SearchSortController.getInstance()
-					        .getVideoByIndex(newIndex);
-					vipFrame.getController().updateIntel(videoInstance);
-					vlc.switchMediaFile(videoInstance.getFilePath());
+					controller.setToPreviousListItem();
 				}
 			}
 			if (currentKey == shortcutList[JUMP_FORWARD]) {
@@ -151,7 +128,7 @@ public class KeyParser implements KeyEventDispatcher {
 			}
 			if (currentKey == shortcutList[FULLSCREEN_TOGGLE]) {
 				if (isValidInput(ke, FULLSCREEN_TOGGLE)) {
-					vipFrame.getController().toggleFullscreen();
+					controller.toggleFullscreen();
 				}
 			}
 			return true;

@@ -15,32 +15,23 @@ import com.vip.media.VLC;
 @SuppressWarnings("serial")
 public class FullscreenDialog extends JDialog implements MouseMotionListener {
 
-	//private KeyParser parser;
-
-	//private VipFrame parentFrame;
-
 	private MoviePanel jpnlVideoSurface;
 
 	private VLC vlcInstance;
 
-	public FullscreenDialog(VipFrame parentFrame, VLC vlcInstance, KeyParser parser, MoviePanel jpnlMovie) {
+	public FullscreenDialog(VipFrame parentFrame, VLC vlcInstance) {
 		super(parentFrame, true);
 		this.addMouseMotionListener(this);
-		//this.parentFrame = parentFrame;
-		//this.parser = parser;
 		this.setSize(Toolkit.getDefaultToolkit().getScreenSize());
 		this.setUndecorated(true);
 		this.setLayout(new BorderLayout());
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.vlcInstance = vlcInstance;
-		this.jpnlVideoSurface = jpnlMovie;
-		vlcInstance.setSurface(jpnlVideoSurface);
+		this.jpnlVideoSurface = new MoviePanel(vlcInstance);
 		this.add(jpnlVideoSurface, BorderLayout.CENTER);
-
 		this.setModalityType(Dialog.ModalityType.MODELESS);
+		jpnlVideoSurface.setDrawOverlay(true);
 		this.setVisible(true);
-		jpnlVideoSurface.updateVideoSurface();
-		this.requestFocus();
 	}
 
 	public MoviePanel getSurface() {

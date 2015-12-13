@@ -1,45 +1,39 @@
 package com.vip.media;
 
+import java.awt.GraphicsEnvironment;
+import java.awt.image.BufferedImage;
+
+import com.vip.attributes.Video;
 import com.vip.window.MoviePanel;
 
+import uk.co.caprica.vlcj.binding.internal.libvlc_media_t;
+import uk.co.caprica.vlcj.component.DirectMediaPlayerComponent;
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
+import uk.co.caprica.vlcj.player.MediaPlayer;
+import uk.co.caprica.vlcj.player.MediaPlayerEventListener;
+import uk.co.caprica.vlcj.player.VideoTrackInfo;
+import uk.co.caprica.vlcj.player.direct.BufferFormat;
+import uk.co.caprica.vlcj.player.direct.BufferFormatCallback;
 import uk.co.caprica.vlcj.player.direct.DirectMediaPlayer;
+import uk.co.caprica.vlcj.player.direct.RenderCallback;
+import uk.co.caprica.vlcj.player.direct.RenderCallbackAdapter;
+import uk.co.caprica.vlcj.player.direct.format.RV32BufferFormat;
 
 /**
  * VLC Class. Controls media playback.
  */
 public class VLC {
 
-	private final boolean vlcFound;
-
-	/** Rate of volume change when pressing a shortcut **/
-	private static final int VOLUME_STEPS = 10;
-
-	/** Maximum volume supported (200 is VLC max) **/
-	private static final int MAX_VOLUME = 200;
+	private final double ASPECT_RATIO = 16.0 / 9.0;
 
 	/** Minimum volume supported (0 is least) **/
 	private static final int MIN_VOLUME = 0;
 
-	private boolean isMuted = false;
+	/** Maximum volume supported (200 is VLC max) **/
+	private static final int MAX_VOLUME = 200;
 
-	private int lastVolume = (MAX_VOLUME + MIN_VOLUME) / 2;
-
-	private String currentPathPlaying = null;
-
-	private String currentTile = null;
-
-	public String getCurrentPlaybackPath() {
-		return currentPathPlaying;
-	}
-
-	public void setCurrentTitle(String newTitle) {
-		currentTile = newTitle;
-	}
-
-	public String getCurrentTitle() {
-		return currentTile;
-	}
+	/** Rate of volume change when pressing a shortcut **/
+	private static final int VOLUME_STEPS = 10;
 
 	/**
 	 * Percentage of how far a jump in the movie will proceed, must be between 0
@@ -47,45 +41,52 @@ public class VLC {
 	 **/
 	private static final double JUMP_PERCENTAGE = 0.05;
 
+	private static boolean vlcFound;
+
+	private static VLC instance;
+
+	private int lastVolume = (MAX_VOLUME + MIN_VOLUME) / 2;
+
+	private DirectMediaPlayerComponent directMediaPlayerComponent;
+
 	/** The mediaplayer that is responsible for playback **/
-	private DirectMediaPlayer directMediaPlayerComponent;
-
-	/** Canvas on which the mediaplayer plays media on **/
-	// private Canvas canvas;
-
-	private MoviePanel jpnlVideoSurface = new MoviePanel(this);
+	private DirectMediaPlayer directMediaPlayer;
 
 	/**
 	 * True on Initialization of a media
 	 */
 	private boolean initMedia = true;
 
-	private boolean isFullscreen = false;
+	private boolean isMuted = false;
 
-	public boolean isFullscreen() {
-		return isFullscreen;
-	}
+	private Video currentVideo;
 
-	public void setFullscreen(boolean newStatus) {
-		isFullscreen = newStatus;
-	}
+	private BufferedImage currentImage;
 
-	/**
-	 * Initializes vlc plugin,finds vlc installation, sets canvas up.
-	 */
-	public VLC() {
+	private MoviePanel currentPanel;
+
+	private boolean isPlaying = false;
+
+	private VLC() {
 		vlcFound = new NativeDiscovery().discover();
 		// If VLC cannot be found, we will inform the user of manual
 		// possibilities
 
-		// vlcFound = false;
-
-		if (vlcFound) {
-			invokeMediaPlayerCreation();
-		} else {
+		if (!vlcFound) {
 			// TODO VLC not found, open JDialog and give hint to manually add
 			// the path
 		}
+	}
+
+	public static VLC getInstance() {
+		if (instance == null) {
+			VLC.instance = new VLC();
+		}
+		return instance;
+	}
+
+	public Video getCurrentVideo() {
+		return currentVideo;
 	}
 
 	/**
@@ -94,7 +95,7 @@ public class VLC {
 	 * @return <code>true</code> if the media should be initialized<br />
 	 *         <code>false</code> if the media is not to be inizialized
 	 */
-	public boolean shouldInitMedia() {
+	public boolean shouldInitProgressBar() {
 		return initMedia;
 	}
 
@@ -102,17 +103,8 @@ public class VLC {
 		return vlcFound;
 	}
 
-	public void setMediaInitState(boolean newInit) {
+	public void setProgressBarInitState(boolean newInit) {
 		initMedia = newInit;
-	}
-
-	/**
-	 * Getter method of the class' canvas.
-	 * 
-	 * @return the canvas that displays the Movie
-	 */
-	public MoviePanel getVideoSurface() {
-		return jpnlVideoSurface;
 	}
 
 	/**
@@ -140,7 +132,7 @@ public class VLC {
 	 */
 	public DirectMediaPlayer getMediaPlayer() {
 		if (vlcFound) {
-			return directMediaPlayerComponent;
+			return directMediaPlayer;
 		} else {
 			return null;
 		}
@@ -153,30 +145,26 @@ public class VLC {
 	 * @param media_path
 	 *            Path to the media file to be loaded
 	 */
-	public void loadMedia(String mediaPath) {
-		if (vlcFound && directMediaPlayerComponent != null) {
-			directMediaPlayerComponent.prepareMedia(mediaPath);
-			setMediaInitState(true);
-			currentPathPlaying = mediaPath;
-			jpnlVideoSurface.setCurrentMediaPath(mediaPath);
-			if (isFullscreen) {
-				jpnlVideoSurface.setDrawOverlay(true);
-				jpnlVideoSurface.setDisplayStates(true, true, false, true);
-			}
+	private void loadMedia(Video videoInstance) {
+		if (vlcFound && directMediaPlayer != null) {
+			String mediaPath = videoInstance.getFilePath();
+			directMediaPlayer.prepareMedia(mediaPath);
+			setProgressBarInitState(true);
 		}
 	}
 
-	public void switchMediaFile(String newFile) {
+	public void switchMediaFile(Video videoInstance) {
 		stopMedia();
-		loadMedia(newFile);
+		loadMedia(videoInstance);
 		playMedia();
+		currentVideo = videoInstance;
 	}
 
 	/**
 	 * Toggles media playback
 	 */
 	public void toggleMediaPlayback() {
-		if (vlcFound && directMediaPlayerComponent != null) {
+		if (vlcFound && directMediaPlayer != null) {
 			if (getMediaPlayer().isPlaying()) {
 				pauseMedia();
 			} else {
@@ -189,35 +177,44 @@ public class VLC {
 	 * Starts media playback
 	 */
 	public void playMedia() {
-		if (vlcFound && directMediaPlayerComponent != null)
-			directMediaPlayerComponent.play();
+		if (vlcFound && directMediaPlayer != null) {
+			directMediaPlayer.play();
+			isPlaying = true;
+		}
+
 	}
 
 	/**
 	 * Pauses media playback
 	 */
 	public void pauseMedia() {
-		if (vlcFound && directMediaPlayerComponent != null)
-			directMediaPlayerComponent.pause();
+		if (vlcFound && directMediaPlayer != null) {
+			directMediaPlayer.pause();
+			isPlaying = false;
+		}
+
 	}
 
 	/**
 	 * Stops media playback
 	 */
 	public void stopMedia() {
-		if (vlcFound && directMediaPlayerComponent != null)
-			directMediaPlayerComponent.stop();
+		if (vlcFound && directMediaPlayer != null) {
+			directMediaPlayer.stop();
+			isPlaying = false;
+		}
+
 	}
 
 	/**
 	 * Jumps to the next chapter
 	 */
 	public void nextChapter() {
-		if (vlcFound && directMediaPlayerComponent != null)
-			if (directMediaPlayerComponent.getChapterCount() == 0) {
+		if (vlcFound && directMediaPlayer != null)
+			if (directMediaPlayer.getChapterCount() == 0) {
 				jumpForward();
 			} else {
-				directMediaPlayerComponent.nextChapter();
+				directMediaPlayer.nextChapter();
 			}
 	}
 
@@ -225,11 +222,11 @@ public class VLC {
 	 * Jumps to the previous Chapter
 	 */
 	public void previousChapter() {
-		if (vlcFound && directMediaPlayerComponent != null)
-			if (directMediaPlayerComponent.getChapterCount() == 0) {
+		if (vlcFound && directMediaPlayer != null)
+			if (directMediaPlayer.getChapterCount() == 0) {
 				jumpBack();
 			} else {
-				directMediaPlayerComponent.previousChapter();
+				directMediaPlayer.previousChapter();
 			}
 
 	}
@@ -238,14 +235,14 @@ public class VLC {
 	 * Jumps forward in the media file a given percentage
 	 */
 	public void jumpForward() {
-		if (vlcFound && directMediaPlayerComponent != null && directMediaPlayerComponent.getLength() != -1) {
+		if (vlcFound && directMediaPlayer != null && directMediaPlayer.getLength() != -1) {
 			if (JUMP_PERCENTAGE >= 0 && JUMP_PERCENTAGE <= 1) {
-				int changeRate = (int) (directMediaPlayerComponent.getLength() * JUMP_PERCENTAGE);
-				int newTime = (int) (directMediaPlayerComponent.getTime() + changeRate);
-				if (newTime >= directMediaPlayerComponent.getLength()) {
+				int changeRate = (int) (directMediaPlayer.getLength() * JUMP_PERCENTAGE);
+				int newTime = (int) (directMediaPlayer.getTime() + changeRate);
+				if (newTime >= directMediaPlayer.getLength()) {
 					stopMedia();
 				} else {
-					directMediaPlayerComponent.setTime(newTime);
+					directMediaPlayer.setTime(newTime);
 
 				}
 			}
@@ -256,13 +253,13 @@ public class VLC {
 	 * Jumps back in the media file a given percentage
 	 */
 	public void jumpBack() {
-		if (vlcFound && directMediaPlayerComponent != null && directMediaPlayerComponent.getLength() != -1) {
+		if (vlcFound && directMediaPlayer != null && directMediaPlayer.getLength() != -1) {
 			if (JUMP_PERCENTAGE >= 0 && JUMP_PERCENTAGE <= 1) {
-				int changeRate = (int) (directMediaPlayerComponent.getLength() * JUMP_PERCENTAGE);
-				int newTime = (int) (directMediaPlayerComponent.getTime() - changeRate);
+				int changeRate = (int) (directMediaPlayer.getLength() * JUMP_PERCENTAGE);
+				int newTime = (int) (directMediaPlayer.getTime() - changeRate);
 				if (newTime < 0)
 					newTime = 0;
-				directMediaPlayerComponent.setTime(newTime);
+				directMediaPlayer.setTime(newTime);
 			}
 		}
 	}
@@ -273,14 +270,14 @@ public class VLC {
 
 	public void toggleMuted() {
 		if (isMuted) {
-			if (vlcFound && directMediaPlayerComponent != null) {
+			if (vlcFound && directMediaPlayer != null) {
 				isMuted = false;
-				directMediaPlayerComponent.setVolume(lastVolume);
+				directMediaPlayer.setVolume(lastVolume);
 			}
 		} else {
-			if (vlcFound && directMediaPlayerComponent != null) {
+			if (vlcFound && directMediaPlayer != null) {
 				isMuted = true;
-				directMediaPlayerComponent.setVolume(0);
+				directMediaPlayer.setVolume(0);
 			}
 		}
 	}
@@ -290,7 +287,7 @@ public class VLC {
 	}
 
 	public void setVolume(int newVolume) {
-		if (vlcFound && directMediaPlayerComponent != null && directMediaPlayerComponent.getLength() != -1) {
+		if (vlcFound && directMediaPlayer != null && directMediaPlayer.getLength() != -1) {
 			if (newVolume > MAX_VOLUME) {
 				newVolume = MAX_VOLUME;
 			} else if (newVolume < MIN_VOLUME) {
@@ -302,13 +299,13 @@ public class VLC {
 			} else {
 				isMuted = true;
 			}
-			directMediaPlayerComponent.setVolume(newVolume);
+			directMediaPlayer.setVolume(newVolume);
 		}
 	}
 
 	public int getVolume() {
-		if (vlcFound && directMediaPlayerComponent != null) {
-			return directMediaPlayerComponent.getVolume();
+		if (vlcFound && directMediaPlayer != null) {
+			return directMediaPlayer.getVolume();
 		} else {
 			return 0;
 		}
@@ -318,19 +315,9 @@ public class VLC {
 		return VOLUME_STEPS;
 	}
 
-	public void invokeMediaPlayerCreation() {
-		directMediaPlayerComponent = jpnlVideoSurface.createMediaPlayer().getMediaPlayer();
-	}
-
-	public void setSurface(MoviePanel newPanel) {
-		jpnlVideoSurface = newPanel;
-		invokeMediaPlayerCreation();
-	}
-
-	public String getUpdatedTimeToString() {
+	public String getFormattedTimeToString() {
 		String strUpdatedTime = null;
-		Double procentualProgress = ((double) directMediaPlayerComponent.getTime()
-		        / directMediaPlayerComponent.getLength()) * 100;
+		Double procentualProgress = ((double) directMediaPlayer.getTime() / directMediaPlayer.getLength()) * 100;
 		// is newTime is not a valid Number, we display a default Text
 		int hoursPassed = 0;
 		int minutesPassed = 0;
@@ -338,12 +325,12 @@ public class VLC {
 		int hoursTotal = 0;
 		int minutesTotal = 0;
 		int secondsTotal = 0;
-		hoursPassed = (int) (directMediaPlayerComponent.getTime() / 3600000);
-		minutesPassed = (int) (directMediaPlayerComponent.getTime() / 60000 % 60);
-		secondsPassed = (int) (directMediaPlayerComponent.getTime() / 1000 % 60);
-		hoursTotal = (int) (directMediaPlayerComponent.getLength() / 3600000);
-		minutesTotal = (int) (directMediaPlayerComponent.getLength() / 60000 % 60);
-		secondsTotal = (int) (directMediaPlayerComponent.getLength() / 1000 % 60);
+		hoursPassed = (int) (directMediaPlayer.getTime() / 3600000);
+		minutesPassed = (int) (directMediaPlayer.getTime() / 60000 % 60);
+		secondsPassed = (int) (directMediaPlayer.getTime() / 1000 % 60);
+		hoursTotal = (int) (directMediaPlayer.getLength() / 3600000);
+		minutesTotal = (int) (directMediaPlayer.getLength() / 60000 % 60);
+		secondsTotal = (int) (directMediaPlayer.getLength() / 1000 % 60);
 		if (procentualProgress.isNaN() || procentualProgress.isInfinite()) {
 			strUpdatedTime = String.format("%02d:%02d:%02d / %02d:%02d:%02d   000,0", hoursPassed, minutesPassed,
 			        secondsPassed, hoursTotal, minutesTotal, secondsTotal, procentualProgress);
@@ -357,4 +344,68 @@ public class VLC {
 		return strUpdatedTime;
 	}
 
+	private int imageWidth;
+	private int imageHeight;
+
+	public void switchSurface(MoviePanel newSurface, boolean safeTime) {
+		long time = 0;
+		if (directMediaPlayer != null) {
+			if (safeTime) {
+				time = directMediaPlayer.getTime();
+			}
+			directMediaPlayer.stop();
+		}
+		if (currentPanel != null) {
+			currentPanel.setInactive();
+		}
+		currentPanel = newSurface;
+		if (currentPanel != null) {
+			currentPanel.setActive();
+			calcAspectRatio();
+			currentImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_3BYTE_BGR);
+			directMediaPlayerComponent = new DirectMediaPlayerComponent(new MovieBufferFormatCallback()) {
+				@Override
+				protected RenderCallback onGetRenderCallback() {
+					return new MovieRenderCallbackAdapter();
+				}
+			};
+			directMediaPlayer = directMediaPlayerComponent.getMediaPlayer();
+			if (currentVideo != null) {
+				switchMediaFile(currentVideo);
+				directMediaPlayer.setTime(time);
+			}
+		}
+	}
+
+	private class MovieBufferFormatCallback implements BufferFormatCallback {
+		@Override
+		public BufferFormat getBufferFormat(int sourceWidth, int sourceHeight) {
+			return new RV32BufferFormat(imageWidth, imageHeight);
+		}
+	};
+
+	private class MovieRenderCallbackAdapter extends RenderCallbackAdapter {
+
+		private MovieRenderCallbackAdapter() {
+			super(new int[imageWidth * imageHeight]);
+		}
+
+		@Override
+		protected void onDisplay(DirectMediaPlayer mediaPlayer, int[] rgbBuffer) {
+			currentImage.setRGB(0, 0, imageWidth, imageHeight, rgbBuffer, 0, imageWidth);
+			currentPanel.setCurrentImage(currentImage);
+			currentPanel.repaint();
+		}
+	}
+
+	public void calcAspectRatio() {
+		imageWidth = currentPanel.getWidth();
+		imageHeight = currentPanel.getHeight();
+		if (imageWidth > imageHeight * ASPECT_RATIO) {
+			imageWidth = (int) Math.rint(imageHeight * ASPECT_RATIO / 10) * 10;
+
+		} else {
+			imageHeight = (int) Math.rint((imageWidth / ASPECT_RATIO) / 10) * 10;
+		}
+	}
 }

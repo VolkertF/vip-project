@@ -3,8 +3,8 @@ package com.vip.window;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-import com.vip.Controller;
 import com.vip.attributes.Video;
+import com.vip.controllers.Controller;
 
 @SuppressWarnings("serial")
 public class ContextVideoMenu extends JPopupMenu {

@@ -3,9 +3,11 @@ package com.vip.input;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JList;
+
 import com.vip.attributes.Video;
+import com.vip.controllers.Controller;
 import com.vip.media.VLC;
-import com.vip.window.VipFrame;
 
 /**
  * Class is responsible for ActionCommand parsing and delegating to the specific
@@ -13,48 +15,29 @@ import com.vip.window.VipFrame;
  */
 public class ButtonParser implements ActionListener {
 
-	private VipFrame vipFrame;
-	private VLC vlc;
+	private Controller controller;
 
 	/**
 	 * 
 	 */
-	public ButtonParser(VLC vlcInstance, VipFrame vipFrameInstance) {
-		vlc = vlcInstance;
-		vipFrame = vipFrameInstance;
+	public ButtonParser(Controller newController) {
+		controller = newController;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent ae) {
+		VLC vlc = controller.getVLC();
+		JList<String> jlstFileList = controller.getFrame().getFileList();
 		String action = ae.getActionCommand();
 		if ("jbtnToggleMoviePlayback".equals(action))
 			vlc.toggleMediaPlayback();
 		if ("jbtnStopMovie".equals(action))
 			vlc.stopMedia();
 		if ("jbtnPreviousMovie".equals(action)) {
-			int oldIndex = vipFrame.getFileList().getSelectedIndex();
-			int newIndex = oldIndex - 1;
-			// If reached pre-beginning of list
-			if (newIndex < 0) {
-				newIndex = (vipFrame.getFileList().getModel().getSize() - 1);
-				vipFrame.getFileList().setSelectedIndex(newIndex);
-			}
-			vipFrame.getFileList().setSelectedIndex(newIndex);
-			Video videoInstance = com.vip.controllers.SearchSortController.getInstance().getVideoByIndex(newIndex);
-			vipFrame.getController().updateIntel(videoInstance);
-			vlc.switchMediaFile(videoInstance.getFilePath());
+			controller.setToPreviousListItem();
 		}
 		if ("jbtnNextMovie".equals(action)) {
-			int oldIndex = vipFrame.getFileList().getSelectedIndex();
-			int newIndex = oldIndex + 1;
-			// If reached end of list
-			if (newIndex >= (vipFrame.getFileList().getModel().getSize())) {
-				newIndex = 0;
-			}
-			vipFrame.getFileList().setSelectedIndex(newIndex);
-			Video videoInstance = com.vip.controllers.SearchSortController.getInstance().getVideoByIndex(newIndex);
-			vipFrame.getController().updateIntel(videoInstance);
-			vlc.switchMediaFile(videoInstance.getFilePath());
+			controller.setToNextListItem();
 		}
 		if ("jbtnPreviousChapter".equals(action))
 			vlc.previousChapter();
@@ -74,6 +57,6 @@ public class ButtonParser implements ActionListener {
 			}
 		}
 		if ("jbtnFullscreen".equals(action))
-			vipFrame.getController().toggleFullscreen();
+			controller.toggleFullscreen();
 	}
 }

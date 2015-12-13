@@ -100,7 +100,6 @@ public class SearchSortController {
 	 * Sorts list by title
 	 */
 	public void sortByTitle(){
-		
 		Collections.sort(movies, new Comparator<Video>() {
 			    public int compare(Video one, Video other) {
 			        return one.getTitle().compareTo(other.getTitle());
@@ -113,7 +112,6 @@ public class SearchSortController {
 	 * Sorts list by country
 	 */
 	public void sortByCountry(){
-		
 		Collections.sort(movies, new Comparator<Video>() {
 			    public int compare(Video one, Video other) {
 			        return one.getCountry().compareTo(other.getCountry());
@@ -126,7 +124,6 @@ public class SearchSortController {
 	 * Sorts list by personal rating
 	 */
 	public void sortByPersonalRating(){
-		
 		Collections.sort(movies, new Comparator<Video>() {
 			    public int compare(Video one, Video other) {
 			        return Double.compare(one.getPersonalRating(), other.getPersonalRating());

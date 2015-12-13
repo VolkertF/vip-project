@@ -55,6 +55,7 @@ import com.vip.Controller;
 import com.vip.attributes.Video;
 import com.vip.controllers.DatabaseController;
 import com.vip.controllers.OMDBController;
+import com.vip.controllers.SearchSortController;
 import com.vip.media.VLC;
 
 @SuppressWarnings("serial")
@@ -351,10 +352,12 @@ public class VipFrame extends JFrame {
 
 		jtfSearch = new JTextField(20);
 
-		String[] searchCategories = { "By Length, increasing", // Index 0
-		        "By length, decreasing", // Index 1
-		        "By rating, increasing", // Index 2
-		        "By rating, decreasing", }; // Index 3
+		String[] searchCategories = { "By Title", // Index 0
+		        "By Country", // Index 1
+		        "By Personal Rating", //Index 2
+		        "By IMDb Rating", //Index 3
+		        "By Release Date", //Index 4
+		};
 
 		jcbSearchCategories = new JComboBox<String>(searchCategories);
 		jcbSearchCategories.setEditable(false);
@@ -363,11 +366,15 @@ public class VipFrame extends JFrame {
 		// JScrollPane(jcbSearchCategories);
 
 		jbtnSearchExecute = new JButton("Search");
-		jbtnSearchExecute.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent arg0) {
-				com.vip.controllers.SearchSortController.getInstance().searchAll(jtfSearch.getText());
+		
+		
+		ActionListener action = new ActionListener() {
+			@Override public void actionPerformed(ActionEvent e) {
+				SearchSortController.getInstance().searchAll(jtfSearch.getText());
 			}
-		});
+		};
+		jbtnSearchExecute.addActionListener(action);
+		jtfSearch.addActionListener(action);
 
 		JPanel jpnlSearchControls = new JPanel();
 		jpnlSearchControls.setLayout(new GridBagLayout());

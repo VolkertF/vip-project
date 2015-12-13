@@ -15,7 +15,7 @@ public class OmdbRequest extends JFrame {
 	
 	public OmdbRequest(ArrayList<SearchResult> results) {
 		super("Search-Results");
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		this.searchResult = switchArrayList(results);
 		this.setPreferredSize(new Dimension(600, 400));
 		buildPanels();

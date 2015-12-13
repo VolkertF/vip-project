@@ -329,6 +329,11 @@ public class VipFrame extends JFrame {
 	/**
 	 * This JComboBox is ment for sorting your search by different categories
 	 */
+	private JComboBox<String> jcbSortCategories;
+	
+	/**
+	 * This JComboBox is ment for searching in different sections of the movie files.
+	 */
 	private JComboBox<String> jcbSearchCategories;
 
 	/**
@@ -352,25 +357,55 @@ public class VipFrame extends JFrame {
 
 		jtfSearch = new JTextField(20);
 
-		String[] searchCategories = { "By Title", // Index 0
+		String[] sortCategories = { "By Title", // Index 0
 		        "By Country", // Index 1
 		        "By Personal Rating", //Index 2
 		        "By IMDb Rating", //Index 3
 		        "By Release Date", //Index 4
 		};
 
+		jcbSortCategories = new JComboBox<String>(sortCategories);
+		jcbSortCategories.setEditable(false);
+		jcbSortCategories.setSelectedIndex(0);
+		
+		String[] searchCategories = { "Default",
+				"By Title",
+				"By Director",
+				"By Country",
+				"By Cast",
+				"By Genre",
+				"By Writers",
+				"By Release Date",
+				"By Plot"
+		};
+		
 		jcbSearchCategories = new JComboBox<String>(searchCategories);
 		jcbSearchCategories.setEditable(false);
 		jcbSearchCategories.setSelectedIndex(0);
-		// JScrollPane jspSearchCategories = new
-		// JScrollPane(jcbSearchCategories);
-
-		jbtnSearchExecute = new JButton("Search");
 		
-		
+		jbtnSearchExecute = new JButton("Search");		
 		ActionListener action = new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
-				SearchSortController.getInstance().searchAll(jtfSearch.getText());
+				int searchChoice = jcbSearchCategories.getSelectedIndex();
+				if(searchChoice == 1) {
+					SearchSortController.getInstance().searchByTitle(jtfSearch.getText());
+				} else if(searchChoice == 2) {
+					SearchSortController.getInstance().searchByDirector(jtfSearch.getText());
+				} else if(searchChoice == 3) {
+					SearchSortController.getInstance().searchByCountry(jtfSearch.getText());
+				} else if(searchChoice == 4) {
+					SearchSortController.getInstance().searchByCast(jtfSearch.getText());
+				} else if(searchChoice == 5) {
+					SearchSortController.getInstance().searchByGenre(jtfSearch.getText());
+				} else if(searchChoice == 6) {
+					SearchSortController.getInstance().searchByWriters(jtfSearch.getText());
+				} else if(searchChoice == 7) {
+					SearchSortController.getInstance().searchByReleaseDate(jtfSearch.getText());
+				} else if(searchChoice == 8) {
+					SearchSortController.getInstance().searchByPlot(jtfSearch.getText());
+				} else {
+					SearchSortController.getInstance().searchAll(jtfSearch.getText());
+				}	
 			}
 		};
 		jbtnSearchExecute.addActionListener(action);
@@ -379,7 +414,8 @@ public class VipFrame extends JFrame {
 		JPanel jpnlSearchControls = new JPanel();
 		jpnlSearchControls.setLayout(new GridBagLayout());
 		addComponent(0, 0, 2, 1, 1.0, 0.1, jpnlSearchControls, jtfSearch, defaultInsets);
-		addComponent(0, 2, 1, 1, 0.5, 0.1, jpnlSearchControls, jcbSearchCategories, defaultInsets);
+		addComponent(0, 2, 1, 1, 0.5, 0.1, jpnlSearchControls, jcbSortCategories, defaultInsets);
+		addComponent(1, 1, 3, 1, 0.5, 0.1, jpnlSearchControls, jcbSearchCategories, defaultInsets);
 		addComponent(1, 2, 1, 1, 0.5, 0.1, jpnlSearchControls, jbtnSearchExecute, defaultInsets);
 
 		addComponent(0, 0, 1, 1, 1, 0.05, jpnlExplorer, jpnlSearchControls, defaultInsets);

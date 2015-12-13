@@ -36,7 +36,12 @@ public class Video {
 
 	public Video(String path) {
 		this.filePath = path;
-		String[] temp = path.split(Pattern.quote("\\"));
+		String[] temp;
+		if(path.contains("\\")) {
+			temp = path.split(Pattern.quote("\\"));
+		} else {
+			temp = path.split(Pattern.quote("/"));
+		}
 		this.title = temp[temp.length - 1];
 		this.infoFetched = false;
 	}

@@ -684,7 +684,7 @@ public class VipFrame extends JFrame {
 					Video videoInstance = com.vip.controllers.SearchSortController.getInstance()
 		                    .getVideoByIndex(jlstFileList.getSelectedIndex());
 					videoInstance.setPersonalRating(newRating);
-					updateIntel(videoInstance);
+					controller.updateIntel(videoInstance);
 				}
 			}
 		});
@@ -692,8 +692,21 @@ public class VipFrame extends JFrame {
 		jlabelRating = new JLabel(Integer.toString(jsliderRating.getValue()));
 		jlabelRating.setHorizontalAlignment(SwingConstants.CENTER);
 
-		addComponent(0, 0, 9, 1, 0.9, 1, jpnlIntelNorth, jsliderRating, defaultInsets);
-		addComponent(9, 0, 1, 1, 0.1, 1, jpnlIntelNorth, jlabelRating, defaultInsets);
+		JButton jbtnOmDbFetch = new JButton("Fetch IMDB");
+		jbtnOmDbFetch.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent me) {
+				if (jlstFileList.getSelectedIndex() >= 0) {
+					Video videoInstance = com.vip.controllers.SearchSortController.getInstance()
+		                    .getVideoByIndex(jlstFileList.getSelectedIndex());
+					com.vip.controllers.SearchSortController.getInstance().fetchVideoInformation(videoInstance);
+				}
+			}
+		});
+
+		addComponent(0, 0, 8, 1, 0.8, 1, jpnlIntelNorth, jsliderRating, defaultInsets);
+		addComponent(8, 0, 1, 1, 0.1, 1, jpnlIntelNorth, jlabelRating, defaultInsets);
+		addComponent(9, 0, 1, 1, 0.1, 1, jpnlIntelNorth, jbtnOmDbFetch, defaultInsets);
 
 		jpnlIntelNorth.setBorder(BorderFactory.createTitledBorder("Rating"));
 		jlabelRating.setBorder(BorderFactory.createTitledBorder(""));
@@ -918,7 +931,7 @@ public class VipFrame extends JFrame {
 			public void mouseClicked(MouseEvent ev) {
 				Video videoInstance = com.vip.controllers.SearchSortController.getInstance()
 		                .getVideoByIndex(jlstFileList.getSelectedIndex());
-				updateIntel(videoInstance);
+				controller.updateIntel(videoInstance);
 				if (ev.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(ev)) {
 					controller.getVLC().stopMedia();
 					controller.getVLC().loadMedia(videoInstance.getFilePath());
@@ -934,13 +947,6 @@ public class VipFrame extends JFrame {
 				}
 			}
 		});
-	}
-
-	public void updateIntel(Video videoInstance) {
-		updateRatingSlider();
-		int position = jtaMediaInfo.getCaretPosition();
-		jtaMediaInfo.setText(videoInstance.toString());
-		jtaMediaInfo.setCaretPosition(position);
 	}
 
 	/**
@@ -975,5 +981,9 @@ public class VipFrame extends JFrame {
 
 		com.vip.controllers.SearchSortController.getInstance()
 		        .updateList(com.vip.controllers.SearchSortController.getInstance().getMovies());
+	}
+
+	public JTextArea getIntelTextArea() {
+		return jtaMediaInfo;
 	}
 }

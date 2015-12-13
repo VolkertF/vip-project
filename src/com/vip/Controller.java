@@ -10,6 +10,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.swing.JTextArea;
+
+import com.vip.attributes.Video;
 import com.vip.input.ButtonParser;
 import com.vip.input.KeyParser;
 import com.vip.media.VLC;
@@ -341,6 +344,14 @@ public class Controller {
 
 	public KeyParser getKeyParser() {
 		return keyParser;
+	}
+
+	public void updateIntel(Video videoInstance) {
+		vipFrame.updateRatingSlider();
+		JTextArea jtaMediaInfo = vipFrame.getIntelTextArea();
+		int position = jtaMediaInfo.getCaretPosition();
+		jtaMediaInfo.setText(videoInstance.toString());
+		jtaMediaInfo.setCaretPosition(position);
 	}
 
 }

@@ -41,7 +41,7 @@ public class ButtonParser implements ActionListener {
 			}
 			vipFrame.getFileList().setSelectedIndex(newIndex);
 			Video videoInstance = com.vip.controllers.SearchSortController.getInstance().getVideoByIndex(newIndex);
-			vipFrame.updateIntel(videoInstance);
+			vipFrame.getController().updateIntel(videoInstance);
 			vlc.switchMediaFile(videoInstance.getFilePath());
 		}
 		if ("jbtnNextMovie".equals(action)) {
@@ -53,7 +53,7 @@ public class ButtonParser implements ActionListener {
 			}
 			vipFrame.getFileList().setSelectedIndex(newIndex);
 			Video videoInstance = com.vip.controllers.SearchSortController.getInstance().getVideoByIndex(newIndex);
-			vipFrame.updateIntel(videoInstance);
+			vipFrame.getController().updateIntel(videoInstance);
 			vlc.switchMediaFile(videoInstance.getFilePath());
 		}
 		if ("jbtnPreviousChapter".equals(action))

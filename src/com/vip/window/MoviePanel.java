@@ -32,7 +32,7 @@ import uk.co.caprica.vlcj.player.direct.format.RV32BufferFormat;
 public class MoviePanel extends JPanel implements ComponentListener {
 
 	// just approx.!
-	private final int OVERLAY_DISPLAY_TIME = 2;
+	private final int OVERLAY_DISPLAY_TIME = 3;
 	private int overlayTimer = OVERLAY_DISPLAY_TIME;
 
 	private final double ASPECT_RATIO = 16.0 / 9.0;
@@ -109,6 +109,9 @@ public class MoviePanel extends JPanel implements ComponentListener {
 	private boolean drawTime = false;
 	private boolean drawFps = false;
 	private boolean drawTitle = false;
+	private boolean isPanelRefreshing = false;
+	private final int PANELREFRESHTICKRATE = 1;
+	private int refreshPanelTimer = PANELREFRESHTICKRATE;
 
 	private final Font font = new Font("Tahoma", Font.BOLD, 40);
 
@@ -121,10 +124,21 @@ public class MoviePanel extends JPanel implements ComponentListener {
 		Graphics2D g2 = (Graphics2D) g;
 		updatedTicks++;
 		long time = System.currentTimeMillis();
+		// Some every-second-timer. Horrible to have it implemented here.
+		// "Perhaps" bother with it later
 		if (time - lastUpdateTime >= 1000) {
 			lastUpdateTime = time;
 			averageFps = updatedTicks;
 			updatedTicks = 0;
+			if (isPanelRefreshing) {
+				if (refreshPanelTimer > 0) {
+					refreshPanelTimer--;
+				} else {
+					isPanelRefreshing = false;
+					refreshPanelTimer = PANELREFRESHTICKRATE;
+					updatePanel();
+				}
+			}
 			if (shouldDrawOverlay) {
 				overlayTimer--;
 			}
@@ -260,6 +274,16 @@ public class MoviePanel extends JPanel implements ComponentListener {
 
 	@Override
 	public void componentResized(ComponentEvent e) {
+		System.out.println("We resized the MoviePanel! " + this.getWidth() + " x " + this.getHeight());
+		isPanelRefreshing = true;
+		refreshPanelTimer = PANELREFRESHTICKRATE;
+	}
+
+	@Override
+	public void componentShown(ComponentEvent e) {
+	}
+
+	public void updatePanel() {
 		if (vlcInstance.getMediaPlayer() != null && vlcInstance.getCurrentPlaybackPath() != null) {
 			if (currentPath != vlcInstance.getCurrentPlaybackPath()) {
 				currentPath = vlcInstance.getCurrentPlaybackPath();
@@ -285,9 +309,5 @@ public class MoviePanel extends JPanel implements ComponentListener {
 				vlcInstance.pauseMedia();
 			}
 		}
-	}
-
-	@Override
-	public void componentShown(ComponentEvent e) {
 	}
 }

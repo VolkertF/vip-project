@@ -114,7 +114,7 @@ public class KeyParser implements KeyEventDispatcher {
 					vipFrame.getFileList().setSelectedIndex(newIndex);
 					Video videoInstance = com.vip.controllers.SearchSortController.getInstance()
 					        .getVideoByIndex(newIndex);
-					vipFrame.updateIntel(videoInstance);
+					vipFrame.getController().updateIntel(videoInstance);
 					vlc.switchMediaFile(videoInstance.getFilePath());
 				}
 			}
@@ -130,7 +130,7 @@ public class KeyParser implements KeyEventDispatcher {
 					vipFrame.getFileList().setSelectedIndex(newIndex);
 					Video videoInstance = com.vip.controllers.SearchSortController.getInstance()
 					        .getVideoByIndex(newIndex);
-					vipFrame.updateIntel(videoInstance);
+					vipFrame.getController().updateIntel(videoInstance);
 					vlc.switchMediaFile(videoInstance.getFilePath());
 				}
 			}

@@ -214,7 +214,11 @@ public class VLC {
 	 */
 	public void nextChapter() {
 		if (vlcFound && directMediaPlayerComponent != null)
-			directMediaPlayerComponent.nextChapter();
+			if (directMediaPlayerComponent.getChapterCount() == 0) {
+				jumpForward();
+			} else {
+				directMediaPlayerComponent.nextChapter();
+			}
 	}
 
 	/**
@@ -222,7 +226,12 @@ public class VLC {
 	 */
 	public void previousChapter() {
 		if (vlcFound && directMediaPlayerComponent != null)
-			directMediaPlayerComponent.previousChapter();
+			if (directMediaPlayerComponent.getChapterCount() == 0) {
+				jumpBack();
+			} else {
+				directMediaPlayerComponent.previousChapter();
+			}
+
 	}
 
 	/**

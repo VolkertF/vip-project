@@ -37,7 +37,7 @@ public class Video {
 	public Video(String path) {
 		this.filePath = path;
 		String[] temp;
-		if(path.contains("\\")) {
+		if (path.contains("\\")) {
 			temp = path.split(Pattern.quote("\\"));
 		} else {
 			temp = path.split(Pattern.quote("/"));
@@ -187,7 +187,13 @@ public class Video {
 	}
 
 	public void setPersonalRating(double personalRating) {
-		this.personalRating = personalRating;
+		if (personalRating < 0) {
+			this.personalRating = 0;
+		} else if (personalRating > 20) {
+			this.personalRating = 20;
+		} else {
+			this.personalRating = personalRating;
+		}
 	}
 
 	public int getSeason() {

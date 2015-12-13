@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.JTextField;
 
+import com.vip.attributes.Video;
 import com.vip.media.VLC;
 import com.vip.window.VipFrame;
 
@@ -104,17 +105,33 @@ public class KeyParser implements KeyEventDispatcher {
 			}
 			if (currentKey == shortcutList[NEXT_MOVIE]) {
 				if (isValidInput(ke, NEXT_MOVIE)) {
-					vlc.switchMediaFile("F:\\Videos\\The Saga Of Bjorn-HD.mp4");
-					// TODO either change to next list Item or load next movie
-					// in custom playback list into the media player
+					int oldIndex = vipFrame.getFileList().getSelectedIndex();
+					int newIndex = oldIndex + 1;
+					// If reached end of list
+					if (newIndex >= (vipFrame.getFileList().getModel().getSize())) {
+						newIndex = 0;
+					}
+					vipFrame.getFileList().setSelectedIndex(newIndex);
+					Video videoInstance = com.vip.controllers.SearchSortController.getInstance()
+					        .getVideoByIndex(newIndex);
+					vipFrame.updateIntel(videoInstance);
+					vlc.switchMediaFile(videoInstance.getFilePath());
 				}
 			}
 			if (currentKey == shortcutList[PREVIOUS_MOVIE]) {
 				if (isValidInput(ke, PREVIOUS_MOVIE)) {
-					vlc.switchMediaFile("F:\\Videos\\Dji. Death Sails-HD.mp4");
-					// TODO either change to previous list Item or load previous
-					// movie
-					// in custom playback list into the media player
+					int oldIndex = vipFrame.getFileList().getSelectedIndex();
+					int newIndex = oldIndex - 1;
+					// If reached pre-beginning of list
+					if (newIndex < 0) {
+						newIndex = (vipFrame.getFileList().getModel().getSize() - 1);
+						vipFrame.getFileList().setSelectedIndex(newIndex);
+					}
+					vipFrame.getFileList().setSelectedIndex(newIndex);
+					Video videoInstance = com.vip.controllers.SearchSortController.getInstance()
+					        .getVideoByIndex(newIndex);
+					vipFrame.updateIntel(videoInstance);
+					vlc.switchMediaFile(videoInstance.getFilePath());
 				}
 			}
 			if (currentKey == shortcutList[JUMP_FORWARD]) {
@@ -155,10 +172,6 @@ public class KeyParser implements KeyEventDispatcher {
 	 */
 	public boolean isValidInput(KeyEvent ke, int index) {
 		int modifiers = ke.getModifiers();
-		System.out.println("Pressed:" + (char) ke.getKeyCode() + ". Index has: " + shortcutList[index]);
-		System.out.println("Modifiers are: " + modifiers + ". Should be Ctrl? " + shortcutCTRLmask[index]
-		        + ". Should be Shift? " + shortcutSHIFTmask[index]);
-		System.out.println("Mod intersection is: " + (modifiers & KeyEvent.CTRL_MASK));
 		// Not Valid if CTRL should be pressed but is not
 		if (shortcutCTRLmask[index] && ((modifiers & KeyEvent.CTRL_MASK) != KeyEvent.CTRL_MASK)) {
 			return false;

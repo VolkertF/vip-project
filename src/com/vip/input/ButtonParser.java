@@ -3,6 +3,7 @@ package com.vip.input;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import com.vip.attributes.Video;
 import com.vip.media.VLC;
 import com.vip.window.VipFrame;
 
@@ -31,12 +32,29 @@ public class ButtonParser implements ActionListener {
 		if ("jbtnStopMovie".equals(action))
 			vlc.stopMedia();
 		if ("jbtnPreviousMovie".equals(action)) {
-			// TODO exchange hardcoded video file with list reference
-			vlc.switchMediaFile("F:\\Videos\\The Saga Of Bjorn-HD.mp4");
+			int oldIndex = vipFrame.getFileList().getSelectedIndex();
+			int newIndex = oldIndex - 1;
+			// If reached pre-beginning of list
+			if (newIndex < 0) {
+				newIndex = (vipFrame.getFileList().getModel().getSize() - 1);
+				vipFrame.getFileList().setSelectedIndex(newIndex);
+			}
+			vipFrame.getFileList().setSelectedIndex(newIndex);
+			Video videoInstance = com.vip.controllers.SearchSortController.getInstance().getVideoByIndex(newIndex);
+			vipFrame.updateIntel(videoInstance);
+			vlc.switchMediaFile(videoInstance.getFilePath());
 		}
 		if ("jbtnNextMovie".equals(action)) {
-			// TODO exchange hardcoded video file with list reference
-			vlc.switchMediaFile("F:\\Videos\\Dji. Death Sails-HD.mp4");
+			int oldIndex = vipFrame.getFileList().getSelectedIndex();
+			int newIndex = oldIndex + 1;
+			// If reached end of list
+			if (newIndex >= (vipFrame.getFileList().getModel().getSize())) {
+				newIndex = 0;
+			}
+			vipFrame.getFileList().setSelectedIndex(newIndex);
+			Video videoInstance = com.vip.controllers.SearchSortController.getInstance().getVideoByIndex(newIndex);
+			vipFrame.updateIntel(videoInstance);
+			vlc.switchMediaFile(videoInstance.getFilePath());
 		}
 		if ("jbtnPreviousChapter".equals(action))
 			vlc.previousChapter();

@@ -330,9 +330,10 @@ public class VipFrame extends JFrame {
 	 * This JComboBox is ment for sorting your search by different categories
 	 */
 	private JComboBox<String> jcbSortCategories;
-	
+
 	/**
-	 * This JComboBox is ment for searching in different sections of the movie files.
+	 * This JComboBox is ment for searching in different sections of the movie
+	 * files.
 	 */
 	private JComboBox<String> jcbSearchCategories;
 
@@ -347,7 +348,8 @@ public class VipFrame extends JFrame {
 	 */
 	private void buildExplorerGUI() {
 		jlstFileList = new JList<String>(com.vip.controllers.SearchSortController.getInstance().getList());
-		com.vip.controllers.SearchSortController.getInstance().updateList(com.vip.controllers.SearchSortController.getInstance().getMovies());
+		com.vip.controllers.SearchSortController.getInstance()
+		        .updateList(com.vip.controllers.SearchSortController.getInstance().getMovies());
 		jlstFileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jlstFileList.setSelectedIndex(0);
 		JTextArea jtaScrollPaneText = new JTextArea(20, 1);
@@ -359,53 +361,46 @@ public class VipFrame extends JFrame {
 
 		String[] sortCategories = { "By Title", // Index 0
 		        "By Country", // Index 1
-		        "By Personal Rating", //Index 2
-		        "By IMDb Rating", //Index 3
-		        "By Release Date", //Index 4
+		        "By Personal Rating", // Index 2
+		        "By IMDb Rating", // Index 3
+		        "By Release Date", // Index 4
 		};
 
 		jcbSortCategories = new JComboBox<String>(sortCategories);
 		jcbSortCategories.setEditable(false);
 		jcbSortCategories.setSelectedIndex(0);
-		
-		String[] searchCategories = { "Default",
-				"By Title",
-				"By Director",
-				"By Country",
-				"By Cast",
-				"By Genre",
-				"By Writers",
-				"By Release Date",
-				"By Plot"
-		};
-		
+
+		String[] searchCategories = { "Default", "By Title", "By Director", "By Country", "By Cast", "By Genre",
+		        "By Writers", "By Release Date", "By Plot" };
+
 		jcbSearchCategories = new JComboBox<String>(searchCategories);
 		jcbSearchCategories.setEditable(false);
 		jcbSearchCategories.setSelectedIndex(0);
-		
-		jbtnSearchExecute = new JButton("Search");		
+
+		jbtnSearchExecute = new JButton("Search");
 		ActionListener action = new ActionListener() {
-			@Override public void actionPerformed(ActionEvent e) {
+			@Override
+			public void actionPerformed(ActionEvent e) {
 				int searchChoice = jcbSearchCategories.getSelectedIndex();
-				if(searchChoice == 1) {
+				if (searchChoice == 1) {
 					SearchSortController.getInstance().searchByTitle(jtfSearch.getText());
-				} else if(searchChoice == 2) {
+				} else if (searchChoice == 2) {
 					SearchSortController.getInstance().searchByDirector(jtfSearch.getText());
-				} else if(searchChoice == 3) {
+				} else if (searchChoice == 3) {
 					SearchSortController.getInstance().searchByCountry(jtfSearch.getText());
-				} else if(searchChoice == 4) {
+				} else if (searchChoice == 4) {
 					SearchSortController.getInstance().searchByCast(jtfSearch.getText());
-				} else if(searchChoice == 5) {
+				} else if (searchChoice == 5) {
 					SearchSortController.getInstance().searchByGenre(jtfSearch.getText());
-				} else if(searchChoice == 6) {
+				} else if (searchChoice == 6) {
 					SearchSortController.getInstance().searchByWriters(jtfSearch.getText());
-				} else if(searchChoice == 7) {
+				} else if (searchChoice == 7) {
 					SearchSortController.getInstance().searchByReleaseDate(jtfSearch.getText());
-				} else if(searchChoice == 8) {
+				} else if (searchChoice == 8) {
 					SearchSortController.getInstance().searchByPlot(jtfSearch.getText());
 				} else {
 					SearchSortController.getInstance().searchAll(jtfSearch.getText());
-				}	
+				}
 			}
 		};
 		jbtnSearchExecute.addActionListener(action);
@@ -499,21 +494,21 @@ public class VipFrame extends JFrame {
 		jbtnStopMovie.addActionListener(controller.getButtonParser());
 		jbtnStopMovie.setActionCommand("jbtnStopMovie");
 
-		JButton jbtnPreviousMovie = new JButton("Previous Media");
+		JButton jbtnPreviousMovie = new JButton("Previous Movie");
 		jbtnPreviousMovie.addActionListener(controller.getButtonParser());
 		jbtnPreviousMovie.setActionCommand("jbtnPreviousMovie");
 
-		JButton jbtnNextMovie = new JButton("Next Media");
+		JButton jbtnNextMovie = new JButton("Next Movie");
 		jbtnNextMovie.addActionListener(controller.getButtonParser());
 		jbtnNextMovie.setActionCommand("jbtnNextMovie");
 
 		JButton jbtnPreviousChapter = new JButton("Previous Chapter");
 		jbtnPreviousChapter.addActionListener(controller.getButtonParser());
-		jbtnPreviousChapter.setActionCommand("jbtnJumpBack");
+		jbtnPreviousChapter.setActionCommand("jbtnPreviousChapter");
 
 		JButton jbtnNextChapter = new JButton("Next Chapter");
 		jbtnNextChapter.addActionListener(controller.getButtonParser());
-		jbtnNextChapter.setActionCommand("jbtnJumpForward");
+		jbtnNextChapter.setActionCommand("jbtnNextChapter");
 
 		jsliderVolume = new JSlider(JSlider.HORIZONTAL, VLC.getMinVolume(), VLC.getMaxVolume(),
 		        ((VLC.getMinVolume() + VLC.getMaxVolume()) / 2));
@@ -638,8 +633,18 @@ public class VipFrame extends JFrame {
 	}
 
 	public void updateRatingSlider() {
+		if (jlstFileList.getSelectedIndex() >= 0) {
+			jsliderRating.setValue((int) com.vip.controllers.SearchSortController.getInstance()
+			        .getVideoByIndex(jlstFileList.getSelectedIndex()).getPersonalRating());
+		} else {
+			jsliderRating.setValue(0);
+		}
 		String ratingString = String.format("%3.1f", (jsliderRating.getValue() / 2.0));
 		jlabelRating.setText(ratingString);
+	}
+
+	public JList<String> getFileList() {
+		return jlstFileList;
 	}
 
 	/**
@@ -676,11 +681,10 @@ public class VipFrame extends JFrame {
 				BasicSliderUI ui = (BasicSliderUI) jslider.getUI();
 				int newRating = ui.valueForXPosition(me.getX());
 				if (jlstFileList.getSelectedIndex() >= 0) {
-					Video videoInstance = com.vip.controllers.SearchSortController.getInstance().getVideoByIndex(jlstFileList.getSelectedIndex());
+					Video videoInstance = com.vip.controllers.SearchSortController.getInstance()
+		                    .getVideoByIndex(jlstFileList.getSelectedIndex());
 					videoInstance.setPersonalRating(newRating);
-					int position = jtaMediaInfo.getCaretPosition();
-					jtaMediaInfo.setText(videoInstance.toString());
-					jtaMediaInfo.setCaretPosition(position);
+					updateIntel(videoInstance);
 				}
 			}
 		});
@@ -871,7 +875,8 @@ public class VipFrame extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				String path = getFilePath(new FileNameExtensionFilter("Video Files", movieExtensions));
 				com.vip.controllers.SearchSortController.getInstance().addMovieToList(new Video(path));
-				com.vip.controllers.SearchSortController.getInstance().updateList(com.vip.controllers.SearchSortController.getInstance().getMovies());
+				com.vip.controllers.SearchSortController.getInstance()
+		                .updateList(com.vip.controllers.SearchSortController.getInstance().getMovies());
 			}
 		});
 
@@ -911,17 +916,9 @@ public class VipFrame extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent ev) {
-				Video videoInstance = com.vip.controllers.SearchSortController.getInstance().getVideoByIndex(jlstFileList.getSelectedIndex());
-				double personalRating = videoInstance.getPersonalRating();
-				if (personalRating < 0) {
-					videoInstance.setPersonalRating(0);
-				} else if (personalRating > 20) {
-					videoInstance.setPersonalRating(20);
-				}
-				jsliderRating.setValue((int) personalRating);
-				int position = jtaMediaInfo.getCaretPosition();
-				jtaMediaInfo.setText(videoInstance.toString());
-				jtaMediaInfo.setCaretPosition(position);
+				Video videoInstance = com.vip.controllers.SearchSortController.getInstance()
+		                .getVideoByIndex(jlstFileList.getSelectedIndex());
+				updateIntel(videoInstance);
 				if (ev.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(ev)) {
 					controller.getVLC().stopMedia();
 					controller.getVLC().loadMedia(videoInstance.getFilePath());
@@ -937,6 +934,13 @@ public class VipFrame extends JFrame {
 				}
 			}
 		});
+	}
+
+	public void updateIntel(Video videoInstance) {
+		updateRatingSlider();
+		int position = jtaMediaInfo.getCaretPosition();
+		jtaMediaInfo.setText(videoInstance.toString());
+		jtaMediaInfo.setCaretPosition(position);
 	}
 
 	/**
@@ -965,9 +969,11 @@ public class VipFrame extends JFrame {
 			e.printStackTrace();
 		}
 		for (int i = 0; i < fileList.size(); i++) {
-			com.vip.controllers.SearchSortController.getInstance().addMovieToList(new Video(fileList.get(i).getAbsolutePath()));
+			com.vip.controllers.SearchSortController.getInstance()
+			        .addMovieToList(new Video(fileList.get(i).getAbsolutePath()));
 		}
 
-		com.vip.controllers.SearchSortController.getInstance().updateList(com.vip.controllers.SearchSortController.getInstance().getMovies());
+		com.vip.controllers.SearchSortController.getInstance()
+		        .updateList(com.vip.controllers.SearchSortController.getInstance().getMovies());
 	}
 }

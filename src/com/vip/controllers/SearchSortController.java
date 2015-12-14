@@ -1,6 +1,5 @@
 package com.vip.controllers;
 
-
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,15 +31,33 @@ public class SearchSortController {
 	 */
 	private ArrayList<Video> movies;
 	
+	/**
+	 * With this object the JList should show every movie
+	 * in the right way and order.
+	 * Mainly this object is for sorting and searching
+	 * algorithms.
+	 */
 	private DefaultListModel<String> defaultJList;
 	
+	/**
+	 * A Singleton instance of this class
+	 */
 	private static SearchSortController instance;
 	
+	/**
+	 * A private Constructor that can only be called once.
+	 */
 	private SearchSortController() {
 		defaultJList = new DefaultListModel<String>();
 		movies = new ArrayList<Video>();
 	}
 	
+	/**
+	 * The method, that connects the SearchSortController
+	 * to the outer world. Yay!
+	 * @return
+	 * 		An initialized instance of this class
+	 */
 	public static SearchSortController getInstance() {
 		if(instance == null) {
 			SearchSortController.instance = new SearchSortController();
@@ -98,7 +115,13 @@ public class SearchSortController {
 		return movies.get(index);
 	}
 	
-	
+	/**
+	 * Method for making a Search on the OMDb based on
+	 * a string that the user enter for the movie.
+	 * @param vid
+	 * 		The video object the information should
+	 * 		be fetched to.
+	 */
 	public void fetchVideoInformation(Video vid) {
 		String searchKey = (String) JOptionPane.showInputDialog("Please enter the name of the Video that is searched for! (Previous name: " + vid.getTitle());
 		OmdbRequest window = new OmdbRequest(OMDBController.getInstance().searchApi(searchKey), vid);
@@ -106,11 +129,24 @@ public class SearchSortController {
 		window.setVisible(true);
 	}
 	
+	/**
+	 * This method takes the Map of key-value pairs that
+	 * the OMDb API delivers and assign it to a Video-
+	 * object.
+	 * 
+	 * It currently contains Date, which is deprecated right
+	 * now
+	 * 
+	 * @param map
+	 * 		A map of the OMDb-data
+	 * @param vid
+	 * 		The Video Obj. the information should be fetched to.
+	 */
+	@SuppressWarnings("deprecation")
 	public void assignMapToVideo(Map<String, String> map, Video vid) {
 		String type = map.get("Type");
 		if(type.equals("movie")) {
 			vid.setTitle(map.get("Title"));
-			String dateString = map.get("Released");
 			vid.setReleaseDate(new Date(95, 9, 21));;
 			vid.setGenre(new ArrayList<String>(Arrays.asList(map.get("Genre").split(","))));
 			vid.setDirector(map.get("Director"));
@@ -122,7 +158,6 @@ public class SearchSortController {
 			vid.setInfoFetched(true);
 		} else if(type.equals("episode"));
 	}
-	
 	
 	/**
 	 * Sorts list by title
@@ -186,7 +221,6 @@ public class SearchSortController {
 		updateList(movies);
 	}
 	
-	
 	/**
 	 * Search by anything in the object and update the list being displayed.
 	 * 
@@ -207,6 +241,7 @@ public class SearchSortController {
 	 * Search by title and update the list being displayed.
 	 * 
 	 * @param searchText
+	 * 		A String for initializing the search
 	 */
 	public void searchByTitle(String searchText){
 		ArrayList<Video> results = new ArrayList<Video>();
@@ -225,6 +260,7 @@ public class SearchSortController {
 	 * Search by director and update the list being displayed.
 	 * 
 	 * @param searchText
+	 * 		A String for initializing the search
 	 */
 	public void searchByDirector(String searchText){
 		ArrayList<Video> results = new ArrayList<Video>();
@@ -243,6 +279,7 @@ public class SearchSortController {
 	 * Search by country and update the list being displayed.
 	 * 
 	 * @param searchText
+	 * 		A String for initializing the search
 	 */
 	public void searchByCountry(String searchText){
 		ArrayList<Video> results = new ArrayList<Video>();
@@ -261,6 +298,7 @@ public class SearchSortController {
 	 * Search by cast and update the list being displayed.
 	 * 
 	 * @param searchText
+	 * 		A String for initializing the search
 	 */
 	public void searchByCast(String searchText){
 		ArrayList<Video> results = new ArrayList<Video>();
@@ -279,6 +317,7 @@ public class SearchSortController {
 	 * Search by genre and update the list being displayed.
 	 * 
 	 * @param searchText
+	 * 		A String for initializing the search
 	 */
 	public void searchByGenre(String searchText){
 		ArrayList<Video> results = new ArrayList<Video>();
@@ -297,6 +336,7 @@ public class SearchSortController {
 	 * Search by writers and update the list being displayed.
 	 * 
 	 * @param searchText
+	 * 		A String for initializing the search
 	 */
 	public void searchByWriters(String searchText){
 		ArrayList<Video> results = new ArrayList<Video>();
@@ -315,6 +355,7 @@ public class SearchSortController {
 	 * Search by release date and update the list being displayed.
 	 * 
 	 * @param searchText
+	 * 		A String for initializing the search
 	 */
 	public void searchByReleaseDate(String searchText){
 		ArrayList<Video> results = new ArrayList<Video>();
@@ -333,6 +374,7 @@ public class SearchSortController {
 	 * Search by plot summary and update the list being displayed.
 	 * 
 	 * @param searchText
+	 * 		A String for initializing the search
 	 */
 	public void searchByPlot(String searchText){
 		ArrayList<Video> results = new ArrayList<Video>();

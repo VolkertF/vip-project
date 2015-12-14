@@ -63,10 +63,6 @@ import com.vip.media.VLC;
 @SuppressWarnings("serial")
 public class VipFrame extends JFrame implements ComponentListener {
 
-	private VipFrame thisFrame = this;
-
-	private final int RESIZE_REFRESH_RATE = 50;
-
 	/**
 	 * Constructor for building the frame and initialize all event handlers.
 	 */
@@ -99,58 +95,16 @@ public class VipFrame extends JFrame implements ComponentListener {
 		setVisible(true);
 		controller.getVLC().switchSurface(mainMoviePanel, false);
 	}
+	
+	/**
+	 * TODO: Javadoc
+	 */
+	private VipFrame thisFrame = this;
 
 	/**
-	 * Outsourced method for detecting whether a root folder is already
-	 * determined or has to be declared by the user
+	 * TODO: Javadoc
 	 */
-	private void selectRootFolder() {
-		JOptionPane.showMessageDialog(this, "You have to select a root folder for your video collection!");
-		rootFolderPath = getFilePath(2);
-	}
-
-	/**
-	 * Method for getting the path of a selected folder
-	 * 
-	 * @return Absolute path to the file
-	 * @param int
-	 *            type Integer for choosing a different selection type of the
-	 *            open dialog
-	 */
-	private String getFilePath(int type) {
-		JFileChooser chooser = new JFileChooser();
-		if (type == 2) {
-			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		} else if (type == 1) {
-			chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		} else if (type != 1 && type != 2) {
-			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-		}
-
-		int returnVal = chooser.showOpenDialog(rootPane);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			return chooser.getSelectedFile().getAbsolutePath();
-		}
-		return "";
-	}
-
-	/**
-	 * Overloaded method for searching for files with a certain ending
-	 * 
-	 * @param filter
-	 *            FileNameExtensionFilter for only making files searchable for
-	 *            the JFileChooser, that have the specified ending.
-	 * @return Absolute path to the file
-	 */
-	private String getFilePath(FileNameExtensionFilter filter) {
-		JFileChooser chooser = new JFileChooser();
-		chooser.setFileFilter(filter);
-		int returnVal = chooser.showOpenDialog(rootPane);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			return chooser.getSelectedFile().getAbsolutePath();
-		}
-		return "";
-	}
+	private final int RESIZE_REFRESH_RATE = 50;
 
 	/**
 	 * String Array for filtering the right files
@@ -171,15 +125,6 @@ public class VipFrame extends JFrame implements ComponentListener {
 	 * Controller for saving the movies into a database
 	 */
 	private DatabaseController dataController = new DatabaseController();
-
-	/**
-	 * Getter for controller class
-	 * 
-	 * @return the responsible controller class for this frame.
-	 */
-	public Controller getController() {
-		return controller;
-	}
 
 	/**
 	 * The JPanel that represents the Explorer and do file-searching stuff and
@@ -210,6 +155,150 @@ public class VipFrame extends JFrame implements ComponentListener {
 	 * Main JPanel, that holds all the other panels
 	 */
 	private JPanel jpnlMain;
+	
+	/**
+	 * This JList will fill with the files in all searching directories the
+	 * program overwatches, so basically every movie file found on the harddrive
+	 */
+	private JList<String> jlstFileList;
+
+	/**
+	 * This JTextField is for entering your private search stuff into a
+	 * textField to search your library for this
+	 */
+	private JTextField jtfSearch;
+
+	/**
+	 * This JComboBox is ment for sorting your search by different categories
+	 */
+	private JComboBox<String> jcbSortCategories;
+
+	/**
+	 * This JComboBox is ment for searching in different sections of the movie
+	 * files.
+	 */
+	private JComboBox<String> jcbSearchCategories;
+
+	/**
+	 * By pressing this JButton the search by the chosen searching-categories
+	 * and the entered keywords is executed.
+	 */
+	private JButton jbtnSearchExecute;
+	
+	/**
+	 * Indicator of current volume level
+	 */
+	private JButton jbtnVolume;
+
+	/**
+	 * Slider for volume level
+	 */
+	private JSlider jsliderVolume;
+
+	/** Indicator for time left in the current movie **/
+	private JLabel jlabelMovieTimer;
+
+	/**
+	 * Slider for movie timeline
+	 */
+	private JSlider jsliderMovieProgress;
+
+	/**
+	 * TODO: Javadoc
+	 */
+	private MoviePanel mainMoviePanel;
+	
+	/**
+	 * This JMenuBar makes the windowmenu come alive
+	 */
+	private JMenuBar jmbMenu;
+
+	/**
+	 * The submenu File containing a direct way to open VLC and to close the
+	 * window without pressing the red X.s
+	 */
+	private JMenu jmFile;
+
+	/**
+	 * MenuItem which allows to define the Path to VLC.exe manually.
+	 */
+	private JMenuItem jmiPathVLC;
+
+	/**
+	 * MenuItem which allows to add a file to the watchlist of displayed files
+	 * to play.
+	 */
+	private JMenuItem jmiAddFile;
+
+	/**
+	 * MenuItem which allows to add a whole directory to the watchlist of
+	 * displayed files to play.
+	 * 
+	 */
+	private JMenuItem jmiAddDirectory;
+
+	/**
+	 * MenuItem which allows the user to save his/her whole progress in the
+	 * database, which will keep everything over to the next boot.
+	 */
+	private JMenuItem jmiSaveAll;
+
+	/**
+	 * MenuItem which allows the user to close the program.
+	 */
+	private JMenuItem jmiClose;
+
+	/**
+	 * The submenu Help containing the tutorial
+	 */
+	private JMenu jmHelp;
+
+	/**
+	 * MenuItem from which the user will get a pop-up window with a short
+	 * tutorial on how to use the program.
+	 */
+	private JMenuItem jmiTutorial;
+
+	/**
+	 * The submenu About containing the website, the team, the code on GitHub
+	 * and the journals so far
+	 */
+	private JMenu jmAbout;
+
+	/**
+	 * MenuItem from which the user can access the website of the project
+	 */
+	private JMenuItem jmiWebsite;
+
+	/**
+	 * MenuItem from which the user can access the team descriptions
+	 */
+	private JMenuItem jmiMeetTheTeam;
+
+	/**
+	 * MenuItem from which the user can look up the code on GitHub
+	 */
+	private JMenuItem jmiWatchCode;
+
+	/**
+	 * MenuItem from which the user can access the teams journals
+	 */
+	private JMenuItem jmiJournals;
+	
+	/**
+	 * TODO: Javadoc
+	 */
+	private JSlider jsliderRating;
+
+	/**
+	 * TODO: Javadoc
+	 */
+	private JLabel jlabelRating;
+
+	/**
+	 * TODO: Javadoc
+	 */
+	private JTextArea jtaMediaInfo;
 
 	/**
 	 * Helping routine for creating components and adding them to a
@@ -289,6 +378,15 @@ public class VipFrame extends JFrame implements ComponentListener {
 			// If Nimbus is not found, it will be the default look and feel
 		}
 	}
+	
+	/**
+	 * Getter for controller class
+	 * 
+	 * @return the responsible controller class for this frame.
+	 */
+	public Controller getController() {
+		return controller;
+	}
 
 	/**
 	 * Create Subpanels Have to be called before any other building-methods
@@ -316,35 +414,6 @@ public class VipFrame extends JFrame implements ComponentListener {
 		addComponent(1, 0, 1, 1, 0.65, 0.7, jpnlMain, jpnlMovie, defaultInsets);
 		addComponent(1, 1, 1, 1, 0.65, 0.3, jpnlMain, jpnlIntel, defaultInsets);
 	}
-
-	/**
-	 * This JList will fill with the files in all searching directories the
-	 * program overwatches, so basically every movie file found on the harddrive
-	 */
-	private JList<String> jlstFileList;
-
-	/**
-	 * This JTextField is for entering your private search stuff into a
-	 * textField to search your library for this
-	 */
-	private JTextField jtfSearch;
-
-	/**
-	 * This JComboBox is ment for sorting your search by different categories
-	 */
-	private JComboBox<String> jcbSortCategories;
-
-	/**
-	 * This JComboBox is ment for searching in different sections of the movie
-	 * files.
-	 */
-	private JComboBox<String> jcbSearchCategories;
-
-	/**
-	 * By pressing this JButton the search by the chosen searching-categories
-	 * and the entered keywords is executed.
-	 */
-	private JButton jbtnSearchExecute; // Button for executing the search
 
 	/**
 	 * Create Sub-sub-panels in the explorer panel
@@ -422,31 +491,9 @@ public class VipFrame extends JFrame implements ComponentListener {
 	}
 
 	/**
-	 * Indicator of current volume level
-	 */
-	private JButton jbtnVolume;
-
-	/**
-	 * Slider for volume level
-	 */
-	private JSlider jsliderVolume;
-
-	/** Indicator for time left in the current movie **/
-	private JLabel jlabelMovieTimer;
-
-	/**
-	 * Slider for movie timeline
-	 */
-	private JSlider jsliderMovieProgress;
-
-	private MoviePanel mainMoviePanel;
-
-	/**
 	 * Create Sub-sub- components in the movie panel including the JVLC plugin
 	 * to play movies Maybe also a section to control the movie (play, pause,
 	 * volume up/down, fast forward etc.)
-	 * 
-	 * @author Fabian Volkert
 	 */
 	private void buildMovieGUI() {
 		mainMoviePanel = new MoviePanel(controller.getVLC());
@@ -548,6 +595,9 @@ public class VipFrame extends JFrame implements ComponentListener {
 		addComponent(9, 0, 1, 1, 0, 1, jpnlMovieControls, jlabelMovieTimer, defaultInsets);
 	}
 
+	/**
+	 * TODO: Javadoc
+	 */
 	private void initProgressBar() {
 		int movieLength = (int) controller.getVLC().getMediaPlayer().getLength();
 		jsliderMovieProgress.setMaximum(movieLength);
@@ -588,7 +638,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 	}
 
 	/**
-	 *
+	 * TODO: Javadoc
 	 */
 	private void updateTimelineLabels() {
 		String newLabelText = controller.getVLC().getFormattedTimeToString();
@@ -596,13 +646,16 @@ public class VipFrame extends JFrame implements ComponentListener {
 	}
 
 	/**
-	 * 
+	 * TODO: Javadoc
 	 */
 	public void updateVolumeSlider() {
 		jbtnVolume.setText(controller.getVLC().getMediaPlayer().getVolume() + "%");
 		jsliderVolume.setValue(controller.getVLC().getMediaPlayer().getVolume());
 	}
 
+	/**
+	 * TODO: Javadoc
+	 */
 	public void updateRatingSlider() {
 		if (jlstFileList.getSelectedIndex() >= 0) {
 			jsliderRating.setValue((int) com.vip.controllers.SearchSortController.getInstance()
@@ -614,6 +667,11 @@ public class VipFrame extends JFrame implements ComponentListener {
 		jlabelRating.setText(ratingString);
 	}
 
+	/**
+	 * A Method for getting the FileList that display the movies
+	 * @return
+	 * 		The JList of String containing the files
+	 */
 	public JList<String> getFileList() {
 		return jlstFileList;
 	}
@@ -624,12 +682,6 @@ public class VipFrame extends JFrame implements ComponentListener {
 	public JComponent get_jtfSearch() {
 		return jtfSearch;
 	}
-
-	private JSlider jsliderRating;
-
-	private JLabel jlabelRating;
-
-	private JTextArea jtaMediaInfo;
 
 	/**
 	 * Create Sub-sub-components in the intel panel for showing information on
@@ -696,85 +748,6 @@ public class VipFrame extends JFrame implements ComponentListener {
 		addComponent(0, 0, 1, 1, 1, 0.1, jpnlIntel, jpnlIntelNorth, defaultInsets);
 		addComponent(0, 1, 1, 1, 1, 0.9, jpnlIntel, scrollPane, defaultInsets);
 	}
-
-	/**
-	 * This JMenuBar makes the windowmenu come alive
-	 */
-	private JMenuBar jmbMenu;
-
-	/**
-	 * The submenu File containing a direct way to open VLC and to close the
-	 * window without pressing the red X.s
-	 */
-	private JMenu jmFile;
-
-	/**
-	 * MenuItem which allows to define the Path to VLC.exe manually.
-	 */
-	private JMenuItem jmiPathVLC;
-
-	/**
-	 * MenuItem which allows to add a file to the watchlist of displayed files
-	 * to play.
-	 */
-	private JMenuItem jmiAddFile;
-
-	/**
-	 * MenuItem which allows to add a whole directory to the watchlist of
-	 * displayed files to play.
-	 * 
-	 */
-	private JMenuItem jmiAddDirectory;
-
-	/**
-	 * MenuItem which allows the user to save his/her whole progress in the
-	 * database, which will keep everything over to the next boot.
-	 */
-	private JMenuItem jmiSaveAll;
-
-	/**
-	 * MenuItem which allows the user to close the program.
-	 */
-	private JMenuItem jmiClose;
-
-	/**
-	 * The submenu Help containing the tutorial
-	 */
-	private JMenu jmHelp;
-
-	/**
-	 * MenuItem from which the user will get a pop-up window with a short
-	 * tutorial on how to use the program.
-	 */
-	private JMenuItem jmiTutorial;
-
-	/**
-	 * The submenu About containing the website, the team, the code on GitHub
-	 * and the journals so far
-	 */
-	private JMenu jmAbout;
-
-	/**
-	 * MenuItem from which the user can access the website of the project
-	 */
-	private JMenuItem jmiWebsite;
-
-	/**
-	 * MenuItem from which the user can access the team descriptions
-	 */
-	private JMenuItem jmiMeetTheTeam;
-
-	/**
-	 * MenuItem from which the user can look up the code on GitHub
-	 */
-	private JMenuItem jmiWatchCode;
-
-	/**
-	 * MenuItem from which the user can access the teams journals
-	 */
-	private JMenuItem jmiJournals;
-
-	// More menu stuff to come
 
 	/**
 	 * Method for creating the menu with all submenus and menuItems + all
@@ -951,20 +924,42 @@ public class VipFrame extends JFrame implements ComponentListener {
 		        .updateList(com.vip.controllers.SearchSortController.getInstance().getMovies());
 	}
 
+	/**
+	 * TODO Javadoc
+	 * @return
+	 */
 	public JTextArea getIntelTextArea() {
 		return jtaMediaInfo;
 	}
 
+	/**
+	 * TODO: Javadoc
+	 */
 	@Override
 	public void componentHidden(ComponentEvent arg0) {
 	}
 
+	/**
+	 * TODO: Javadoc
+	 */
 	@Override
 	public void componentMoved(ComponentEvent arg0) {
 	}
 
-	private Timer resizeTimer = new Timer(RESIZE_REFRESH_RATE, new TimerListener());
+	/**
+	 * TODO: Javadoc
+	 */
+	private Timer resizeTimer = new Timer(RESIZE_REFRESH_RATE, new ActionListener() {
+		@Override public void actionPerformed(ActionEvent arg0) {
+			System.out.println("Frame resized! " + thisFrame.getWidth() + " x " + thisFrame.getHeight());
+			controller.getVLC().switchSurface(mainMoviePanel, true);
+			resizeTimer.stop();
+		}
+	});
 
+	/*/**		//Maybe the above implementation should do the same things. TODO: Pls consider doing it the above way Fabian :D
+	 * TODO: Javadoc
+	 /
 	private class TimerListener implements ActionListener {
 
 		@Override
@@ -974,18 +969,80 @@ public class VipFrame extends JFrame implements ComponentListener {
 			resizeTimer.stop();
 		}
 
-	}
+	}*/
 
+	/**
+	 * TODO: Javadoc
+	 */
 	@Override
 	public void componentResized(ComponentEvent arg0) {
 		resizeTimer.restart();
 	}
 
+	/**
+	 * TODO: Javadoc
+	 */
 	@Override
 	public void componentShown(ComponentEvent arg0) {
 	}
 
+	/**
+	 * TODO: Javadoc
+	 * @return
+	 */
 	public MoviePanel getMoviePanel() {
 		return mainMoviePanel;
+	}
+	
+	/**
+	 * Outsourced method for detecting whether a root folder is already
+	 * determined or has to be declared by the user
+	 */
+	private void selectRootFolder() {
+		JOptionPane.showMessageDialog(this, "You have to select a root folder for your video collection!");
+		rootFolderPath = getFilePath(2);
+	}
+
+	/**
+	 * Method for getting the path of a selected folder
+	 * 
+	 * @return Absolute path to the file
+	 * @param int
+	 *            type Integer for choosing a different selection type of the
+	 *            open dialog
+	 */
+	private String getFilePath(int type) {
+		JFileChooser chooser = new JFileChooser();
+		if (type == 2) {
+			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		} else if (type == 1) {
+			chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		} else if (type != 1 && type != 2) {
+			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		}
+
+		int returnVal = chooser.showOpenDialog(rootPane);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			return chooser.getSelectedFile().getAbsolutePath();
+		}
+		return "";
+	}
+	
+	/**
+	 * Overloaded method for searching for files with a certain ending
+	 * 
+	 * @param filter
+	 *            FileNameExtensionFilter for only making files searchable for
+	 *            the JFileChooser, that have the specified ending.
+	 * @return Absolute path to the file
+	 */
+	private String getFilePath(FileNameExtensionFilter filter) {
+		JFileChooser chooser = new JFileChooser();
+		chooser.setFileFilter(filter);
+		int returnVal = chooser.showOpenDialog(rootPane);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			return chooser.getSelectedFile().getAbsolutePath();
+		}
+		return "";
 	}
 }

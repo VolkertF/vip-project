@@ -50,7 +50,7 @@ public class OmdbRequest extends JFrame {
 	 * An ArrayList containing the URLs of the images, that
 	 * should be displayed.
 	 */
-	public ArrayList<String> imageUrls;
+	private ArrayList<String> imageUrls;
 	
 	/**
 	 * An ArrayList of the actual Icons that are displayed by
@@ -132,15 +132,6 @@ public class OmdbRequest extends JFrame {
 				}
 			}
 		});
-		
-		/*ActionListener confirmFetchAL = new ActionListener() {
-			@Override public void actionPerformed(ActionEvent arg0) {
-				String[] temp = ((ImageIcon)resultList.getSelectedValue()).getDescription().split("%%%%");
-				Map<String, String> infoMap = OMDBController.getInstance().getById(temp[3]);
-				SearchSortController.getInstance().assignMapToVideo(infoMap, video);
-			}
-		};*/
-		
 		for(String imageURL : imageUrls) {
 			BufferedImage img;
 			try {
@@ -157,7 +148,6 @@ public class OmdbRequest extends JFrame {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
 		}
 		resultList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		resultList.addListSelectionListener(new ListSelectionListener() {

@@ -283,7 +283,6 @@ public class SearchSortController {
 	 */
 	public void searchByCountry(String searchText){
 		ArrayList<Video> results = new ArrayList<Video>();
-		
 		for(Video vid:movies){
 			if(vid.getCountry() != null){
 				if(vid.getCountry().toLowerCase().contains(searchText.toLowerCase())){
@@ -302,11 +301,12 @@ public class SearchSortController {
 	 */
 	public void searchByCast(String searchText){
 		ArrayList<Video> results = new ArrayList<Video>();
-		
 		for(Video vid:movies){
 			if(vid.getCast() != null){
-				if(vid.getTitle().toLowerCase().contains(searchText.toLowerCase())){
-					results.add(vid);
+				for(String cast : vid.getCast()) {
+					if(cast.toLowerCase().contains(searchText.toLowerCase())) {
+						results.add(vid);
+					}
 				}
 			}
 		}
@@ -321,11 +321,12 @@ public class SearchSortController {
 	 */
 	public void searchByGenre(String searchText){
 		ArrayList<Video> results = new ArrayList<Video>();
-		
 		for(Video vid:movies){
 			if(vid.getGenre() != null){
-				if(vid.getGenre().contains(searchText)){
-					results.add(vid);
+				for(String genre : vid.getGenre()) {
+					if(genre.toLowerCase().contains(searchText.toLowerCase())){
+						results.add(vid);
+					}
 				}
 			}
 		}
@@ -340,11 +341,12 @@ public class SearchSortController {
 	 */
 	public void searchByWriters(String searchText){
 		ArrayList<Video> results = new ArrayList<Video>();
-		
 		for(Video vid:movies){
 			if(vid.getWriters() != null){
-				if(vid.getWriters().contains(searchText)){
-					results.add(vid);
+				for(String writer : vid.getWriters()) {
+					if(writer.toLowerCase().contains(searchText.toLowerCase())){
+						results.add(vid);
+					}
 				}
 			}
 		}
@@ -359,7 +361,6 @@ public class SearchSortController {
 	 */
 	public void searchByReleaseDate(String searchText){
 		ArrayList<Video> results = new ArrayList<Video>();
-		
 		for(Video vid:movies){
 			if(vid.getReleaseDate() != null){
 				if(vid.getReleaseDate().toString().contains(searchText)){
@@ -378,7 +379,6 @@ public class SearchSortController {
 	 */
 	public void searchByPlot(String searchText){
 		ArrayList<Video> results = new ArrayList<Video>();
-		
 		for(Video vid:movies){
 			if(vid.getPlotSummary() != null){
 				if(vid.getPlotSummary().toLowerCase().contains(searchText.toLowerCase())){

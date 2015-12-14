@@ -870,17 +870,10 @@ public class VipFrame extends JFrame implements ComponentListener {
 	 */
 	private void addFileListActionListener() {
 		jlstFileList.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent arg0) {
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent arg0) {
-			}
+			@Override public void mouseReleased(MouseEvent arg0) {}
+			@Override public void mouseExited(MouseEvent arg0) {}
+			@Override public void mouseEntered(MouseEvent arg0) {}
+			@Override public void mousePressed(MouseEvent ev) {}
 
 			@Override
 			public void mouseClicked(MouseEvent ev) {
@@ -892,14 +885,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 						controller.getVLC().switchMediaFile(videoInstance);
 					}
 				}
-			}
-
-			@Override
-			public void mousePressed(MouseEvent ev) {
-				if (SwingUtilities.isRightMouseButton(ev)) {
-					// movies.get(jlstFileList.getSelectedIndex()).activateContextVideoMenu(ev);
-				}
-			}
+			}			
 		});
 	}
 

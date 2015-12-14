@@ -89,13 +89,10 @@ public class SearchSortController {
 	 * 			The movies from the database
 	 */
 	public void loadDatabaseMovies(ArrayList<Video> dbMovies){
-		for(Video vid: movies){
 			for(Video dbVid: dbMovies){
-				if(dbVid.getFilePath().toLowerCase().equals(vid.getFilePath().toLowerCase())){
-					vid.setAsVideo(dbVid);
-				}
+				movies.add(dbVid);
 			}
-		}
+			updateList(movies);
 	}
 	
 	/**

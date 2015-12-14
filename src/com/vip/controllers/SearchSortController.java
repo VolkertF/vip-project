@@ -189,7 +189,7 @@ public class SearchSortController {
 	public void sortByPersonalRating(){
 		Collections.sort(movies, new Comparator<Video>() {
 			    public int compare(Video one, Video other) {
-			        return Double.compare(one.getPersonalRating(), other.getPersonalRating());
+			        return Double.compare(other.getPersonalRating(), one.getPersonalRating());
 			    }
 		});
 		updateList(movies);
@@ -202,7 +202,7 @@ public class SearchSortController {
 		
 		Collections.sort(movies, new Comparator<Video>() {
 			    public int compare(Video one, Video other) {
-			        return Double.compare(one.getImdbRating(), other.getImdbRating());
+			        return Double.compare(other.getImdbRating(), one.getImdbRating());
 			    }
 		});
 		updateList(movies);

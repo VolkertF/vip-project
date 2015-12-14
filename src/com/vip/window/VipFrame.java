@@ -473,6 +473,23 @@ public class VipFrame extends JFrame implements ComponentListener {
 				} else {
 					SearchSortController.getInstance().searchAll(jtfSearch.getText());
 				}
+				int sortChoice = jcbSortCategories.getSelectedIndex();
+				if(sortChoice == 4) {
+					System.out.println("sort by release date");
+					SearchSortController.getInstance().sortByReleaseDate();
+				} else if (sortChoice == 1) {
+					SearchSortController.getInstance().sortByCountry();
+					System.out.println("sort by country");
+				} else if (sortChoice == 2) {
+					SearchSortController.getInstance().sortByPersonalRating();
+					System.out.println("sort by personal rating");
+				} else if (sortChoice == 3) {
+					SearchSortController.getInstance().sortByImdbRating();
+					System.out.println("sort by imdb rating");
+				} else {	//searchChoice == 4
+					SearchSortController.getInstance().sortByTitle();
+					System.out.println("sort by title");
+				}
 			}
 		};
 		jbtnSearchExecute.addActionListener(action);

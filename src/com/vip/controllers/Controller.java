@@ -23,10 +23,10 @@ import com.vip.window.VipFrame;
 
 /**
  * Controller class. Contains diverse methods for data processing and forms an
- * interface between GUI and persistence layer. Resonsible for configuration
+ * interface between GUI and media playback. Resonsible for configuration
  * loadout
  * 
- * @author Fabian
+ * @author Fabian Volkert
  *
  */
 public class Controller {
@@ -40,7 +40,7 @@ public class Controller {
 	/** VLC media player. **/
 	private VLC vlcInstance = VLC.getInstance();
 
-	/** **/
+	/** Reference to the main frame of the application **/
 	private VipFrame vipFrame;
 
 	/**
@@ -55,12 +55,18 @@ public class Controller {
 	 **/
 	private static final String SHORTCUT_ENTRY_POINT = "[SHORTCUTS]";
 
+	/**
+	 * Constructor method for the controller.
+	 * 
+	 * @param newVipFrame
+	 *            Reference to the main frame
+	 */
 	public Controller(VipFrame newVipFrame) {
 		vipFrame = newVipFrame;
 	}
 
 	/**
-	 * Responsible for initializse the configuration file. If it is missing the
+	 * Responsible for initializing the configuration file. If it is missing the
 	 * method will automatically create a default configuration. It will also do
 	 * so, if the config file seems to be broken.
 	 */
@@ -327,14 +333,36 @@ public class Controller {
 		return buttonParser;
 	}
 
+	/**
+	 * Getter for vlc instance
+	 * 
+	 * @return the vlc instance
+	 */
 	public VLC getVLC() {
 		return vlcInstance;
 	}
 
+	/**
+	 * Setter for the vlc instance
+	 * 
+	 * @param vlcInstance
+	 *            the new vlc instance
+	 */
 	public void setVLC(VLC vlcInstance) {
 		this.vlcInstance = vlcInstance;
 	}
 
+	/**
+	 * Indicates wether the application is run in fullscreen mode or not
+	 */
+	private boolean isFullscreen = false;
+
+	/** Reference to the Dialog that is shown in fullscreen mode **/
+	private FullscreenDialog fullscreenDialog;
+
+	/**
+	 * Toggles between fullscreen and normal display mode
+	 */
 	public void toggleFullscreen() {
 		if (isFullscreen) {
 			disposeFullscreen();
@@ -343,36 +371,61 @@ public class Controller {
 		}
 	}
 
+	/**
+	 * Getter method for the Input manager
+	 * 
+	 * @return the KeyParser object in charge
+	 */
 	public KeyParser getKeyParser() {
 		return keyParser;
 	}
 
+	/**
+	 * Updates the Textarea in the intel panel that shows the currently relevant
+	 * information
+	 * 
+	 * @param videoInstance
+	 *            the video which's intel should be displayed
+	 */
 	public void updateIntel(Video videoInstance) {
-		vipFrame.updateRatingSlider();
+		vipFrame.updateRatingIndicators();
 		JTextArea jtaMediaInfo = vipFrame.getIntelTextArea();
 		int position = jtaMediaInfo.getCaretPosition();
 		jtaMediaInfo.setText(videoInstance.toStringFull());
 		jtaMediaInfo.setCaretPosition(position);
 	}
 
-	private boolean isFullscreen = false;
-	private FullscreenDialog fullscreenDialog;
-
+	/**
+	 * Getter method for the fullscreen dialog
+	 * 
+	 * @return the fullscreen dialog
+	 */
 	public FullscreenDialog getFullscreen() {
 		return fullscreenDialog;
 	}
 
+	/**
+	 * Returns wether or not the applications runs at fullscreen mode at time
+	 * 
+	 * @return if the app is in fullscreen mode
+	 */
 	public boolean isFullscreen() {
 		return isFullscreen;
 	}
 
+	/**
+	 * Creates a new fullscreen Dialog that overlays the mainframe
+	 */
 	public void createFullscreen() {
 		fullscreenDialog = new FullscreenDialog(vipFrame, vlcInstance);
-		VLC.getInstance().switchSurface(fullscreenDialog.getSurface(), true);
-		fullscreenDialog.requestFocus();
 		isFullscreen = true;
 	}
 
+	/**
+	 * Disposes the fullscreen dialog and switches movie display to the
+	 * mainframe
+	 * 
+	 */
 	public void disposeFullscreen() {
 		VLC.getInstance().switchSurface(vipFrame.getMoviePanel(), true);
 		fullscreenDialog.dispose();
@@ -381,10 +434,20 @@ public class Controller {
 		vipFrame.requestFocus();
 	}
 
+	/**
+	 * Getter method for the main frame reference
+	 * 
+	 * @return the main frame
+	 */
 	public VipFrame getFrame() {
 		return vipFrame;
 	}
 
+	/**
+	 * Changes movie playback to the item right before the currently selected
+	 * one. If the currently selected item is the first one, playback switches
+	 * to the last.
+	 */
 	public void setToPreviousListItem() {
 		JList<Video> jlstFileList = vipFrame.getFileList();
 		int oldIndex = jlstFileList.getSelectedIndex();
@@ -400,6 +463,11 @@ public class Controller {
 		vlcInstance.switchMediaFile(videoInstance);
 	}
 
+	/**
+	 * Changes movie playback to the item right after the currently selected
+	 * one. If the currently selected item is the last one, playback switches to
+	 * the first.
+	 */
 	public void setToNextListItem() {
 		JList<Video> jlstFileList = vipFrame.getFileList();
 		int oldIndex = jlstFileList.getSelectedIndex();

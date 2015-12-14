@@ -72,10 +72,14 @@ public class VipFrame extends JFrame implements ComponentListener {
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(java.awt.event.WindowEvent we) {
+				// TODO ?
+		        // Right now on exit we're default saving the database's
+		        // changes.
+		        // Might could open a window and ask for saving changes
+		        // Would need a "changed" boolean
+				dataController.saveAll(SearchSortController.getInstance().getMovies());
 				thisFrame.dispose();
 				System.exit(0);
-				// TODO catch exit wish of user.
-		        // save stuff
 			}
 		});
 		setMinimumSize(new Dimension(1280, 720));
@@ -96,15 +100,11 @@ public class VipFrame extends JFrame implements ComponentListener {
 		setVisible(true);
 		controller.getVLC().switchSurface(mainMoviePanel, false);
 	}
-	
-	/**
-	 * TODO: Javadoc
-	 */
+
+	/** Reference to the main frame **/
 	private VipFrame thisFrame = this;
 
-	/**
-	 * TODO: Javadoc
-	 */
+	/** Indicates the default delay after firing a resizing event in ms **/
 	private final int RESIZE_REFRESH_RATE = 50;
 
 	/**
@@ -125,7 +125,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 	/**
 	 * Controller for saving the movies into a database
 	 */
-	private DatabaseController dataController = new DatabaseController(); ;
+	private DatabaseController dataController = new DatabaseController();;
 
 	/**
 	 * The JPanel that represents the Explorer and do file-searching stuff and
@@ -156,7 +156,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 	 * Main JPanel, that holds all the other panels
 	 */
 	private JPanel jpnlMain;
-	
+
 	/**
 	 * This JList will fill with the files in all searching directories the
 	 * program overwatches, so basically every movie file found on the harddrive
@@ -185,7 +185,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 	 * and the entered keywords is executed.
 	 */
 	private JButton jbtnSearchExecute;
-	
+
 	/**
 	 * Indicator of current volume level
 	 */
@@ -205,10 +205,11 @@ public class VipFrame extends JFrame implements ComponentListener {
 	private JSlider jsliderMovieProgress;
 
 	/**
-	 * TODO: Javadoc
-	 */
+	 * Reference to the panel in the movie panel used as canvas to draw the
+	 * movie
+	 **/
 	private MoviePanel mainMoviePanel;
-	
+
 	/**
 	 * This JMenuBar makes the windowmenu come alive
 	 */
@@ -285,20 +286,16 @@ public class VipFrame extends JFrame implements ComponentListener {
 	 * MenuItem from which the user can access the teams journals
 	 */
 	private JMenuItem jmiJournals;
-	
-	/**
-	 * TODO: Javadoc
-	 */
+
+	/** The slider that is used to manipulate the current video's rating **/
 	private JSlider jsliderRating;
 
 	/**
-	 * TODO: Javadoc
-	 */
+	 * The label that indicates the current value of the selected video's rating
+	 **/
 	private JLabel jlabelRating;
 
-	/**
-	 * TODO: Javadoc
-	 */
+	/** The Textarea that contains the currently selected video's intel **/
 	private JTextArea jtaMediaInfo;
 
 	/**
@@ -379,7 +376,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 			// If Nimbus is not found, it will be the default look and feel
 		}
 	}
-	
+
 	/**
 	 * Getter for controller class
 	 * 
@@ -421,8 +418,8 @@ public class VipFrame extends JFrame implements ComponentListener {
 	 */
 	private void buildExplorerGUI() {
 		jlstFileList = new JList<Video>(SearchSortController.getInstance().getList());
-		SearchSortController.getInstance()
-		        .updateList(SearchSortController.getInstance().getMovies());
+		SearchSortController.getInstance().updateList(SearchSortController.getInstance().getMovies());
+		SearchSortController.getInstance().setController(controller);
 		jlstFileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jlstFileList.setSelectedIndex(0);
 		JTextArea jtaScrollPaneText = new JTextArea(20, 1);
@@ -455,7 +452,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int sortChoice = jcbSortCategories.getSelectedIndex();
-				if(sortChoice == 4) {
+				if (sortChoice == 4) {
 					SearchSortController.getInstance().sortByReleaseDate();
 				} else if (sortChoice == 1) {
 					SearchSortController.getInstance().sortByCountry();
@@ -609,8 +606,8 @@ public class VipFrame extends JFrame implements ComponentListener {
 	}
 
 	/**
-	 * TODO: Javadoc
-	 */
+	 * Initializes the timeline below the canvas. A movie needs to be loaded
+	 **/
 	private void initProgressBar() {
 		int movieLength = (int) controller.getVLC().getMediaPlayer().getLength();
 		jsliderMovieProgress.setMaximum(movieLength);
@@ -637,8 +634,8 @@ public class VipFrame extends JFrame implements ComponentListener {
 				if (jsliderMovieProgress.getMaximum() == 0) {
 					controller.getVLC().setProgressBarInitState(true);
 				}
-				updateVolumeSlider();
-				updateTimelineLabels();
+				updateVolumeIndicators();
+				updateTimelineLabel();
 
 				int currentMovieTime = (int) controller.getVLC().getMediaPlayer().getTime();
 				jsliderMovieProgress.setValue(currentMovieTime);
@@ -651,25 +648,28 @@ public class VipFrame extends JFrame implements ComponentListener {
 	}
 
 	/**
-	 * TODO: Javadoc
-	 */
-	private void updateTimelineLabels() {
+	 * Updates the label that indicates the current time and the overall time of
+	 * the currently playing movie
+	 **/
+	private void updateTimelineLabel() {
 		String newLabelText = controller.getVLC().getFormattedTimeToString();
 		jlabelMovieTimer.setText(newLabelText + "%");
 	}
 
 	/**
-	 * TODO: Javadoc
-	 */
-	public void updateVolumeSlider() {
+	 * Updates the indicators(the slider and the next-to-it label) to the
+	 * current volume level.
+	 **/
+	public void updateVolumeIndicators() {
 		jbtnVolume.setText(controller.getVLC().getMediaPlayer().getVolume() + "%");
 		jsliderVolume.setValue(controller.getVLC().getMediaPlayer().getVolume());
 	}
 
 	/**
-	 * TODO: Javadoc
-	 */
-	public void updateRatingSlider() {
+	 * Updates the indicators(slider and next-to-it label) to the current
+	 * personal rating of the selected video
+	 **/
+	public void updateRatingIndicators() {
 		if (jlstFileList.getSelectedIndex() >= 0) {
 			jsliderRating.setValue((int) SearchSortController.getInstance()
 			        .getVideoByIndex(jlstFileList.getSelectedIndex()).getPersonalRating());
@@ -682,8 +682,8 @@ public class VipFrame extends JFrame implements ComponentListener {
 
 	/**
 	 * A Method for getting the FileList that display the movies
-	 * @return
-	 * 		The JList of String containing the files
+	 * 
+	 * @return The JList of String containing the files
 	 */
 	public JList<Video> getFileList() {
 		return jlstFileList;
@@ -843,8 +843,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 			public void actionPerformed(ActionEvent arg0) {
 				String path = getFilePath(new FileNameExtensionFilter("Video Files", movieExtensions));
 				SearchSortController.getInstance().addMovieToList(new Video(path));
-				SearchSortController.getInstance()
-		                .updateList(SearchSortController.getInstance().getMovies());
+				SearchSortController.getInstance().updateList(SearchSortController.getInstance().getMovies());
 			}
 		});
 
@@ -915,63 +914,66 @@ public class VipFrame extends JFrame implements ComponentListener {
 			e.printStackTrace();
 		}
 		for (int i = 0; i < fileList.size(); i++) {
-			SearchSortController.getInstance()
-			        .addMovieToList(new Video(fileList.get(i).getAbsolutePath()));
+			SearchSortController.getInstance().addMovieToList(new Video(fileList.get(i).getAbsolutePath()));
 		}
 
-		SearchSortController.getInstance()
-		        .updateList(SearchSortController.getInstance().getMovies());
+		SearchSortController.getInstance().updateList(SearchSortController.getInstance().getMovies());
 	}
 
 	/**
-	 * TODO Javadoc
-	 * @return
+	 * Getter method for the intel Textarea. This Textarea displays the
+	 * currently selected video object's information.
+	 * 
+	 * @return the Textarea object
 	 */
 	public JTextArea getIntelTextArea() {
 		return jtaMediaInfo;
 	}
 
 	/**
-	 * TODO: Javadoc
+	 * Not Needed
 	 */
 	@Override
 	public void componentHidden(ComponentEvent arg0) {
 	}
 
 	/**
-	 * TODO: Javadoc
+	 * Not Needed
 	 */
 	@Override
 	public void componentMoved(ComponentEvent arg0) {
 	}
 
 	/**
-	 * TODO: Javadoc
+	 * Timer that is reset every time, a resized event is fired. Thus preventing
+	 * the media player from recreating on every single event, but once at the
+	 * end of a resizing occurance. Just updates the current panel used as
+	 * canvas.
 	 */
 	private Timer resizeTimer = new Timer(RESIZE_REFRESH_RATE, new ActionListener() {
-		@Override public void actionPerformed(ActionEvent arg0) {
-			System.out.println("Frame resized! " + thisFrame.getWidth() + " x " + thisFrame.getHeight());
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
 			controller.getVLC().switchSurface(mainMoviePanel, true);
 			resizeTimer.stop();
 		}
 	});
 
-	/*/**		//Maybe the above implementation should do the same things. TODO: Pls consider doing it the above way Fabian :D
-	 * TODO: Javadoc
-	 /
-	private class TimerListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			System.out.println("Frame resized! " + thisFrame.getWidth() + " x " + thisFrame.getHeight());
-			controller.getVLC().switchSurface(mainMoviePanel, true);
-			resizeTimer.stop();
-		}
-
-	}*/
+	/*
+	 * /** //Maybe the above implementation should do the same things. TODO: Pls
+	 * consider doing it the above way Fabian :D TODO: Javadoc / private class
+	 * TimerListener implements ActionListener {
+	 * 
+	 * @Override public void actionPerformed(ActionEvent arg0) {
+	 * System.out.println("Frame resized! " + thisFrame.getWidth() + " x " +
+	 * thisFrame.getHeight()); controller.getVLC().switchSurface(mainMoviePanel,
+	 * true); resizeTimer.stop(); }
+	 * 
+	 * }
+	 */
 
 	/**
-	 * TODO: Javadoc
+	 * Is called everytime the main frame is resized and starts a timer to
+	 * update the canvas panel.
 	 */
 	@Override
 	public void componentResized(ComponentEvent arg0) {
@@ -979,20 +981,21 @@ public class VipFrame extends JFrame implements ComponentListener {
 	}
 
 	/**
-	 * TODO: Javadoc
+	 * Not Needed
 	 */
 	@Override
 	public void componentShown(ComponentEvent arg0) {
 	}
 
 	/**
-	 * TODO: Javadoc
-	 * @return
+	 * Getter method for the main frames movie panel, that is used as canvas.
+	 * 
+	 * @return the panel used as canvas
 	 */
 	public MoviePanel getMoviePanel() {
 		return mainMoviePanel;
 	}
-	
+
 	/**
 	 * Outsourced method for detecting whether a root folder is already
 	 * determined or has to be declared by the user
@@ -1026,7 +1029,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 		}
 		return "";
 	}
-	
+
 	/**
 	 * Overloaded method for searching for files with a certain ending
 	 * 

@@ -1,5 +1,6 @@
 package com.vip.window;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Desktop;
@@ -9,9 +10,12 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -27,7 +31,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -44,30 +47,37 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicSliderUI;
 
-import com.vip.Controller;
 import com.vip.attributes.Video;
+import com.vip.controllers.Controller;
 import com.vip.controllers.DatabaseController;
-import com.vip.controllers.OMDBController;
 import com.vip.controllers.SearchSortController;
 import com.vip.media.VLC;
 
 @SuppressWarnings("serial")
-public class VipFrame extends JFrame {
+public class VipFrame extends JFrame implements ComponentListener {
+
 	/**
 	 * Constructor for building the frame and initialize all event handlers.
 	 */
 	public VipFrame() {
 		super("VipFrame");
-		OmdbRequest testReq = new OmdbRequest(OMDBController.getInstance()
-				.searchApi("Star Wars"));
-		testReq.setVisible(true);
-		testReq.setEnabled(true);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent we) {
+				thisFrame.dispose();
+				System.exit(0);
+				// TODO catch exit wish of user.
+		        // save stuff
+			}
+		});
 		setMinimumSize(new Dimension(1280, 720));
 		defaultInsets = new Insets(2, 2, 2, 2);
 		changeGUILook();
@@ -82,65 +92,24 @@ public class VipFrame extends JFrame {
 		searchForMovies(rootFolderPath);
 		pack();
 		requestFocus();
+		setVisible(true);
+		controller.getVLC().switchSurface(mainMoviePanel, false);
 	}
+	
+	/**
+	 * TODO: Javadoc
+	 */
+	private VipFrame thisFrame = this;
 
 	/**
-	 * Outsourced method for detecting whether a root folder is already
-	 * determined or has to be declared by the user
+	 * TODO: Javadoc
 	 */
-	private void selectRootFolder() {
-		JOptionPane.showMessageDialog(this,
-				"You have to select a root folder for you video collection!");
-		rootFolderPath = getFilePath(2);
-	}
-
-	/**
-	 * Method for getting the path of a selected folder
-	 * 
-	 * @return Absolute path to the file
-	 * @param int type Integer for choosing a different selection type of the
-	 *        open dialog
-	 */
-	private String getFilePath(int type) {
-		JFileChooser chooser = new JFileChooser();
-		if (type == 2) {
-			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		} else if (type == 1) {
-			chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		} else if (type != 1 && type != 2) {
-			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-		}
-
-		int returnVal = chooser.showOpenDialog(rootPane);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			return chooser.getSelectedFile().getAbsolutePath();
-		}
-		return "";
-	}
-
-	/**
-	 * Overloaded method for searching for files with a certain ending
-	 * 
-	 * @param filter
-	 *            FileNameExtensionFilter for only making files searchable for
-	 *            the JFileChooser, that have the specified ending.
-	 * @return Absolute path to the file
-	 */
-	private String getFilePath(FileNameExtensionFilter filter) {
-		JFileChooser chooser = new JFileChooser();
-		chooser.setFileFilter(filter);
-		int returnVal = chooser.showOpenDialog(rootPane);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			return chooser.getSelectedFile().getAbsolutePath();
-		}
-		return "";
-	}
+	private final int RESIZE_REFRESH_RATE = 50;
 
 	/**
 	 * String Array for filtering the right files
 	 */
-	private final String[] movieExtensions = { "avi", "mp4", "webm", "flv",
-			"mkv", "ogg", "mov", "wmv", "m4v" };
+	private final String[] movieExtensions = { "avi", "mp4", "webm", "flv", "mkv", "ogg", "mov", "wmv", "m4v" };
 
 	/**
 	 * String for the root-folder path
@@ -156,21 +125,6 @@ public class VipFrame extends JFrame {
 	 * Controller for saving the movies into a database
 	 */
 	private DatabaseController dataController = new DatabaseController();
-
-	/**
-	 * Controller for searching and sorting videos
-	 */
-	private SearchSortController ssController = SearchSortController
-			.getInstance();
-
-	/**
-	 * Getter for controller class
-	 * 
-	 * @return the responsible controller class for this frame.
-	 */
-	public Controller getController() {
-		return controller;
-	}
 
 	/**
 	 * The JPanel that represents the Explorer and do file-searching stuff and
@@ -200,122 +154,13 @@ public class VipFrame extends JFrame {
 	/**
 	 * Main JPanel, that holds all the other panels
 	 */
-	JPanel jpnlMain;
-
-	/**
-	 * Helping routine for creating components and adding them to a
-	 * GridBagLayout The parameters are constraints when they are added
-	 * 
-	 * @param x
-	 *            x-position
-	 * @param y
-	 *            y-position
-	 * @param width
-	 *            Width of the cell
-	 * @param height
-	 *            Height of the cell
-	 * @param weightx
-	 *            Weight vertically
-	 * @param weighty
-	 *            Weight horizontally
-	 * @param cont
-	 *            Container
-	 * @param comp
-	 *            Component that will be added
-	 * @param insets
-	 *            Distances round the component that is added
-	 */
-	private static void addComponent(int x, int y, int width, int height,
-			double weightx, double weighty, Container cont, Component comp,
-			Insets insets) {
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.gridx = x;
-		gbc.gridy = y;
-		gbc.gridwidth = width;
-		gbc.gridheight = height;
-		gbc.weightx = weightx;
-		gbc.weighty = weighty;
-		gbc.insets = insets;
-		cont.add(comp, gbc);
-	}
-
-	/**
-	 * Helping routine for creating ActionListeners and add them to menuItems
-	 * based on opening the standard browser and open a URL. Uses URI and a
-	 * menuItem.
-	 * 
-	 * @param menuItem
-	 *            The Item that the URL should be added to
-	 * @param url
-	 *            The URL that should open when you click the MenuItem
-	 * @throws URISyntaxException
-	 */
-	private static void addURLActionListenerToMenuBarItem(JMenuItem menuItem,
-			final URI url) throws URISyntaxException {
-		ActionListener al = new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				try {
-					Desktop.getDesktop().browse(url);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		};
-		menuItem.addActionListener(al);
-	}
-
-	/**
-	 * Tries to change the look and feel of Java to Nimbus, a cross-platform GUI
-	 * that comes with Java 6 update 10
-	 */
-	public void changeGUILook() {
-		try {
-			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					UIManager.setLookAndFeel(info.getClassName());
-					break;
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			// If Nimbus is not found, it will be the default look and feel
-		}
-	}
-
-	/**
-	 * Create Subpanels Have to be called before any other building-methods
-	 */
-	private void buildPanels() {
-		jpnlMain = new JPanel();
-		jpnlMain.setLayout(new GridBagLayout());
-		add(jpnlMain);
-
-		jpnlExplorer = new JPanel();
-		jpnlExplorer.setLayout(new GridBagLayout());
-		jpnlExplorer.setBorder(BorderFactory.createTitledBorder("Explorer"));
-		jpnlExplorer.setPreferredSize(new Dimension(250, 800));
-
-		jpnlMovie = new JPanel();
-		jpnlMovie.setLayout(new GridBagLayout());
-		jpnlMovie.setBorder(BorderFactory.createTitledBorder("Movie"));
-
-		jpnlIntel = new JPanel();
-		jpnlIntel.setLayout(new GridBagLayout());
-		jpnlIntel.setBorder(BorderFactory.createTitledBorder("Intel"));
-		jpnlIntel.setPreferredSize(new Dimension(1200, 150));
-
-		addComponent(0, 0, 1, 2, 0.35, 1.0, jpnlMain, jpnlExplorer,
-				defaultInsets);
-		addComponent(1, 0, 1, 1, 0.65, 0.5, jpnlMain, jpnlMovie, defaultInsets);
-		addComponent(1, 1, 1, 1, 0.65, 0.5, jpnlMain, jpnlIntel, defaultInsets);
-	}
-
+	private JPanel jpnlMain;
+	
 	/**
 	 * This JList will fill with the files in all searching directories the
 	 * program overwatches, so basically every movie file found on the harddrive
 	 */
-	private JList<String> jlstFileList;
+	private JList<Video> jlstFileList;
 
 	/**
 	 * This JTextField is for entering your private search stuff into a
@@ -326,58 +171,20 @@ public class VipFrame extends JFrame {
 	/**
 	 * This JComboBox is ment for sorting your search by different categories
 	 */
+	private JComboBox<String> jcbSortCategories;
+
+	/**
+	 * This JComboBox is ment for searching in different sections of the movie
+	 * files.
+	 */
 	private JComboBox<String> jcbSearchCategories;
 
 	/**
 	 * By pressing this JButton the search by the chosen searching-categories
 	 * and the entered keywords is executed.
 	 */
-	private JButton jbtnSearchExecute; // Button for executing the search
-
-	/**
-	 * Create Sub-sub-panels in the explorer panel
-	 */
-	private void buildExplorerGUI() {
-		jlstFileList = new JList<String>(ssController.getList());
-		ssController.updateList(ssController.getMovies());
-		jlstFileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		jlstFileList.setSelectedIndex(0);
-		JTextArea jtaScrollPaneText = new JTextArea(20, 1);
-		JScrollPane scrollPane = new JScrollPane(jtaScrollPaneText);
-		scrollPane.getViewport().setView(jlstFileList);
-		jlstFileList.revalidate();
-
-		jtfSearch = new JTextField(20);
-
-		String[] searchCategories = { "By Length, increasing", // Index 0
-				"By length, decreasing", // Index 1
-				"By rating, increasing", // Index 2
-				"By rating, decreasing", }; // Index 3
-
-		jcbSearchCategories = new JComboBox<String>(searchCategories);
-		jcbSearchCategories.setEditable(false);
-		jcbSearchCategories.setSelectedIndex(0);
-		// JScrollPane jspSearchCategories = new
-		// JScrollPane(jcbSearchCategories);
-
-		jbtnSearchExecute = new JButton("Search");
-
-		JPanel jpnlSearchControls = new JPanel();
-		jpnlSearchControls.setLayout(new GridBagLayout());
-		addComponent(0, 0, 2, 1, 1.0, 0.1, jpnlSearchControls, jtfSearch,
-				defaultInsets);
-		addComponent(0, 2, 1, 1, 0.5, 0.1, jpnlSearchControls,
-				jcbSearchCategories, defaultInsets);
-		addComponent(1, 2, 1, 1, 0.5, 0.1, jpnlSearchControls,
-				jbtnSearchExecute, defaultInsets);
-
-		addComponent(0, 0, 1, 1, 1, 0.05, jpnlExplorer, jpnlSearchControls,
-				defaultInsets);
-		addComponent(0, 1, 1, 1, 1, 0.95, jpnlExplorer, scrollPane,
-				defaultInsets);
-
-	}
-
+	private JButton jbtnSearchExecute;
+	
 	/**
 	 * Indicator of current volume level
 	 */
@@ -396,309 +203,11 @@ public class VipFrame extends JFrame {
 	 */
 	private JSlider jsliderMovieProgress;
 
-	private boolean isFullscreen = false;
-
-	private FullscreenDialog fullscreenDialog;
-
-	public boolean isFullscreen() {
-		return isFullscreen;
-	}
-
-	public void setFullscreen(boolean newStatus) {
-		isFullscreen = newStatus;
-	}
-
-	public FullscreenDialog getFullscreen() {
-		return fullscreenDialog;
-	}
-
-	public void createFullscreen() {
-		if (fullscreenDialog != null) {
-			fullscreenDialog = new FullscreenDialog(this);
-		} else {
-			fullscreenDialog.requestFocus();
-		}
-
-	}
-
-	public void disposeFullscreen() {
-		if (fullscreenDialog != null) {
-			fullscreenDialog.dispose();
-			fullscreenDialog = null;
-			this.requestFocus();
-		}
-	}
-
 	/**
-	 * Create Sub-sub- components in the movie panel including the JVLC plugin
-	 * to play movies Maybe also a section to control the movie (play, pause,
-	 * volume up/down, fast forward etc.)
-	 * 
-	 * @author Fabian Volkert
+	 * TODO: Javadoc
 	 */
-	private void buildMovieGUI() {
-		addComponent(0, 0, 1, 1, 1.0, 0.6, jpnlMovie, controller.getVLC()
-				.getCanvas(), defaultInsets);
-		// controller.getVLC().getCanvas().setMaximumSize(new
-		// Dimension(jpnlMovie.getWidth(),jpnlMovie.getHeight()));
-
-		JPanel jpnlMovieControls = new JPanel();
-		jpnlMovieControls.setLayout(new GridBagLayout());
-		addComponent(0, 1, 1, 1, 1.0, 0.4, jpnlMovie, jpnlMovieControls,
-				defaultInsets);
-
-		// jpnlMovie.add(jpnlMovieControls, BorderLayout.SOUTH);
-
-		JButton jbtnPlayMovie = new JButton("Play/Pause");
-		jbtnPlayMovie.addActionListener(controller.getButtonParser());
-		jbtnPlayMovie.setActionCommand("jbtnToggleMoviePlayback");
-
-		JButton jbtnStopMovie = new JButton("Stop");
-		jbtnStopMovie.addActionListener(controller.getButtonParser());
-		jbtnStopMovie.setActionCommand("jbtnStopMovie");
-
-		JButton jbtnPreviousMovie = new JButton("Previous Media");
-		jbtnPreviousMovie.addActionListener(controller.getButtonParser());
-		jbtnPreviousMovie.setActionCommand("jbtnPreviousMovie");
-
-		JButton jbtnNextMovie = new JButton("Next Media");
-		jbtnNextMovie.addActionListener(controller.getButtonParser());
-		jbtnNextMovie.setActionCommand("jbtnNextMovie");
-
-		JButton jbtnPreviousChapter = new JButton("Previous Chapter");
-		jbtnPreviousChapter.addActionListener(controller.getButtonParser());
-		jbtnPreviousChapter.setActionCommand("jbtnJumpBack");
-
-		JButton jbtnNextChapter = new JButton("Next Chapter");
-		jbtnNextChapter.addActionListener(controller.getButtonParser());
-		jbtnNextChapter.setActionCommand("jbtnJumpForward");
-
-		jsliderVolume = new JSlider(JSlider.HORIZONTAL, VLC.getMinVolume(),
-				VLC.getMaxVolume(),
-				((VLC.getMinVolume() + VLC.getMaxVolume()) / 2));
-		jsliderVolume.addMouseListener(new MouseAdapter() {
-			public void mouseReleased(MouseEvent me) {
-				JSlider jslider = (JSlider) me.getSource();
-				BasicSliderUI ui = (BasicSliderUI) jslider.getUI();
-				int newVolume = ui.valueForXPosition(me.getX());
-				controller.getVLC().setVolume(newVolume);
-			}
-		});
-
-		jbtnVolume = new JButton(Integer.toString(((VLC.getMinVolume() + VLC
-				.getMaxVolume()) / 2)) + "%");
-		jbtnVolume.addActionListener(controller.getButtonParser());
-		jbtnVolume.setActionCommand("jbtnVolume");
-
-		JButton jbtnFullscreen = new JButton("Fullscreen");
-		jbtnFullscreen.addActionListener(controller.getButtonParser());
-		jbtnFullscreen.setActionCommand("jbtnFullscreen");
-
-		jsliderMovieProgress = new JSlider(0, 100, 0);
-		jsliderMovieProgress.setMajorTickSpacing(5);
-		jsliderMovieProgress.addMouseListener(new MouseAdapter() {
-			public void mouseReleased(MouseEvent me) {
-				JSlider jslider = (JSlider) me.getSource();
-				BasicSliderUI ui = (BasicSliderUI) jslider.getUI();
-				int newTime = ui.valueForXPosition(me.getX());
-				controller.getVLC().getMediaPlayer().setTime(newTime);
-			}
-		});
-
-		jlabelMovieTimer = new JLabel();
-		jlabelMovieTimer.setHorizontalAlignment(SwingConstants.CENTER);
-		jlabelMovieTimer.setText("00:00:00 / 00:00:00   0%");
-
-		if (!controller.getVLC().isVLCInstalled()) {
-			jbtnPlayMovie.setEnabled(false);
-			jbtnStopMovie.setEnabled(false);
-			jbtnNextChapter.setEnabled(false);
-			jbtnPreviousChapter.setEnabled(false);
-			jbtnNextMovie.setEnabled(false);
-			jbtnPreviousMovie.setEnabled(false);
-			jbtnFullscreen.setEnabled(false);
-			jbtnVolume.setEnabled(false);
-		}
-
-		addComponent(0, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnPlayMovie,
-				defaultInsets);
-		addComponent(1, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnStopMovie,
-				defaultInsets);
-		addComponent(2, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnPreviousMovie,
-				defaultInsets);
-		addComponent(3, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnNextMovie,
-				defaultInsets);
-		addComponent(4, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnPreviousChapter,
-				defaultInsets);
-		addComponent(5, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnNextChapter,
-				defaultInsets);
-		addComponent(6, 1, 2, 1, 1, 1, jpnlMovieControls, jsliderVolume,
-				defaultInsets);
-		addComponent(8, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnVolume,
-				defaultInsets);
-		addComponent(9, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnFullscreen,
-				defaultInsets);
-		addComponent(0, 0, 9, 1, 1, 1, jpnlMovieControls, jsliderMovieProgress,
-				defaultInsets);
-		addComponent(9, 0, 1, 1, 0, 1, jpnlMovieControls, jlabelMovieTimer,
-				defaultInsets);
-	}
-
-	private void initProgressBar() {
-		int movieLength = (int) controller.getVLC().getMediaPlayer()
-				.getLength();
-		jsliderMovieProgress.setMaximum(movieLength);
-		jsliderMovieProgress.setMinimum(0);
-		revalidate();
-		jsliderMovieProgress.repaint();
-	}
-
-	/**
-	 * Updates the state of the nominators for current progress in media file
-	 */
-	public void updateGUI() {
-		if (controller.getVLC().getMediaPlayer().getLength() != -1) {
-			if (controller.getVLC().shouldInitMedia()) {
-				initProgressBar();
-				controller.getVLC().setMediaInitState(false);
-			} else {
-				// If initialization fails: retry
-				if (jsliderMovieProgress.getMaximum() == 0) {
-					controller.getVLC().setMediaInitState(true);
-				}
-				// Might be -1, means you cannot move the slider on invalid
-				// movie file
-				// on purpose!
-				updateTimelineLabels();
-				updateVolumeSlider();
-				updateRatingSlider();
-
-				int currentMovieTime = (int) controller.getVLC()
-						.getMediaPlayer().getTime();
-				jsliderMovieProgress.setValue(currentMovieTime);
-			}
-		} else {
-			jlabelMovieTimer.setText("00:00:00 / 00:00:00   0%");
-		}
-	}
-
-	/**
-	 * TODO @author Fabian Volkert
-	 */
-	private void updateTimelineLabels() {
-		Double procentualProgress = ((double) controller.getVLC()
-				.getMediaPlayer().getTime() / controller.getVLC()
-				.getMediaPlayer().getLength()) * 100;
-		// is newTime is not a valid Number, we display a default Text
-		int hoursPassed = 0;
-		int minutesPassed = 0;
-		int secondsPassed = 0;
-		int hoursTotal = 0;
-		int minutesTotal = 0;
-		int secondsTotal = 0;
-		hoursPassed = (int) (controller.getVLC().getMediaPlayer().getTime() / 3600000);
-		minutesPassed = (int) (controller.getVLC().getMediaPlayer().getTime() / 60000 % 60);
-		secondsPassed = (int) (controller.getVLC().getMediaPlayer().getTime() / 1000 % 60);
-		hoursTotal = (int) (controller.getVLC().getMediaPlayer().getLength() / 3600000);
-		minutesTotal = (int) (controller.getVLC().getMediaPlayer().getLength() / 60000 % 60);
-		secondsTotal = (int) (controller.getVLC().getMediaPlayer().getLength() / 1000 % 60);
-
-		if (procentualProgress.isNaN() || procentualProgress.isInfinite()) {
-			String newLabelText = String.format(
-					"%02d:%02d:%02d / %02d:%02d:%02d   000,0", hoursPassed,
-					minutesPassed, secondsPassed, hoursTotal, minutesTotal,
-					secondsTotal, procentualProgress);
-			jlabelMovieTimer.setText(newLabelText + "%");
-		} else {
-			if (procentualProgress > 100) {
-				procentualProgress = 100.0;
-			}
-			String newLabelText = String.format(
-					"%02d:%02d:%02d / %02d:%02d:%02d   %4.1f", hoursPassed,
-					minutesPassed, secondsPassed, hoursTotal, minutesTotal,
-					secondsTotal, procentualProgress);
-			jlabelMovieTimer.setText(newLabelText + "%");
-		}
-	}
-
-	/**
-	 * TODO @author Fabian Volkert
-	 */
-	public void updateVolumeSlider() {
-		jbtnVolume.setText(controller.getVLC().getMediaPlayer().getVolume()
-				+ "%");
-		jsliderVolume
-				.setValue(controller.getVLC().getMediaPlayer().getVolume());
-	}
-
-	public void updateRatingSlider() {
-		jlabelRating
-				.setText(Double.toString(((double) jsliderRating.getValue() / 2.0)));
-	}
-
-	/**
-	 * Method for delivering KeyParser the search TextField
-	 */
-	public JComponent get_jtfSearch() {
-		return jtfSearch;
-	}
-
-	private JSlider jsliderRating;
-
-	private JLabel jlabelRating;
-
-	private JTextArea jtaMediaInfo;
-
-	/**
-	 * Create Sub-sub-components in the intel panel for showing information on
-	 * the selected video file in the explorer section
-	 */
-	private void buildIntelGUI() {
-		// Here some information about the currently selected video file will be
-		// stored.
-
-		JPanel jpnlIntelNorth = new JPanel();
-		jpnlIntelNorth.setLayout(new GridBagLayout());
-
-		jsliderRating = new JSlider(0, 20, 0);
-		jsliderRating.setMajorTickSpacing(0);
-		jsliderRating.addMouseListener(new MouseAdapter() {
-			public void mouseReleased(MouseEvent me) {
-				JSlider jslider = (JSlider) me.getSource();
-				BasicSliderUI ui = (BasicSliderUI) jslider.getUI();
-				int newRating = ui.valueForXPosition(me.getX());
-				// TODO pass new rating to video object -> get item from list
-				// (it's just String right now, so there must be some sort of
-				// workaround for this)
-			}
-		});
-
-		jlabelRating = new JLabel(Integer.toString(jsliderRating.getValue()));
-		jlabelRating.setHorizontalAlignment(SwingConstants.CENTER);
-
-		addComponent(0, 0, 9, 1, 0.9, 1, jpnlIntelNorth, jsliderRating,
-				defaultInsets);
-		addComponent(9, 0, 1, 1, 0.1, 1, jpnlIntelNorth, jlabelRating,
-				defaultInsets);
-
-		jpnlIntelNorth.setBorder(BorderFactory.createTitledBorder("Rating"));
-		jlabelRating.setBorder(BorderFactory.createTitledBorder(""));
-
-		jtaMediaInfo = new JTextArea(20, 1);
-		jtaMediaInfo.setEditable(false);
-		jtaMediaInfo.setLineWrap(true);
-		JScrollPane scrollPane = new JScrollPane(jtaMediaInfo);
-		scrollPane
-				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-
-		jtaMediaInfo
-				.setText("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labor.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labor.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labor.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labor");
-
-		addComponent(0, 0, 1, 1, 1, 0.1, jpnlIntel, jpnlIntelNorth,
-				defaultInsets);
-		addComponent(0, 1, 1, 1, 1, 0.9, jpnlIntel, scrollPane, defaultInsets);
-	}
-
+	private MoviePanel mainMoviePanel;
+	
 	/**
 	 * This JMenuBar makes the windowmenu come alive
 	 */
@@ -775,8 +284,482 @@ public class VipFrame extends JFrame {
 	 * MenuItem from which the user can access the teams journals
 	 */
 	private JMenuItem jmiJournals;
+	
+	/**
+	 * TODO: Javadoc
+	 */
+	private JSlider jsliderRating;
 
-	// More menu stuff to come
+	/**
+	 * TODO: Javadoc
+	 */
+	private JLabel jlabelRating;
+
+	/**
+	 * TODO: Javadoc
+	 */
+	private JTextArea jtaMediaInfo;
+
+	/**
+	 * Helping routine for creating components and adding them to a
+	 * GridBagLayout The parameters are constraints when they are added
+	 * 
+	 * @param x
+	 *            x-position
+	 * @param y
+	 *            y-position
+	 * @param width
+	 *            Width of the cell
+	 * @param height
+	 *            Height of the cell
+	 * @param weightx
+	 *            Weight vertically
+	 * @param weighty
+	 *            Weight horizontally
+	 * @param cont
+	 *            Container
+	 * @param comp
+	 *            Component that will be added
+	 * @param insets
+	 *            Distances round the component that is added
+	 */
+	private static void addComponent(int x, int y, int width, int height, double weightx, double weighty,
+	        Container cont, Component comp, Insets insets) {
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridx = x;
+		gbc.gridy = y;
+		gbc.gridwidth = width;
+		gbc.gridheight = height;
+		gbc.weightx = weightx;
+		gbc.weighty = weighty;
+		gbc.insets = insets;
+		cont.add(comp, gbc);
+	}
+
+	/**
+	 * Helping routine for creating ActionListeners and add them to menuItems
+	 * based on opening the standard browser and open a URL. Uses URI and a
+	 * menuItem.
+	 * 
+	 * @param menuItem
+	 *            The Item that the URL should be added to
+	 * @param url
+	 *            The URL that should open when you click the MenuItem
+	 * @throws URISyntaxException
+	 */
+	private static void addURLActionListenerToMenuBarItem(JMenuItem menuItem, final URI url) throws URISyntaxException {
+		ActionListener al = new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					Desktop.getDesktop().browse(url);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		menuItem.addActionListener(al);
+	}
+
+	/**
+	 * Tries to change the look and feel of Java to Nimbus, a cross-platform GUI
+	 * that comes with Java 6 update 10
+	 */
+	public void changeGUILook() {
+		try {
+			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+				if ("Nimbus".equals(info.getName())) {
+					UIManager.setLookAndFeel(info.getClassName());
+					break;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			// If Nimbus is not found, it will be the default look and feel
+		}
+	}
+	
+	/**
+	 * Getter for controller class
+	 * 
+	 * @return the responsible controller class for this frame.
+	 */
+	public Controller getController() {
+		return controller;
+	}
+
+	/**
+	 * Create Subpanels Have to be called before any other building-methods
+	 */
+	private void buildPanels() {
+		jpnlMain = new JPanel();
+		jpnlMain.setLayout(new GridBagLayout());
+		add(jpnlMain);
+
+		jpnlExplorer = new JPanel();
+		jpnlExplorer.setLayout(new GridBagLayout());
+		jpnlExplorer.setBorder(BorderFactory.createTitledBorder("Explorer"));
+		jpnlExplorer.setPreferredSize(new Dimension(250, 800));
+
+		jpnlMovie = new JPanel();
+		jpnlMovie.setLayout(new GridBagLayout());
+		jpnlMovie.setBorder(BorderFactory.createTitledBorder("Movie"));
+
+		jpnlIntel = new JPanel();
+		jpnlIntel.setLayout(new GridBagLayout());
+		jpnlIntel.setBorder(BorderFactory.createTitledBorder("Intel"));
+		jpnlIntel.setPreferredSize(new Dimension(1200, 150));
+
+		addComponent(0, 0, 1, 2, 0.35, 1.0, jpnlMain, jpnlExplorer, defaultInsets);
+		addComponent(1, 0, 1, 1, 0.65, 0.7, jpnlMain, jpnlMovie, defaultInsets);
+		addComponent(1, 1, 1, 1, 0.65, 0.3, jpnlMain, jpnlIntel, defaultInsets);
+	}
+
+	/**
+	 * Create Sub-sub-panels in the explorer panel
+	 */
+	private void buildExplorerGUI() {
+		jlstFileList = new JList<Video>(com.vip.controllers.SearchSortController.getInstance().getList());
+		com.vip.controllers.SearchSortController.getInstance()
+		        .updateList(com.vip.controllers.SearchSortController.getInstance().getMovies());
+		jlstFileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		jlstFileList.setSelectedIndex(0);
+		JTextArea jtaScrollPaneText = new JTextArea(20, 1);
+		JScrollPane scrollPane = new JScrollPane(jtaScrollPaneText);
+		scrollPane.getViewport().setView(jlstFileList);
+		jlstFileList.revalidate();
+
+		jtfSearch = new JTextField(20);
+
+		String[] sortCategories = { "By Title", // Index 0
+		        "By Country", // Index 1
+		        "By Personal Rating", // Index 2
+		        "By IMDb Rating", // Index 3
+		        "By Release Date", // Index 4
+		};
+
+		jcbSortCategories = new JComboBox<String>(sortCategories);
+		jcbSortCategories.setEditable(false);
+		jcbSortCategories.setSelectedIndex(0);
+
+		String[] searchCategories = { "Default", "By Title", "By Director", "By Country", "By Cast", "By Genre",
+		        "By Writers", "By Release Date", "By Plot" };
+
+		jcbSearchCategories = new JComboBox<String>(searchCategories);
+		jcbSearchCategories.setEditable(false);
+		jcbSearchCategories.setSelectedIndex(0);
+
+		jbtnSearchExecute = new JButton("Search");
+		ActionListener action = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int sortChoice = jcbSortCategories.getSelectedIndex();
+				if(sortChoice == 4) {
+					SearchSortController.getInstance().sortByReleaseDate();
+				} else if (sortChoice == 1) {
+					SearchSortController.getInstance().sortByCountry();
+				} else if (sortChoice == 2) {
+					SearchSortController.getInstance().sortByPersonalRating();
+				} else if (sortChoice == 3) {
+					SearchSortController.getInstance().sortByImdbRating();
+				} else {
+					SearchSortController.getInstance().sortByTitle();
+				}
+				int searchChoice = jcbSearchCategories.getSelectedIndex();
+				if (searchChoice == 1) {
+					SearchSortController.getInstance().searchByTitle(jtfSearch.getText());
+				} else if (searchChoice == 2) {
+					SearchSortController.getInstance().searchByDirector(jtfSearch.getText());
+				} else if (searchChoice == 3) {
+					SearchSortController.getInstance().searchByCountry(jtfSearch.getText());
+				} else if (searchChoice == 4) {
+					SearchSortController.getInstance().searchByCast(jtfSearch.getText());
+				} else if (searchChoice == 5) {
+					SearchSortController.getInstance().searchByGenre(jtfSearch.getText());
+				} else if (searchChoice == 6) {
+					SearchSortController.getInstance().searchByWriters(jtfSearch.getText());
+				} else if (searchChoice == 7) {
+					SearchSortController.getInstance().searchByReleaseDate(jtfSearch.getText());
+				} else if (searchChoice == 8) {
+					SearchSortController.getInstance().searchByPlot(jtfSearch.getText());
+				} else {
+					SearchSortController.getInstance().searchAll(jtfSearch.getText());
+				}
+			}
+		};
+		jbtnSearchExecute.addActionListener(action);
+		jtfSearch.addActionListener(action);
+
+		JPanel jpnlSearchControls = new JPanel();
+		jpnlSearchControls.setLayout(new GridBagLayout());
+		addComponent(0, 0, 2, 1, 1.0, 0.1, jpnlSearchControls, jtfSearch, defaultInsets);
+		addComponent(0, 2, 1, 1, 0.5, 0.1, jpnlSearchControls, jcbSortCategories, defaultInsets);
+		addComponent(1, 1, 3, 1, 0.5, 0.1, jpnlSearchControls, jcbSearchCategories, defaultInsets);
+		addComponent(1, 2, 1, 1, 0.5, 0.1, jpnlSearchControls, jbtnSearchExecute, defaultInsets);
+
+		addComponent(0, 0, 1, 1, 1, 0.05, jpnlExplorer, jpnlSearchControls, defaultInsets);
+		addComponent(0, 1, 1, 1, 1, 0.95, jpnlExplorer, scrollPane, defaultInsets);
+
+	}
+
+	/**
+	 * Create Sub-sub- components in the movie panel including the JVLC plugin
+	 * to play movies Maybe also a section to control the movie (play, pause,
+	 * volume up/down, fast forward etc.)
+	 */
+	private void buildMovieGUI() {
+		mainMoviePanel = new MoviePanel(controller.getVLC());
+		addComponent(0, 0, 1, 1, 1.0, 0.95, jpnlMovie, mainMoviePanel, defaultInsets);
+		addComponentListener(this);
+
+		JPanel jpnlMovieControls = new JPanel();
+		jpnlMovieControls.setLayout(new GridBagLayout());
+		addComponent(0, 1, 1, 1, 1.0, 0.05, jpnlMovie, jpnlMovieControls, defaultInsets);
+
+		JButton jbtnPlayMovie = new JButton("Play/Pause");
+		jbtnPlayMovie.addActionListener(controller.getButtonParser());
+		jbtnPlayMovie.setActionCommand("jbtnToggleMoviePlayback");
+
+		JButton jbtnStopMovie = new JButton("Stop");
+		jbtnStopMovie.addActionListener(controller.getButtonParser());
+		jbtnStopMovie.setActionCommand("jbtnStopMovie");
+
+		JButton jbtnPreviousMovie = new JButton("Previous Movie");
+		jbtnPreviousMovie.addActionListener(controller.getButtonParser());
+		jbtnPreviousMovie.setActionCommand("jbtnPreviousMovie");
+
+		JButton jbtnNextMovie = new JButton("Next Movie");
+		jbtnNextMovie.addActionListener(controller.getButtonParser());
+		jbtnNextMovie.setActionCommand("jbtnNextMovie");
+
+		JButton jbtnPreviousChapter = new JButton("Previous Chapter");
+		jbtnPreviousChapter.addActionListener(controller.getButtonParser());
+		jbtnPreviousChapter.setActionCommand("jbtnPreviousChapter");
+
+		JButton jbtnNextChapter = new JButton("Next Chapter");
+		jbtnNextChapter.addActionListener(controller.getButtonParser());
+		jbtnNextChapter.setActionCommand("jbtnNextChapter");
+
+		jsliderVolume = new JSlider(JSlider.HORIZONTAL, VLC.getMinVolume(), VLC.getMaxVolume(),
+		        ((VLC.getMinVolume() + VLC.getMaxVolume()) / 2));
+		jsliderVolume.addMouseListener(new MouseAdapter() {
+
+			public void mouseReleased(MouseEvent me) {
+				JSlider jslider = (JSlider) me.getSource();
+				BasicSliderUI ui = (BasicSliderUI) jslider.getUI();
+				int newVolume = ui.valueForXPosition(me.getX());
+				controller.getVLC().setVolume(newVolume);
+			}
+		});
+
+		jbtnVolume = new JButton(Integer.toString(((VLC.getMinVolume() + VLC.getMaxVolume()) / 2)) + "%");
+		jbtnVolume.addActionListener(controller.getButtonParser());
+		jbtnVolume.setActionCommand("jbtnVolume");
+
+		JButton jbtnFullscreen = new JButton("Fullscreen");
+		jbtnFullscreen.addActionListener(controller.getButtonParser());
+		jbtnFullscreen.setActionCommand("jbtnFullscreen");
+
+		jsliderMovieProgress = new JSlider(0, 100, 0);
+		jsliderMovieProgress.setMajorTickSpacing(5);
+		jsliderMovieProgress.addMouseListener(new MouseAdapter() {
+
+			public void mouseReleased(MouseEvent me) {
+				JSlider jslider = (JSlider) me.getSource();
+				BasicSliderUI ui = (BasicSliderUI) jslider.getUI();
+				int newTime = ui.valueForXPosition(me.getX());
+				controller.getVLC().getMediaPlayer().setTime(newTime);
+			}
+		});
+
+		jlabelMovieTimer = new JLabel();
+		jlabelMovieTimer.setHorizontalAlignment(SwingConstants.CENTER);
+		jlabelMovieTimer.setText("00:00:00 / 00:00:00   0%");
+
+		if (!controller.getVLC().isVLCInstalled()) {
+			jbtnPlayMovie.setEnabled(false);
+			jbtnStopMovie.setEnabled(false);
+			jbtnNextChapter.setEnabled(false);
+			jbtnPreviousChapter.setEnabled(false);
+			jbtnNextMovie.setEnabled(false);
+			jbtnPreviousMovie.setEnabled(false);
+			jbtnFullscreen.setEnabled(false);
+			jbtnVolume.setEnabled(false);
+			jsliderVolume.setEnabled(false);
+			jsliderMovieProgress.setEnabled(false);
+			jlabelMovieTimer.setText("");
+			mainMoviePanel.setBackground(Color.GRAY);
+			TitledBorder titledBorderMoviePanel = BorderFactory.createTitledBorder("Movie");
+			titledBorderMoviePanel.setTitleColor(Color.GRAY);
+			jpnlMovie.setBorder(titledBorderMoviePanel);
+		}
+
+		addComponent(0, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnPlayMovie, defaultInsets);
+		addComponent(1, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnStopMovie, defaultInsets);
+		addComponent(2, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnPreviousMovie, defaultInsets);
+		addComponent(3, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnNextMovie, defaultInsets);
+		addComponent(4, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnPreviousChapter, defaultInsets);
+		addComponent(5, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnNextChapter, defaultInsets);
+		addComponent(6, 1, 2, 1, 1, 1, jpnlMovieControls, jsliderVolume, defaultInsets);
+		addComponent(8, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnVolume, defaultInsets);
+		addComponent(9, 1, 1, 1, 1, 1, jpnlMovieControls, jbtnFullscreen, defaultInsets);
+		addComponent(0, 0, 9, 1, 1, 1, jpnlMovieControls, jsliderMovieProgress, defaultInsets);
+		addComponent(9, 0, 1, 1, 0, 1, jpnlMovieControls, jlabelMovieTimer, defaultInsets);
+	}
+
+	/**
+	 * TODO: Javadoc
+	 */
+	private void initProgressBar() {
+		int movieLength = (int) controller.getVLC().getMediaPlayer().getLength();
+		jsliderMovieProgress.setMaximum(movieLength);
+		jsliderMovieProgress.setMinimum(0);
+		revalidate();
+		jsliderMovieProgress.repaint();
+	}
+
+	/**
+	 * Updates the state of the nominators for current progress in media file
+	 */
+	public void updateGUI() {
+		VLC vlcInstance = controller.getVLC();
+		// updateRatingSlider();
+
+		if (vlcInstance.isVLCInstalled() && vlcInstance.getMediaPlayer() != null
+		        && vlcInstance.getMediaPlayer().getLength() != -1) {
+			if (controller.getVLC().shouldInitProgressBar()) {
+				initProgressBar();
+				controller.getVLC().setProgressBarInitState(false);
+			} else {
+
+				// If initialization fails: retry
+				if (jsliderMovieProgress.getMaximum() == 0) {
+					controller.getVLC().setProgressBarInitState(true);
+				}
+				updateVolumeSlider();
+				updateTimelineLabels();
+
+				int currentMovieTime = (int) controller.getVLC().getMediaPlayer().getTime();
+				jsliderMovieProgress.setValue(currentMovieTime);
+			}
+		} else {
+			if (vlcInstance.isVLCInstalled()) {
+				jlabelMovieTimer.setText("00:00:00 / 00:00:00   0%");
+			}
+		}
+	}
+
+	/**
+	 * TODO: Javadoc
+	 */
+	private void updateTimelineLabels() {
+		String newLabelText = controller.getVLC().getFormattedTimeToString();
+		jlabelMovieTimer.setText(newLabelText + "%");
+	}
+
+	/**
+	 * TODO: Javadoc
+	 */
+	public void updateVolumeSlider() {
+		jbtnVolume.setText(controller.getVLC().getMediaPlayer().getVolume() + "%");
+		jsliderVolume.setValue(controller.getVLC().getMediaPlayer().getVolume());
+	}
+
+	/**
+	 * TODO: Javadoc
+	 */
+	public void updateRatingSlider() {
+		if (jlstFileList.getSelectedIndex() >= 0) {
+			jsliderRating.setValue((int) com.vip.controllers.SearchSortController.getInstance()
+			        .getVideoByIndex(jlstFileList.getSelectedIndex()).getPersonalRating());
+		} else {
+			jsliderRating.setValue(0);
+		}
+		String ratingString = String.format("%3.1f", (jsliderRating.getValue() / 2.0));
+		jlabelRating.setText(ratingString);
+	}
+
+	/**
+	 * A Method for getting the FileList that display the movies
+	 * @return
+	 * 		The JList of String containing the files
+	 */
+	public JList<Video> getFileList() {
+		return jlstFileList;
+	}
+
+	/**
+	 * Method for delivering KeyParser the search TextField
+	 */
+	public JComponent get_jtfSearch() {
+		return jtfSearch;
+	}
+
+	/**
+	 * Create Sub-sub-components in the intel panel for showing information on
+	 * the selected video file in the explorer section
+	 */
+	private void buildIntelGUI() {
+		// Here some information about the currently selected video file will be
+		// stored.
+
+		JPanel jpnlIntelNorth = new JPanel();
+		jpnlIntelNorth.setLayout(new GridBagLayout());
+
+		jsliderRating = new JSlider(0, 20, 0);
+		jsliderRating.setMajorTickSpacing(1);
+		jsliderRating.setMinorTickSpacing(1);
+		jsliderRating.setPaintTicks(true);
+		jsliderRating.addMouseListener(new MouseAdapter() {
+			public void mouseReleased(MouseEvent me) {
+				JSlider jslider = (JSlider) me.getSource();
+				BasicSliderUI ui = (BasicSliderUI) jslider.getUI();
+				int newRating = ui.valueForXPosition(me.getX());
+				if (jlstFileList.getSelectedIndex() >= 0) {
+					Video videoInstance = com.vip.controllers.SearchSortController.getInstance()
+		                    .getVideoByIndex(jlstFileList.getSelectedIndex());
+					videoInstance.setPersonalRating(newRating);
+					controller.updateIntel(videoInstance);
+				}
+			}
+		});
+
+		jlabelRating = new JLabel(Integer.toString(jsliderRating.getValue()));
+		jlabelRating.setHorizontalAlignment(SwingConstants.CENTER);
+
+		JButton jbtnOmDbFetch = new JButton("Fetch IMDB");
+		jbtnOmDbFetch.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent me) {
+				if (jlstFileList.getSelectedIndex() >= 0) {
+					Video videoInstance = com.vip.controllers.SearchSortController.getInstance()
+		                    .getVideoByIndex(jlstFileList.getSelectedIndex());
+					com.vip.controllers.SearchSortController.getInstance().fetchVideoInformation(videoInstance);
+				}
+			}
+		});
+
+		addComponent(0, 0, 8, 1, 0.8, 1, jpnlIntelNorth, jsliderRating, defaultInsets);
+		addComponent(8, 0, 1, 1, 0.1, 1, jpnlIntelNorth, jlabelRating, defaultInsets);
+		addComponent(9, 0, 1, 1, 0.1, 1, jpnlIntelNorth, jbtnOmDbFetch, defaultInsets);
+
+		jpnlIntelNorth.setBorder(BorderFactory.createTitledBorder("Rating"));
+		jlabelRating.setBorder(BorderFactory.createTitledBorder(""));
+
+		jtaMediaInfo = new JTextArea(20, 1);
+		jtaMediaInfo.setEditable(false);
+		jtaMediaInfo.setFocusable(false);
+		jtaMediaInfo.setLineWrap(true);
+
+		JScrollPane scrollPane = new JScrollPane(jtaMediaInfo);
+		jtaMediaInfo.setOpaque(false);
+		jtaMediaInfo.setBackground(new Color(0, 0, 0, 0));
+		scrollPane.getViewport().setOpaque(false);
+		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+		addComponent(0, 0, 1, 1, 1, 0.1, jpnlIntel, jpnlIntelNorth, defaultInsets);
+		addComponent(0, 1, 1, 1, 1, 0.9, jpnlIntel, scrollPane, defaultInsets);
+	}
 
 	/**
 	 * Method for creating the menu with all submenus and menuItems + all
@@ -829,25 +812,20 @@ public class VipFrame extends JFrame {
 		jmiPathVLC.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				JOptionPane
-						.showMessageDialog(
-								rootPane,
-								"In order to run the 'Video Information Program' smoothly "
-										+ "you have to install the 64-Bit Version of Video Lan Player! "
-										+ "\n It can be found on the Website: http://www.videolan.org/vlc/download-windows.html");
+				JOptionPane.showMessageDialog(rootPane, "In order to run the 'Video Information Program' smoothly "
+		                + "you have to install the 64-Bit Version of Video Lan Player! "
+		                + "\n It can be found on the Website: http://www.videolan.org/vlc/download-windows.html");
 			}
 		});
 
 		// Adding ActionListeners with URLs
 		try {
-			addURLActionListenerToMenuBarItem(jmiWebsite, new URI(
-					"http://cyril-casapao.github.io/vip-project/"));
-			addURLActionListenerToMenuBarItem(jmiMeetTheTeam, new URI(
-					"http://cyril-casapao.github.io/vip-project/team.html"));
-			addURLActionListenerToMenuBarItem(jmiWatchCode, new URI(
-					"https://github.com/cyril-casapao/vip-project"));
-			addURLActionListenerToMenuBarItem(jmiJournals, new URI(
-					"http://cyril-casapao.github.io/vip-project/journals.html"));
+			addURLActionListenerToMenuBarItem(jmiWebsite, new URI("http://cyril-casapao.github.io/vip-project/"));
+			addURLActionListenerToMenuBarItem(jmiMeetTheTeam,
+			        new URI("http://cyril-casapao.github.io/vip-project/team.html"));
+			addURLActionListenerToMenuBarItem(jmiWatchCode, new URI("https://github.com/cyril-casapao/vip-project"));
+			addURLActionListenerToMenuBarItem(jmiJournals,
+			        new URI("http://cyril-casapao.github.io/vip-project/journals.html"));
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
@@ -862,10 +840,10 @@ public class VipFrame extends JFrame {
 		jmiAddFile.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				String path = getFilePath(new FileNameExtensionFilter(
-						"Video Files", movieExtensions));
-				ssController.addMovieToList(new Video(path));
-				ssController.updateList(ssController.getMovies());
+				String path = getFilePath(new FileNameExtensionFilter("Video Files", movieExtensions));
+				com.vip.controllers.SearchSortController.getInstance().addMovieToList(new Video(path));
+				com.vip.controllers.SearchSortController.getInstance()
+		                .updateList(com.vip.controllers.SearchSortController.getInstance().getMovies());
 			}
 		});
 
@@ -880,7 +858,7 @@ public class VipFrame extends JFrame {
 		jmiSaveAll.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				dataController.saveAll(ssController.getMovies());
+				dataController.saveAll(SearchSortController.getInstance().getMovies());
 			}
 		});
 	}
@@ -905,13 +883,13 @@ public class VipFrame extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent ev) {
-				if (ev.getClickCount() == 2
-						&& SwingUtilities.isLeftMouseButton(ev)) {
-					controller.getVLC().loadMedia(
-							ssController.getVideoByIndex(
-									jlstFileList.getSelectedIndex())
-									.getFilePath());
-					controller.getVLC().toggleMediaPlayback();
+				if (jlstFileList.getSelectedIndex() >= 0) {
+					Video videoInstance = com.vip.controllers.SearchSortController.getInstance()
+		                    .getVideoByIndex(jlstFileList.getSelectedIndex());
+					controller.updateIntel(videoInstance);
+					if (ev.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(ev)) {
+						controller.getVLC().switchMediaFile(videoInstance);
+					}
 				}
 			}
 
@@ -939,11 +917,9 @@ public class VipFrame extends JFrame {
 					searchForMovies(entry.toString());
 				}
 				String tempFilePath = entry.toString();
-				String[] tempFilePathSplitted = tempFilePath.split(Pattern
-						.quote("."));
+				String[] tempFilePathSplitted = tempFilePath.split(Pattern.quote("."));
 				for (int i = 0; i < movieExtensions.length; i++) {
-					if (tempFilePathSplitted[tempFilePathSplitted.length - 1]
-							.equalsIgnoreCase(movieExtensions[i])) {
+					if (tempFilePathSplitted[tempFilePathSplitted.length - 1].equalsIgnoreCase(movieExtensions[i])) {
 						fileList.add(entry.toFile());
 					}
 				}
@@ -952,10 +928,133 @@ public class VipFrame extends JFrame {
 			e.printStackTrace();
 		}
 		for (int i = 0; i < fileList.size(); i++) {
-			ssController.addMovieToList(new Video(fileList.get(i)
-					.getAbsolutePath()));
+			com.vip.controllers.SearchSortController.getInstance()
+			        .addMovieToList(new Video(fileList.get(i).getAbsolutePath()));
 		}
-		
-		ssController.updateList(ssController.getMovies());
+
+		com.vip.controllers.SearchSortController.getInstance()
+		        .updateList(com.vip.controllers.SearchSortController.getInstance().getMovies());
+	}
+
+	/**
+	 * TODO Javadoc
+	 * @return
+	 */
+	public JTextArea getIntelTextArea() {
+		return jtaMediaInfo;
+	}
+
+	/**
+	 * TODO: Javadoc
+	 */
+	@Override
+	public void componentHidden(ComponentEvent arg0) {
+	}
+
+	/**
+	 * TODO: Javadoc
+	 */
+	@Override
+	public void componentMoved(ComponentEvent arg0) {
+	}
+
+	/**
+	 * TODO: Javadoc
+	 */
+	private Timer resizeTimer = new Timer(RESIZE_REFRESH_RATE, new ActionListener() {
+		@Override public void actionPerformed(ActionEvent arg0) {
+			System.out.println("Frame resized! " + thisFrame.getWidth() + " x " + thisFrame.getHeight());
+			controller.getVLC().switchSurface(mainMoviePanel, true);
+			resizeTimer.stop();
+		}
+	});
+
+	/*/**		//Maybe the above implementation should do the same things. TODO: Pls consider doing it the above way Fabian :D
+	 * TODO: Javadoc
+	 /
+	private class TimerListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			System.out.println("Frame resized! " + thisFrame.getWidth() + " x " + thisFrame.getHeight());
+			controller.getVLC().switchSurface(mainMoviePanel, true);
+			resizeTimer.stop();
+		}
+
+	}*/
+
+	/**
+	 * TODO: Javadoc
+	 */
+	@Override
+	public void componentResized(ComponentEvent arg0) {
+		resizeTimer.restart();
+	}
+
+	/**
+	 * TODO: Javadoc
+	 */
+	@Override
+	public void componentShown(ComponentEvent arg0) {
+	}
+
+	/**
+	 * TODO: Javadoc
+	 * @return
+	 */
+	public MoviePanel getMoviePanel() {
+		return mainMoviePanel;
+	}
+	
+	/**
+	 * Outsourced method for detecting whether a root folder is already
+	 * determined or has to be declared by the user
+	 */
+	private void selectRootFolder() {
+		JOptionPane.showMessageDialog(this, "You have to select a root folder for your video collection!");
+		rootFolderPath = getFilePath(2);
+	}
+
+	/**
+	 * Method for getting the path of a selected folder
+	 * 
+	 * @return Absolute path to the file
+	 * @param int
+	 *            type Integer for choosing a different selection type of the
+	 *            open dialog
+	 */
+	private String getFilePath(int type) {
+		JFileChooser chooser = new JFileChooser();
+		if (type == 2) {
+			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		} else if (type == 1) {
+			chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		} else if (type != 1 && type != 2) {
+			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		}
+
+		int returnVal = chooser.showOpenDialog(rootPane);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			return chooser.getSelectedFile().getAbsolutePath();
+		}
+		return "";
+	}
+	
+	/**
+	 * Overloaded method for searching for files with a certain ending
+	 * 
+	 * @param filter
+	 *            FileNameExtensionFilter for only making files searchable for
+	 *            the JFileChooser, that have the specified ending.
+	 * @return Absolute path to the file
+	 */
+	private String getFilePath(FileNameExtensionFilter filter) {
+		JFileChooser chooser = new JFileChooser();
+		chooser.setFileFilter(filter);
+		int returnVal = chooser.showOpenDialog(rootPane);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			return chooser.getSelectedFile().getAbsolutePath();
+		}
+		return "";
 	}
 }

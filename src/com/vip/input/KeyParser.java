@@ -5,8 +5,8 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.JTextField;
 
+import com.vip.controllers.Controller;
 import com.vip.media.VLC;
-import com.vip.window.VipFrame;
 
 /**
  * The Key_parser translates user keyboard input into reasonable commands.
@@ -16,33 +16,36 @@ import com.vip.window.VipFrame;
  */
 public class KeyParser implements KeyEventDispatcher {
 
-	private VipFrame vipFrame;
+	private final Controller controller;
 
 	private int NrOfShortcuts = 13;
 
 	// Index-helpers, defines order in config file:
-	private static final int TOGGLE_PLAYBACK = 0;
-	private static final int NEXT_MOVIE = 1;
-	private static final int PREVIOUS_MOVIE = 2;
-	private static final int NEXT_CHAPTER = 3;
-	private static final int PREVIOUS_CHAPTER = 4;
-	private static final int JUMP_FORWARD = 5;
-	private static final int JUMP_BACKWARD = 6;
-	private static final int MUTE_VOLUME = 7;
-	private static final int VOLUME_UP = 8;
-	private static final int VOLUME_DOWN = 9;
-	private static final int OPEN_PREFERENCES = 10;
-	private static final int FULLSCREEN_TOGGLE = 11;
-	private static final int SEARCH = 12;
+	public static final int TOGGLE_PLAYBACK = 0;
+	public static final int NEXT_MOVIE = 1;
+	public static final int PREVIOUS_MOVIE = 2;
+	public static final int NEXT_CHAPTER = 3;
+	public static final int PREVIOUS_CHAPTER = 4;
+	public static final int JUMP_FORWARD = 5;
+	public static final int JUMP_BACKWARD = 6;
+	public static final int MUTE_VOLUME = 7;
+	public static final int VOLUME_UP = 8;
+	public static final int VOLUME_DOWN = 9;
+	public static final int OPEN_PREFERENCES = 10;
+	public static final int FULLSCREEN_TOGGLE = 11;
+	public static final int SEARCH = 12;
 
 	private int[] shortcutList = new int[NrOfShortcuts];
 	private boolean[] shortcutCTRLmask = new boolean[NrOfShortcuts];
 	private boolean[] shortcutSHIFTmask = new boolean[NrOfShortcuts];
 
-	/**
-	 * TODO comment
-	 */
-	public KeyParser() {
+	public int[] getShortcutList() {
+		return shortcutList;
+	}
+
+	public KeyParser(Controller newController) {
+		controller = newController;
+
 		// Initialize arrays with default values
 		for (int i = 0; i < NrOfShortcuts; i++) {
 			shortcutList[i] = -1;
@@ -51,33 +54,19 @@ public class KeyParser implements KeyEventDispatcher {
 		}
 	}
 
-	/**
-	 * TODO comment
-	 * 
-	 * @param newVipFrame
-	 */
-	public KeyParser(VipFrame newVipFrame) {
-		this();
-		vipFrame = newVipFrame;
-	}
-
-	public void setVipFrame(VipFrame newVipFrame) {
-		vipFrame = newVipFrame;
-	}
-
-	// (TODO What if a JDialog is opened? Add more conditions! -> frame focused)
-	// TODO refactor methods, disable vipframe reference, let the controller
-	// class to the work
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent ke) {
 		int keyState = ke.getID();
-		int isPressed = KeyEvent.KEY_PRESSED;
+		int isReleased = KeyEvent.KEY_RELEASED;
 		int currentKey = ke.getKeyCode();
 		// When no textfield is focused and the key is pressed, input will be
 		// processed
-		if (keyState == isPressed && !(ke.getSource() instanceof JTextField)
-		        && (vipFrame.isFocused() || (vipFrame.isFullscreen()))) {
-			VLC vlc = vipFrame.getController().getVLC();
+		if (keyState == isReleased && !(ke.getSource() instanceof JTextField)) {
+			VLC vlc = controller.getVLC();
+			if (controller.isFullscreen()) {
+				controller.getFullscreen().getSurface().setDrawOverlay(true);
+				controller.getFullscreen().getSurface().setDisplayStates(true, true, false, false);
+			}
 			if (currentKey == shortcutList[TOGGLE_PLAYBACK]) {
 				if (isValidInput(ke, TOGGLE_PLAYBACK))
 					vlc.toggleMediaPlayback();
@@ -91,28 +80,33 @@ public class KeyParser implements KeyEventDispatcher {
 					vlc.previousChapter();
 			}
 			if (currentKey == shortcutList[VOLUME_UP]) {
-				if (isValidInput(ke, VOLUME_UP))
+				if (isValidInput(ke, VOLUME_UP)) {
+					if(controller.isFullscreen()){
+						controller.getFullscreen().getSurface().setDisplayStates(true, false, false, false);
+					}
 					vlc.setVolume(vlc.getVolume() + vlc.getVolumeSteps());
+				}
 			}
 			if (currentKey == shortcutList[VOLUME_DOWN]) {
-				if (isValidInput(ke, VOLUME_DOWN))
+				if (isValidInput(ke, VOLUME_DOWN)) {
+					if(controller.isFullscreen()){
+						controller.getFullscreen().getSurface().setDisplayStates(true, false, false, false);
+					}
 					vlc.setVolume(vlc.getVolume() - vlc.getVolumeSteps());
+				}
 			}
 			if (currentKey == shortcutList[SEARCH]) {
 				if (isValidInput(ke, SEARCH))
-					vipFrame.get_jtfSearch().requestFocus();
+					controller.getFrame().get_jtfSearch().requestFocus();
 			}
 			if (currentKey == shortcutList[NEXT_MOVIE]) {
 				if (isValidInput(ke, NEXT_MOVIE)) {
-					// TODO either change to next list Item or load next movie
-					// in custom playback list into the media player
+					controller.setToNextListItem();
 				}
 			}
 			if (currentKey == shortcutList[PREVIOUS_MOVIE]) {
 				if (isValidInput(ke, PREVIOUS_MOVIE)) {
-					// TODO either change to previous list Item or load previous
-					// movie
-					// in custom playback list into the media player
+					controller.setToPreviousListItem();
 				}
 			}
 			if (currentKey == shortcutList[JUMP_FORWARD]) {
@@ -132,9 +126,10 @@ public class KeyParser implements KeyEventDispatcher {
 			}
 			if (currentKey == shortcutList[FULLSCREEN_TOGGLE]) {
 				if (isValidInput(ke, FULLSCREEN_TOGGLE)) {
-					vipFrame.getController().toggleFullscreen();
+					controller.toggleFullscreen();
 				}
 			}
+			return true;
 		}
 		return false;
 	}
@@ -150,16 +145,18 @@ public class KeyParser implements KeyEventDispatcher {
 	 * @return <code>true</code> if the input is a valid shortcut <br />
 	 *         <code>false</code> if the input didn't match the requierements
 	 */
-	private boolean isValidInput(KeyEvent ke, int index) {
+	public boolean isValidInput(KeyEvent ke, int index) {
+		int modifiers = ke.getModifiers();
 		// Not Valid if CTRL should be pressed but is not
-		if (shortcutCTRLmask[index] && (ke.getModifiers() & KeyEvent.CTRL_MASK) == 0) {
+		if (shortcutCTRLmask[index] && ((modifiers & KeyEvent.CTRL_MASK) != KeyEvent.CTRL_MASK)) {
 			return false;
-		} else if (shortcutCTRLmask[index] && (ke.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
+		} else if (!shortcutCTRLmask[index] && ((modifiers & KeyEvent.CTRL_MASK) == KeyEvent.CTRL_MASK)) {
+			return false;
 		}
-		// Not Valid if SHIFT should be pressed but is not
-		if (shortcutSHIFTmask[index] && (ke.getModifiers() & KeyEvent.SHIFT_MASK) == 0) {
+		if (shortcutSHIFTmask[index] && ((modifiers & KeyEvent.SHIFT_MASK) != KeyEvent.SHIFT_MASK)) {
 			return false;
-		} else if (shortcutSHIFTmask[index] && (ke.getModifiers() & KeyEvent.SHIFT_MASK) != 0) {
+		} else if (!shortcutSHIFTmask[index] && ((modifiers & KeyEvent.SHIFT_MASK) == KeyEvent.SHIFT_MASK)) {
+
 		}
 		return true;
 	}

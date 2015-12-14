@@ -1,33 +1,53 @@
 package com.vip.window;
 
 import java.awt.BorderLayout;
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.KeyboardFocusManager;
+import java.awt.Dialog;
 import java.awt.Toolkit;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.JDialog;
-import javax.swing.JPanel;
+import javax.swing.JFrame;
 
-public class FullscreenDialog extends JDialog {
+import com.vip.media.VLC;
 
-	private Canvas canvas = new Canvas();
+@SuppressWarnings("serial")
+public class FullscreenDialog extends JDialog implements MouseMotionListener {
 
-	public FullscreenDialog(VipFrame parentFrame) {
+	private MoviePanel jpnlVideoSurface;
+
+	private VLC vlcInstance;
+
+	public FullscreenDialog(VipFrame parentFrame, VLC vlcInstance) {
 		super(parentFrame, true);
+		this.addMouseMotionListener(this);
 		this.setSize(Toolkit.getDefaultToolkit().getScreenSize());
-		this.requestFocus();
 		this.setUndecorated(true);
-
-		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-		manager.addKeyEventDispatcher(parentFrame.getController().getKeyParser());
-
-		JPanel contentPanel = new JPanel();
-		this.add(contentPanel, BorderLayout.CENTER);
-
-		canvas.setBackground(Color.BLACK);
-		contentPanel.add(canvas, BorderLayout.CENTER);
-
+		this.setLayout(new BorderLayout());
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		this.vlcInstance = vlcInstance;
+		this.jpnlVideoSurface = new MoviePanel(vlcInstance);
+		this.add(jpnlVideoSurface, BorderLayout.CENTER);
+		this.setModalityType(Dialog.ModalityType.MODELESS);
+		jpnlVideoSurface.setDrawOverlay(true);
 		this.setVisible(true);
+	}
+
+	public MoviePanel getSurface() {
+		return jpnlVideoSurface;
+	}
+
+	public VLC getVLC() {
+		return vlcInstance;
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent arg0) {
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
+		jpnlVideoSurface.setDrawOverlay(true);
+		jpnlVideoSurface.setDisplayStates(true, true, false, true);
 	}
 }

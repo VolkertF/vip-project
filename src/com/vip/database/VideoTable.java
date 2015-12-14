@@ -27,7 +27,7 @@ public class VideoTable {
 			String sql = "CREATE TABLE IF NOT EXISTS VIDEO "
 					+ "(PATH 			STRING		PRIMARY KEY		NOT NULL,"
 					+ " TITLE           STRING 						NOT NULL,"
-					+ " RELEASE_DATE 	DATETIME," 
+					+ " RELEASE_DATE 	DATE," 
 					+ " GENRE			STRING,"
 					+ " DIRECTOR        STRING," 
 					+ "	CAST			STRING,"
@@ -79,12 +79,12 @@ public class VideoTable {
 						.replace("]", "'"));
 			}
 			statement.setString(5, video.getDirector());
-			if(video.getGenre() != null){
+			if(video.getCast() != null){
 				statement.setString(6, video.getCast().toString()
 								.replace("[", "'")
 								.replace("]", "'"));
 			}
-			if(video.getGenre() != null){
+			if(video.getWriters() != null){
 				statement.setString(7, video.getWriters().toString()
 								.replace("[", "'")
 								.replace("]", "'"));

@@ -1,6 +1,5 @@
-package com.vip;
+package com.vip.controllers;
 
-import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
@@ -11,9 +10,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.swing.JList;
+import javax.swing.JTextArea;
+
+import com.vip.Main;
+import com.vip.attributes.Video;
 import com.vip.input.ButtonParser;
 import com.vip.input.KeyParser;
 import com.vip.media.VLC;
+import com.vip.window.FullscreenDialog;
 import com.vip.window.VipFrame;
 
 /**
@@ -27,13 +32,13 @@ import com.vip.window.VipFrame;
 public class Controller {
 
 	/** Responsible for parsing keyboard input into actions **/
-	private KeyParser keyParser = new KeyParser();
+	private KeyParser keyParser = new KeyParser(this);
 
 	/** Responsible for parsing button input into actions **/
-	private ButtonParser buttonParser;
+	private ButtonParser buttonParser = new ButtonParser(this);
 
 	/** VLC media player. **/
-	private VLC vlcInstance = new VLC();
+	private VLC vlcInstance = VLC.getInstance();
 
 	/** **/
 	private VipFrame vipFrame;
@@ -52,7 +57,6 @@ public class Controller {
 
 	public Controller(VipFrame newVipFrame) {
 		vipFrame = newVipFrame;
-		buttonParser = new ButtonParser(vlcInstance, vipFrame);
 	}
 
 	/**
@@ -157,8 +161,8 @@ public class Controller {
 		pw.println("PREVIOUS_MOVIE=B");
 		pw.println("NEXT_CHAPTER=N");
 		pw.println("PREVIOUS_CHAPTER=P");
-		pw.println("JUMP_FORWARD=CTRL H");
-		pw.println("JUMP_BACKWARD=CTRL J");
+		pw.println("JUMP_FORWARD=CTRL J");
+		pw.println("JUMP_BACKWARD=CTRL H");
 		pw.println("MUTE_VOLUME=M");
 		pw.println("VOLUME_UP=NUM_PLUS");
 		pw.println("VOLUME_DOWN=NUM_MINUS");
@@ -235,7 +239,6 @@ public class Controller {
 			}
 
 			// Disables default keyboard input and puts this manager in charge
-			keyParser.setVipFrame(vipFrame);
 			KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 			manager.addKeyEventDispatcher(keyParser);
 
@@ -333,19 +336,81 @@ public class Controller {
 	}
 
 	public void toggleFullscreen() {
-
-		if (vipFrame.isFullscreen()) {
-			System.out.println("Disposed Fullscreen!");
-			vipFrame.disposeFullscreen();
+		if (isFullscreen) {
+			disposeFullscreen();
 		} else {
-			System.out.println("Created Fullscreen!");
-			vipFrame.createFullscreen();
+			createFullscreen();
 		}
-		vipFrame.setFullscreen(!vipFrame.isFullscreen());
 	}
 
-	public KeyEventDispatcher getKeyParser() {
+	public KeyParser getKeyParser() {
 		return keyParser;
 	}
 
+	public void updateIntel(Video videoInstance) {
+		vipFrame.updateRatingSlider();
+		JTextArea jtaMediaInfo = vipFrame.getIntelTextArea();
+		int position = jtaMediaInfo.getCaretPosition();
+		jtaMediaInfo.setText(videoInstance.toStringFull());
+		jtaMediaInfo.setCaretPosition(position);
+	}
+
+	private boolean isFullscreen = false;
+	private FullscreenDialog fullscreenDialog;
+
+	public FullscreenDialog getFullscreen() {
+		return fullscreenDialog;
+	}
+
+	public boolean isFullscreen() {
+		return isFullscreen;
+	}
+
+	public void createFullscreen() {
+		fullscreenDialog = new FullscreenDialog(vipFrame, vlcInstance);
+		VLC.getInstance().switchSurface(fullscreenDialog.getSurface(), true);
+		fullscreenDialog.requestFocus();
+		isFullscreen = true;
+	}
+
+	public void disposeFullscreen() {
+		VLC.getInstance().switchSurface(vipFrame.getMoviePanel(), true);
+		fullscreenDialog.dispose();
+		fullscreenDialog = null;
+		isFullscreen = false;
+		vipFrame.requestFocus();
+	}
+
+	public VipFrame getFrame() {
+		return vipFrame;
+	}
+
+	public void setToPreviousListItem() {
+		JList<Video> jlstFileList = vipFrame.getFileList();
+		int oldIndex = jlstFileList.getSelectedIndex();
+		int newIndex = oldIndex - 1;
+		// If reached pre-beginning of list
+		if (newIndex < 0) {
+			newIndex = (jlstFileList.getModel().getSize() - 1);
+			jlstFileList.setSelectedIndex(newIndex);
+		}
+		jlstFileList.setSelectedIndex(newIndex);
+		Video videoInstance = com.vip.controllers.SearchSortController.getInstance().getVideoByIndex(newIndex);
+		updateIntel(videoInstance);
+		vlcInstance.switchMediaFile(videoInstance);
+	}
+
+	public void setToNextListItem() {
+		JList<Video> jlstFileList = vipFrame.getFileList();
+		int oldIndex = jlstFileList.getSelectedIndex();
+		int newIndex = oldIndex + 1;
+		// If reached end of list
+		if (newIndex >= (jlstFileList.getModel().getSize())) {
+			newIndex = 0;
+		}
+		jlstFileList.setSelectedIndex(newIndex);
+		Video videoInstance = com.vip.controllers.SearchSortController.getInstance().getVideoByIndex(newIndex);
+		updateIntel(videoInstance);
+		vlcInstance.switchMediaFile(videoInstance);
+	}
 }

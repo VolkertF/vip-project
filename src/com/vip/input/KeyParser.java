@@ -5,10 +5,8 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.JTextField;
 
-import com.vip.attributes.Video;
 import com.vip.controllers.Controller;
 import com.vip.media.VLC;
-import com.vip.window.VipFrame;
 
 /**
  * The Key_parser translates user keyboard input into reasonable commands.

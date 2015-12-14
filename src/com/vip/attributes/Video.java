@@ -178,8 +178,8 @@ public class Video {
 		return imdbRating;
 	}
 
-	public void setImdbRating(double imdbRating) {
-		this.imdbRating = imdbRating;
+	public void setImdbRating(double rating) {
+		this.imdbRating = rating;
 	}
 
 	public double getPersonalRating() {

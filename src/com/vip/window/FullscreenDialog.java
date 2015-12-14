@@ -9,7 +9,6 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
-import com.vip.input.KeyParser;
 import com.vip.media.VLC;
 
 @SuppressWarnings("serial")

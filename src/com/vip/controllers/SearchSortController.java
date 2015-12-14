@@ -2,8 +2,11 @@ package com.vip.controllers;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Map;
+
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
@@ -88,11 +91,24 @@ public class SearchSortController {
 	
 	
 	public void fetchVideoInformation(Video vid) {
-		//System.out.println("Fetching information for " + vid.getTitle());
-		String searchKey = (String) JOptionPane.showInputDialog("Please enter the name of the Video that is searched for!");
-		OmdbRequest window = new OmdbRequest(OMDBController.getInstance().searchApi(searchKey));
+		String searchKey = (String) JOptionPane.showInputDialog("Please enter the name of the Video that is searched for! (Previous name: " + vid.getTitle());
+		OmdbRequest window = new OmdbRequest(OMDBController.getInstance().searchApi(searchKey), vid);
 		window.setEnabled(true);
 		window.setVisible(true);
+	}
+	
+	public void assignMapToVideo(Map<String, String> map, Video vid) {
+		vid.setTitle(map.get("Title"));
+		//vid.setReleaseDate(map.get("Year").);//TODO fix it
+		vid.setGenre(new ArrayList<String>(Arrays.asList(map.get("Genre").split(","))));
+		vid.setDirector(map.get("Director"));
+		vid.setCast(new ArrayList<String>(Arrays.asList(map.get("Actors").split(","))));
+		vid.setWriters(new ArrayList<String>(Arrays.asList(map.get("Writer").split(","))));
+		vid.setPlotSummary(map.get("Plot"));
+		vid.setCountry(map.get("Country"));
+		//String[] tempRating = map.get("imdbRating").split("\"");
+		vid.setImdbRating(Double.parseDouble(map.get("imdbRating")));
+		vid.setInfoFetched(true);
 	}
 	
 	

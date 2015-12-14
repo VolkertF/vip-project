@@ -2,66 +2,204 @@ package com.vip.window;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
+import com.vip.attributes.Video;
+import com.vip.controllers.OMDBController;
+import com.vip.controllers.SearchSortController;
 import com.vip.extractor.MediaSearchResult;
 import com.vip.extractor.SearchResult;
 
+/**
+ * This class creates a window from an OMDb-Request, if the user
+ * presses the button for fetching information on a single movie in
+ * the list. This window displays a choice of movies, which then are
+ * able to be selected by the user.
+ * @author Johannes Licht
+ */
 @SuppressWarnings("serial")
 public class OmdbRequest extends JFrame {
+	/**
+	 * ArrayList containing searchResults from the OMDb-Request
+	 */
 	private ArrayList<MediaSearchResult> searchResult;
+	
+	/**
+	 * An ArrayList containing the URLs of the images, that
+	 * should be displayed.
+	 */
 	public ArrayList<String> imageUrls;
+	
+	/**
+	 * An ArrayList of the actual Icons that are displayed by
+	 * using a JList with a DefaultListModel.
+	 */
 	private ArrayList<ImageIcon> icons = new ArrayList<ImageIcon>();
+	
+	/**
+	 * The DefaultListModel for keeping the JList working
+	 */
 	@SuppressWarnings("rawtypes")
 	private DefaultListModel iconListModel = new DefaultListModel();
+	
+	/**
+	 * The Actual JList containing all the Icons to be displayed.
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private JList resultList = new JList(iconListModel);
 	
+	
+	/**
+	 * A Button to confirm, that the movie that is selected,
+	 * should be fetched to the Video object.
+	 */
+	private JButton buttonFetch = new JButton();
+	
+	/**
+	 * A Button for leaving this view and going back
+	 * to the main frame.
+	 */
+	private JButton buttonCancel = new JButton();
+	
+	
+	/**
+	 * Constructor for OMDb-Request window
+	 * @param searchResults
+	 * 		An ArrayList of SearchResults from the OMDb-Request.
+	 * @param vid
+	 * 		The video that information should be fetched to.
+	 */
 	@SuppressWarnings("unchecked")
-	public OmdbRequest(ArrayList<SearchResult> searchResults) {
+	public OmdbRequest(ArrayList<SearchResult> searchResults, Video vid) {
+		final Video video = vid;
 		this.searchResult = switchArrayList(searchResults);
 		this.imageUrls = fillArrayListFromArrayList(this.searchResult);
 		
 		this.setLayout(new BorderLayout());
-		this.add(new JScrollPane(resultList), BorderLayout.LINE_START);
+		this.add(new JScrollPane(resultList), BorderLayout.LINE_END);
 		
 		this.add(new JPanel(), BorderLayout.CENTER);
+		this.add(buttonFetch, BorderLayout.SOUTH);
+		buttonFetch.setText("Fetch Information");
+		buttonFetch.setToolTipText("Press this button if you have selected the right movie you wanted to search for");
+		buttonFetch.setVisible(true);
+		this.add(buttonCancel, BorderLayout.SOUTH);
+		buttonCancel.setVisible(true);
+		buttonCancel.setText("Cancel");
+		buttonCancel.setToolTipText("Press this button if you want to leave this screen and return to the main frame.");
+		
+		buttonCancel.addActionListener(new ActionListener() {
+			@Override public void actionPerformed(ActionEvent arg0) {
+				dispose();
+			}
+		});
+		
+		resultList.addMouseListener(new MouseListener() {
+			@Override public void mouseReleased(MouseEvent arg0) {}
+			@Override public void mousePressed(MouseEvent arg0) {}
+			@Override public void mouseExited(MouseEvent arg0) {}
+			@Override public void mouseEntered(MouseEvent arg0) {}
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				if(arg0.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(arg0)) {
+					String[] temp = ((ImageIcon)resultList.getSelectedValue()).getDescription().split("%%%%");
+					String[] tempTemp = temp[3].split("\"");
+					Map<String, String> infoMap = OMDBController.getInstance().getById(tempTemp[1]);
+					SearchSortController.getInstance().assignMapToVideo(infoMap, video);
+					dispose();
+				}
+			}
+		});
+		
+		/*ActionListener confirmFetchAL = new ActionListener() {
+			@Override public void actionPerformed(ActionEvent arg0) {
+				String[] temp = ((ImageIcon)resultList.getSelectedValue()).getDescription().split("%%%%");
+				Map<String, String> infoMap = OMDBController.getInstance().getById(temp[3]);
+				SearchSortController.getInstance().assignMapToVideo(infoMap, video);
+			}
+		};*/
+		
 		for(String imageURL : imageUrls) {
 			BufferedImage img;
 			try {
-				img = ImageIO.read(new URL(imageURL));
+				String[] splittedImageURL = imageURL.split("%%%%");
+				String poster = splittedImageURL[0];
+				img = ImageIO.read(new URL(poster));
 				img = ImageUtil.createScaledImage(img);
-				ImageIcon icon = new ImageIcon(img, imageURL);
+				ImageIcon icon = new ImageIcon(img, poster);
+				icon.setDescription(imageURL);
 				icons.add(icon);
 				iconListModel.addElement(icon);
-			} catch (Exception e) {
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			
 		}
 		resultList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		resultList.addListSelectionListener(new ListSelectionListener() {
+			@Override public void valueChanged(ListSelectionEvent arg0) {
+				String[] descrip = ((ImageIcon)resultList.getSelectedValue()).getDescription().split("%%%%");
+				resultList.setToolTipText("<html>Name: " + descrip[1] + " <br>Year of Release: " + descrip[2] + "</html>");
+			}
+		});
 		this.setPreferredSize(new Dimension(400, 500));
 		this.pack();
 	}
 
+	/**
+	 * Helping method for filling an ArrayList of Strings
+	 * with poster, title and year of the SearchResults
+	 * @param searchResult
+	 * 		ArrayList of searchResults that should be displayed
+	 * @return
+	 * 		Another ArrayList containing String of the poster, the title
+	 * 		and the year of the movie.
+	 */
 	private ArrayList<String> fillArrayListFromArrayList(ArrayList<MediaSearchResult> searchResult) {
 		ArrayList<String> urlList = new ArrayList<String>();
 		for(MediaSearchResult temp : searchResult) {
-			urlList.add(temp.getPoster());
+			if(temp.getPoster() == null) {
+				//throw new MalformedURLException();
+			}
+			String description = temp.getPoster() + "%%%%" + temp.getTitle() + "%%%%" + temp.getYear() + "%%%%" + temp.getImdbId();
+			urlList.add(description);
 		}
 		return urlList;
 	}
 	
+	
+	/**
+	 * Helping method for turning an ArrayList of SearchResults into an
+	 * ArrayList of MediaSearchResults
+	 * @param searchResults
+	 * 		The ArrayList of SearchResults
+	 * @return
+	 * 		The same list containing MediaSearchResults
+	 */
 	private ArrayList<MediaSearchResult> switchArrayList(ArrayList<SearchResult> searchResults) {
 		ArrayList<MediaSearchResult> mediaSearchResult = new ArrayList<MediaSearchResult>();
 		for(SearchResult temp : searchResults) {

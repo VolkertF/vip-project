@@ -105,7 +105,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 	 * determined or has to be declared by the user
 	 */
 	private void selectRootFolder() {
-		JOptionPane.showMessageDialog(this, "You have to select a root folder for you video collection!");
+		JOptionPane.showMessageDialog(this, "You have to select a root folder for your video collection!");
 		rootFolderPath = getFilePath(2);
 	}
 
@@ -209,7 +209,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 	/**
 	 * Main JPanel, that holds all the other panels
 	 */
-	JPanel jpnlMain;
+	private JPanel jpnlMain;
 
 	/**
 	 * Helping routine for creating components and adding them to a

@@ -5,8 +5,8 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 public class ImageUtil {
-	public static final int DEST_WIDTH = 90;
-	public static final int DEST_HEIGHT = 75;
+	public static final int DEST_WIDTH = 250;
+	public static final int DEST_HEIGHT = 200;
 	public static final double ASPECT_RATIO = (double) DEST_WIDTH / DEST_HEIGHT;
 	
 	public static BufferedImage createScaledImage(BufferedImage original) {

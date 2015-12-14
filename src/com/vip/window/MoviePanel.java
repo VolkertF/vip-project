@@ -5,12 +5,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
@@ -19,14 +16,6 @@ import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 
 import com.vip.media.VLC;
-
-import uk.co.caprica.vlcj.component.DirectMediaPlayerComponent;
-import uk.co.caprica.vlcj.player.direct.BufferFormat;
-import uk.co.caprica.vlcj.player.direct.BufferFormatCallback;
-import uk.co.caprica.vlcj.player.direct.DirectMediaPlayer;
-import uk.co.caprica.vlcj.player.direct.RenderCallback;
-import uk.co.caprica.vlcj.player.direct.RenderCallbackAdapter;
-import uk.co.caprica.vlcj.player.direct.format.RV32BufferFormat;
 
 @SuppressWarnings("serial")
 public class MoviePanel extends JPanel {

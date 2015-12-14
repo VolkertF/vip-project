@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JList;
 
-import com.vip.attributes.Video;
 import com.vip.controllers.Controller;
 import com.vip.media.VLC;
 

@@ -160,20 +160,20 @@ public class Video {
 	public String toString(){
 		
 		String string = ""
-				+ "\nFile Path: " + this.getFilePath()
-				+ "\nTitle: " + this.getTitle()
-				+ "\nRelease Date: " + this.getReleaseDate()
-				+ "\nGenre: " + this.getGenre()
-				+ "\nDirector: " + this.getDirector()
-				+ "\nCast: " + this.getCast()
-				+ "\nWriters: " + this.getWriters()
-				+ "\nPlot Summary: " + this.getPlotSummary()
-				+ "\nCountry: " + this.getCountry()
-				+ "\nIMDb Rating: " + this.getImdbRating()
-				+ "\nPersonal Rating: " + this.getPersonalRating()
-				+ "\nSeason: " + this.getSeason()
-				+ "\nEpisode: " + this.getEpisode()
-				+ "\nInfo Fetched: " + this.isInfoFetched();
+				+ "\n" + this.getFilePath()
+				+ "\n" + this.getTitle()
+				+ "\n" + this.getReleaseDate()
+				+ "\n" + this.getGenre()
+				+ "\n" + this.getDirector()
+				+ "\n" + this.getCast()
+				+ "\n" + this.getWriters()
+				+ "\n" + this.getPlotSummary()
+				+ "\n" + this.getCountry()
+				+ "\n" + this.getImdbRating()
+				+ "\n" + this.getPersonalRating()
+				+ "\n" + this.getSeason()
+				+ "\n" + this.getEpisode()
+				+ "\n" + this.isInfoFetched();
 		
 		
 		return string;

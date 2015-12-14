@@ -106,3 +106,7 @@ local.properties
 # TeXlipse plugin #
 ###################
 .texlipse
+
+# other stuff #
+###############
+test.db

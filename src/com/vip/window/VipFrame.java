@@ -693,8 +693,6 @@ public class VipFrame extends JFrame implements ComponentListener {
 		scrollPane.getViewport().setOpaque(false);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-		// TODO create extended intel
-		jtaMediaInfo.setText("");
 		addComponent(0, 0, 1, 1, 1, 0.1, jpnlIntel, jpnlIntelNorth, defaultInsets);
 		addComponent(0, 1, 1, 1, 1, 0.9, jpnlIntel, scrollPane, defaultInsets);
 	}
@@ -875,7 +873,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 		jmiSaveAll.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				dataController.saveAll(com.vip.controllers.SearchSortController.getInstance().getMovies());
+				dataController.saveAll(SearchSortController.getInstance().getMovies());
 			}
 		});
 	}

@@ -1,6 +1,7 @@
 package com.vip.controllers;
 
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,13 +15,21 @@ import com.vip.attributes.Video;
 import com.vip.window.OmdbRequest;
 
 /**
- * This class stores information about the Videos in the program,
- * and with this class all the sort and search algorithms are executed.
+ * This controller stores information about the movie-list
+ * and the DefaultListModel, that display the list in the GUI.
+ * 
+ * It also delivers a variety of methods for searching and
+ * sorting the movie list and assigning information from
+ * the OMDbController.
  * 
  * @author Johannes Licht
  */
 public class SearchSortController {
 	
+	/**
+	 * This ArrayList stores all movie files that was added
+	 * to the program.
+	 */
 	private ArrayList<Video> movies;
 	
 	private DefaultListModel<String> defaultJList;
@@ -98,17 +107,20 @@ public class SearchSortController {
 	}
 	
 	public void assignMapToVideo(Map<String, String> map, Video vid) {
-		vid.setTitle(map.get("Title"));
-		//vid.setReleaseDate(map.get("Year").);//TODO fix it
-		vid.setGenre(new ArrayList<String>(Arrays.asList(map.get("Genre").split(","))));
-		vid.setDirector(map.get("Director"));
-		vid.setCast(new ArrayList<String>(Arrays.asList(map.get("Actors").split(","))));
-		vid.setWriters(new ArrayList<String>(Arrays.asList(map.get("Writer").split(","))));
-		vid.setPlotSummary(map.get("Plot"));
-		vid.setCountry(map.get("Country"));
-		//String[] tempRating = map.get("imdbRating").split("\"");
-		vid.setImdbRating(Double.parseDouble(map.get("imdbRating")));
-		vid.setInfoFetched(true);
+		String type = map.get("Type");
+		if(type.equals("movie")) {
+			vid.setTitle(map.get("Title"));
+			String dateString = map.get("Released");
+			vid.setReleaseDate(new Date(95, 9, 21));;
+			vid.setGenre(new ArrayList<String>(Arrays.asList(map.get("Genre").split(","))));
+			vid.setDirector(map.get("Director"));
+			vid.setCast(new ArrayList<String>(Arrays.asList(map.get("Actors").split(","))));
+			vid.setWriters(new ArrayList<String>(Arrays.asList(map.get("Writer").split(","))));
+			vid.setPlotSummary(map.get("Plot"));
+			vid.setCountry(map.get("Country"));
+			vid.setImdbRating(Double.parseDouble(map.get("imdbRating")));
+			vid.setInfoFetched(true);
+		} else if(type.equals("episode"));
 	}
 	
 	

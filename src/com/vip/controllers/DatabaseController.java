@@ -28,14 +28,15 @@ public class DatabaseController {
 	}
 	
 	public void save(Video video){
-		
+		if(video == null) {
+			System.out.println("Video object is null");
+		}
 		database.saveVideo(video);
 	}
 	
 	public void saveAll(ArrayList<Video> videos){
-		
 		for(Video video:videos){
-			database.saveVideo(video);
+			save(video);
 		}
 	}
 	

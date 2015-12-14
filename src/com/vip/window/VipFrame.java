@@ -90,6 +90,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 		buildMenuBar();
 		addFileListActionListener();
 		searchForMovies(rootFolderPath);
+		dataController.loadVideos();
 		pack();
 		requestFocus();
 		setVisible(true);
@@ -124,7 +125,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 	/**
 	 * Controller for saving the movies into a database
 	 */
-	private DatabaseController dataController = new DatabaseController();
+	private DatabaseController dataController = new DatabaseController(); ;
 
 	/**
 	 * The JPanel that represents the Explorer and do file-searching stuff and
@@ -419,9 +420,9 @@ public class VipFrame extends JFrame implements ComponentListener {
 	 * Create Sub-sub-panels in the explorer panel
 	 */
 	private void buildExplorerGUI() {
-		jlstFileList = new JList<Video>(com.vip.controllers.SearchSortController.getInstance().getList());
-		com.vip.controllers.SearchSortController.getInstance()
-		        .updateList(com.vip.controllers.SearchSortController.getInstance().getMovies());
+		jlstFileList = new JList<Video>(SearchSortController.getInstance().getList());
+		SearchSortController.getInstance()
+		        .updateList(SearchSortController.getInstance().getMovies());
 		jlstFileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jlstFileList.setSelectedIndex(0);
 		JTextArea jtaScrollPaneText = new JTextArea(20, 1);
@@ -670,7 +671,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 	 */
 	public void updateRatingSlider() {
 		if (jlstFileList.getSelectedIndex() >= 0) {
-			jsliderRating.setValue((int) com.vip.controllers.SearchSortController.getInstance()
+			jsliderRating.setValue((int) SearchSortController.getInstance()
 			        .getVideoByIndex(jlstFileList.getSelectedIndex()).getPersonalRating());
 		} else {
 			jsliderRating.setValue(0);
@@ -716,7 +717,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 				BasicSliderUI ui = (BasicSliderUI) jslider.getUI();
 				int newRating = ui.valueForXPosition(me.getX());
 				if (jlstFileList.getSelectedIndex() >= 0) {
-					Video videoInstance = com.vip.controllers.SearchSortController.getInstance()
+					Video videoInstance = SearchSortController.getInstance()
 		                    .getVideoByIndex(jlstFileList.getSelectedIndex());
 					videoInstance.setPersonalRating(newRating);
 					controller.updateIntel(videoInstance);
@@ -732,9 +733,9 @@ public class VipFrame extends JFrame implements ComponentListener {
 			@Override
 			public void mouseReleased(MouseEvent me) {
 				if (jlstFileList.getSelectedIndex() >= 0) {
-					Video videoInstance = com.vip.controllers.SearchSortController.getInstance()
+					Video videoInstance = SearchSortController.getInstance()
 		                    .getVideoByIndex(jlstFileList.getSelectedIndex());
-					com.vip.controllers.SearchSortController.getInstance().fetchVideoInformation(videoInstance);
+					SearchSortController.getInstance().fetchVideoInformation(videoInstance);
 				}
 			}
 		});
@@ -841,9 +842,9 @@ public class VipFrame extends JFrame implements ComponentListener {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String path = getFilePath(new FileNameExtensionFilter("Video Files", movieExtensions));
-				com.vip.controllers.SearchSortController.getInstance().addMovieToList(new Video(path));
-				com.vip.controllers.SearchSortController.getInstance()
-		                .updateList(com.vip.controllers.SearchSortController.getInstance().getMovies());
+				SearchSortController.getInstance().addMovieToList(new Video(path));
+				SearchSortController.getInstance()
+		                .updateList(SearchSortController.getInstance().getMovies());
 			}
 		});
 
@@ -884,7 +885,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 			@Override
 			public void mouseClicked(MouseEvent ev) {
 				if (jlstFileList.getSelectedIndex() >= 0) {
-					Video videoInstance = com.vip.controllers.SearchSortController.getInstance()
+					Video videoInstance = SearchSortController.getInstance()
 		                    .getVideoByIndex(jlstFileList.getSelectedIndex());
 					controller.updateIntel(videoInstance);
 					if (ev.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(ev)) {
@@ -928,12 +929,12 @@ public class VipFrame extends JFrame implements ComponentListener {
 			e.printStackTrace();
 		}
 		for (int i = 0; i < fileList.size(); i++) {
-			com.vip.controllers.SearchSortController.getInstance()
+			SearchSortController.getInstance()
 			        .addMovieToList(new Video(fileList.get(i).getAbsolutePath()));
 		}
 
-		com.vip.controllers.SearchSortController.getInstance()
-		        .updateList(com.vip.controllers.SearchSortController.getInstance().getMovies());
+		SearchSortController.getInstance()
+		        .updateList(SearchSortController.getInstance().getMovies());
 	}
 
 	/**

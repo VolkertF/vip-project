@@ -83,6 +83,22 @@ public class SearchSortController {
 	}
 	
 	/**
+	 * Loads the movies from the database into the list of movies open in the program
+	 * 
+	 * @param dbMovies
+	 * 			The movies from the database
+	 */
+	public void loadDatabaseMovies(ArrayList<Video> dbMovies){
+		for(Video vid: movies){
+			for(Video dbVid: dbMovies){
+				if(dbVid.getFilePath().toLowerCase().equals(vid.getFilePath().toLowerCase())){
+					vid.setAsVideo(dbVid);
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Method for updating the ListModel, so the List in the JFrame 
 	 * is actually showing the newest version of all movies stored 
 	 * in the movies ArrayList
@@ -230,7 +246,7 @@ public class SearchSortController {
 		ArrayList<Video> results = new ArrayList<Video>();
 		
 		for(Video vid:movies){
-			if(vid.toStringFull().toLowerCase().contains(searchText.toLowerCase())){
+			if(vid.toStringSearch().toLowerCase().contains(searchText.toLowerCase())){
 				results.add(vid);
 			}
 		}

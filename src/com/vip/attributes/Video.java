@@ -34,6 +34,11 @@ public class Video {
 
 	private boolean infoFetched;
 
+	/**
+	 * Used to instantiate Video with a file path
+	 * 
+	 * @param path
+	 */
 	public Video(String path) {
 		this.filePath = path;
 		String[] temp;
@@ -46,9 +51,16 @@ public class Video {
 		this.infoFetched = false;
 	}
 
+	/**
+	 * Default constructor
+	 */
 	public Video() {
 	}
 
+	/**
+	 * 
+	 * @return filePath
+	 */
 	public String getFilePath() {
 		if (filePath != null) {
 			return filePath;
@@ -58,10 +70,18 @@ public class Video {
 		}
 	}
 
+	/**
+	 * 
+	 * @param filePath
+	 */
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
 	}
 
+	/**
+	 * 
+	 * @return title
+	 */
 	public String getTitle() {
 		if (title != null) {
 			return title;
@@ -70,14 +90,26 @@ public class Video {
 		}
 	}
 
+	/**
+	 * 
+	 * @param title
+	 */
 	public void setTitle(String title) {
 		this.title = title;
 	}
 
+	/**
+	 * 
+	 * @return releaseDate
+	 */
 	public Date getReleaseDate() {
 		return releaseDate;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public String getReleaseDateString() {
 		if (releaseDate != null) {
 			return releaseDate.toString();
@@ -86,14 +118,26 @@ public class Video {
 		}
 	}
 
+	/**
+	 * 
+	 * @param date
+	 */
 	public void setReleaseDate(Date date) {
 		this.releaseDate = date;
 	}
 
+	/**
+	 * 
+	 * @return genre
+	 */
 	public ArrayList<String> getGenre() {
 		return genre;
 	}
 
+	/**
+	 * 
+	 * @return genreString
+	 */
 	public String getGenreString() {
 		if (genre != null) {
 			return genre.toString();
@@ -102,10 +146,18 @@ public class Video {
 		}
 	}
 
+	/**
+	 * 
+	 * @param genre
+	 */
 	public void setGenre(ArrayList<String> genre) {
 		this.genre = genre;
 	}
 
+	/**
+	 * 
+	 * @return director
+	 */
 	public String getDirector() {
 		if (director != null) {
 			return director;
@@ -114,14 +166,26 @@ public class Video {
 		}
 	}
 
+	/**
+	 * 
+	 * @param director
+	 */
 	public void setDirector(String director) {
 		this.director = director;
 	}
 
+	/**
+	 * 
+	 * @return cast
+	 */
 	public ArrayList<String> getCast() {
 		return cast;
 	}
 
+	/**
+	 * 
+	 * @return castString
+	 */
 	public String getCastString() {
 		if (cast != null) {
 			return cast.toString();
@@ -130,14 +194,26 @@ public class Video {
 		}
 	}
 
+	/**
+	 * 
+	 * @param cast
+	 */
 	public void setCast(ArrayList<String> cast) {
 		this.cast = cast;
 	}
 
+	/**
+	 * 
+	 * @return writers
+	 */
 	public ArrayList<String> getWriters() {
 		return writers;
 	}
 
+	/**
+	 * 
+	 * @return writersString
+	 */
 	public String getWritersString() {
 		if (writers != null) {
 			return writers.toString();
@@ -146,10 +222,18 @@ public class Video {
 		}
 	}
 
+	/**
+	 * 
+	 * @param writers
+	 */
 	public void setWriters(ArrayList<String> writers) {
 		this.writers = writers;
 	}
 
+	/**
+	 * 
+	 * @return plotSummary
+	 */
 	public String getPlotSummary() {
 		if (plotSummary != null) {
 			return plotSummary;
@@ -158,10 +242,18 @@ public class Video {
 		}
 	}
 
+	/**
+	 * 
+	 * @param plotSummary
+	 */
 	public void setPlotSummary(String plotSummary) {
 		this.plotSummary = plotSummary;
 	}
 
+	/**
+	 * 
+	 * @return country
+	 */
 	public String getCountry() {
 		if (country != null) {
 			return country;
@@ -170,22 +262,42 @@ public class Video {
 		}
 	}
 
+	/**
+	 * 
+	 * @param country
+	 */
 	public void setCountry(String country) {
 		this.country = country;
 	}
 
+	/**
+	 * 
+	 * @return imdbRating
+	 */
 	public double getImdbRating() {
 		return imdbRating;
 	}
 
+	/**
+	 * 
+	 * @param rating
+	 */
 	public void setImdbRating(double rating) {
 		this.imdbRating = rating;
 	}
 
+	/**
+	 * 
+	 * @return personalRating
+	 */
 	public double getPersonalRating() {
 		return personalRating;
 	}
 
+	/**
+	 * 
+	 * @param personalRating
+	 */
 	public void setPersonalRating(double personalRating) {
 		if (personalRating < 0) {
 			this.personalRating = 0;
@@ -196,32 +308,89 @@ public class Video {
 		}
 	}
 
+	/**
+	 * 
+	 * @return season number
+	 */
 	public int getSeason() {
 		return season;
 	}
 
+	/**
+	 * 
+	 * @param season
+	 */
 	public void setSeason(int season) {
 		this.season = season;
 	}
 
+	/**
+	 * 
+	 * @return episode number
+	 */
 	public int getEpisode() {
 		return episode;
 	}
 
+	/**
+	 * 
+	 * @param episode
+	 */
 	public void setEpisode(int episode) {
 		this.episode = episode;
 	}
 
+	/**
+	 * 
+	 * @return isInfoFetched
+	 */
 	public boolean isInfoFetched() {
 		return infoFetched;
 	}
-
+	
+	/**
+	 * 
+	 * @param infoFetched
+	 */
 	public void setInfoFetched(boolean infoFetched) {
 		this.infoFetched = infoFetched;
 	}
 	
+	/**
+	 * Sets all attributes of video to another video
+	 * 
+	 * @param vid
+	 */
+	public void setAsVideo(Video vid){
+		this.setTitle(vid.getTitle());
+		this.setReleaseDate(vid.getReleaseDate());
+		this.setGenre(vid.getGenre());
+		this.setDirector(vid.getDirector());
+		this.setCast(vid.getCast());
+		this.setWriters(vid.getWriters());
+		this.setPlotSummary(vid.getPlotSummary());
+		this.setCountry(vid.getCountry());
+		this.setImdbRating(vid.getImdbRating());
+		this.setPersonalRating(vid.getPersonalRating());
+		this.setSeason(vid.getSeason());
+		this.setEpisode(vid.getEpisode());
+		this.setInfoFetched(vid.isInfoFetched());
+	}
+	
+	/**
+	 * To string override for generic object
+	 */
 	public String toString(){
 		
+		return this.getTitle();
+	}
+		
+	/**
+	 * The toString method used for searching every part of the video
+	 * 
+	 * @return searchString
+	 */
+	public String toStringSearch() {
 		String string = ""
 				+ "\n" + this.getFilePath()
 				+ "\n" + this.getTitle()
@@ -237,8 +406,14 @@ public class Video {
 				+ "\n" + this.getSeason()
 				+ "\n" + this.getEpisode()
 				+ "\n" + this.isInfoFetched();
-		
-		
+		return string;
+	}
+	
+	/**
+	 * The toString used for displaying the video in the GUI
+	 * 
+	 * @return fullString
+	 */
 	public String toStringFull() {
 		String string = "File Path: " + this.getFilePath() + "\nTitle: " + this.getTitle() + "\nRelease Date: "
 		        + this.getReleaseDateString() + "\nGenre: " + this.getGenreString() + "\nDirector: "

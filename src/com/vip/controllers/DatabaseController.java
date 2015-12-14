@@ -23,8 +23,17 @@ public class DatabaseController {
 	 * Public DatabaseController Constructor
 	 */
 	public DatabaseController() {
-		VideoTable database = new VideoTable();
+		database = new VideoTable();
 		database.createTable();
+	}
+	
+	/**
+	 * Method used for loading the videos from the database into the program
+	 */
+	public void loadVideos(){
+		
+		ArrayList<Video> videos = database.loadVideos();
+		SearchSortController.getInstance().loadDatabaseMovies(videos);
 	}
 	
 	/**
@@ -37,6 +46,7 @@ public class DatabaseController {
 		if(video == null) {
 			System.out.println("Video object is null");
 		}
+		
 		database.saveVideo(video);
 	}
 	

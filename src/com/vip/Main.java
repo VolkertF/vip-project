@@ -24,7 +24,6 @@ public class Main {
 		            // new method
 					e.printStackTrace();
 				}
-
 			}
 		});
 		t.start();

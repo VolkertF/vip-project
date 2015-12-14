@@ -221,7 +221,10 @@ public class Video {
 	}
 
 	public String toString() {
-
+		return this.getTitle();
+	}
+	
+	public String toStringFull() {
 		String string = "File Path: " + this.getFilePath() + "\nTitle: " + this.getTitle() + "\nRelease Date: "
 		        + this.getReleaseDateString() + "\nGenre: " + this.getGenreString() + "\nDirector: "
 		        + this.getDirector() + "\nCast: " + this.getCastString() + "\nWriters: " + this.getWritersString()

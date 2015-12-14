@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JList;
 
+import com.vip.attributes.Video;
 import com.vip.controllers.Controller;
 import com.vip.media.VLC;
 
@@ -26,7 +27,7 @@ public class ButtonParser implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		VLC vlc = controller.getVLC();
-		JList<String> jlstFileList = controller.getFrame().getFileList();
+		JList<Video> jlstFileList = controller.getFrame().getFileList();
 		String action = ae.getActionCommand();
 		if ("jbtnToggleMoviePlayback".equals(action))
 			vlc.toggleMediaPlayback();

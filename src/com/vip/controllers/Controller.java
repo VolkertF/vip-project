@@ -351,7 +351,7 @@ public class Controller {
 		vipFrame.updateRatingSlider();
 		JTextArea jtaMediaInfo = vipFrame.getIntelTextArea();
 		int position = jtaMediaInfo.getCaretPosition();
-		jtaMediaInfo.setText(videoInstance.toString());
+		jtaMediaInfo.setText(videoInstance.toStringFull());
 		jtaMediaInfo.setCaretPosition(position);
 	}
 
@@ -386,7 +386,7 @@ public class Controller {
 	}
 
 	public void setToPreviousListItem() {
-		JList<String> jlstFileList = vipFrame.getFileList();
+		JList<Video> jlstFileList = vipFrame.getFileList();
 		int oldIndex = jlstFileList.getSelectedIndex();
 		int newIndex = oldIndex - 1;
 		// If reached pre-beginning of list
@@ -401,7 +401,7 @@ public class Controller {
 	}
 
 	public void setToNextListItem() {
-		JList<String> jlstFileList = vipFrame.getFileList();
+		JList<Video> jlstFileList = vipFrame.getFileList();
 		int oldIndex = jlstFileList.getSelectedIndex();
 		int newIndex = oldIndex + 1;
 		// If reached end of list

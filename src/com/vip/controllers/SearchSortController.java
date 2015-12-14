@@ -37,7 +37,7 @@ public class SearchSortController {
 	 * Mainly this object is for sorting and searching
 	 * algorithms.
 	 */
-	private DefaultListModel<String> defaultJList;
+	private DefaultListModel<Video> defaultJList;
 	
 	/**
 	 * A Singleton instance of this class
@@ -48,7 +48,7 @@ public class SearchSortController {
 	 * A private Constructor that can only be called once.
 	 */
 	private SearchSortController() {
-		defaultJList = new DefaultListModel<String>();
+		defaultJList = new DefaultListModel<Video>();
 		movies = new ArrayList<Video>();
 	}
 	
@@ -91,7 +91,7 @@ public class SearchSortController {
 		defaultJList.add(0, null);
 		defaultJList.clear();
 		for (Video temp : currentList) {
-			defaultJList.addElement(temp.getTitle());
+			defaultJList.addElement(temp);
 		}
 	}
 	
@@ -100,7 +100,7 @@ public class SearchSortController {
 	 * to the JList in the Swing application
 	 * @return The ListModel which contains every title of every movie in the movies ArrayList 
 	 */
-	public DefaultListModel<String> getList() {
+	public DefaultListModel<Video> getList() {
 		return defaultJList;
 	}
 	
@@ -112,7 +112,7 @@ public class SearchSortController {
 	 * @return The Video at the index of 'index'
 	 */
 	public Video getVideoByIndex(int index) {
-		return movies.get(index);
+		return defaultJList.getElementAt(index);
 	}
 	
 	/**
@@ -230,7 +230,7 @@ public class SearchSortController {
 		ArrayList<Video> results = new ArrayList<Video>();
 		
 		for(Video vid:movies){
-			if(vid.toString().toLowerCase().contains(searchText.toLowerCase())){
+			if(vid.toStringFull().toLowerCase().contains(searchText.toLowerCase())){
 				results.add(vid);
 			}
 		}

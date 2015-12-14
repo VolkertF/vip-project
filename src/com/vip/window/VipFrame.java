@@ -160,7 +160,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 	 * This JList will fill with the files in all searching directories the
 	 * program overwatches, so basically every movie file found on the harddrive
 	 */
-	private JList<String> jlstFileList;
+	private JList<Video> jlstFileList;
 
 	/**
 	 * This JTextField is for entering your private search stuff into a
@@ -419,7 +419,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 	 * Create Sub-sub-panels in the explorer panel
 	 */
 	private void buildExplorerGUI() {
-		jlstFileList = new JList<String>(com.vip.controllers.SearchSortController.getInstance().getList());
+		jlstFileList = new JList<Video>(com.vip.controllers.SearchSortController.getInstance().getList());
 		com.vip.controllers.SearchSortController.getInstance()
 		        .updateList(com.vip.controllers.SearchSortController.getInstance().getMovies());
 		jlstFileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -672,7 +672,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 	 * @return
 	 * 		The JList of String containing the files
 	 */
-	public JList<String> getFileList() {
+	public JList<Video> getFileList() {
 		return jlstFileList;
 	}
 

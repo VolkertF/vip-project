@@ -31,6 +31,8 @@ public class FullscreenDialog extends JDialog implements MouseMotionListener {
 		this.setModalityType(Dialog.ModalityType.MODELESS);
 		jpnlVideoSurface.setDrawOverlay(true);
 		this.setVisible(true);
+		requestFocus();
+//		this.vlcInstance.switchSurface(jpnlVideoSurface, true);
 	}
 
 	public MoviePanel getSurface() {

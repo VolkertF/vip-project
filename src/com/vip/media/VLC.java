@@ -15,10 +15,15 @@ import uk.co.caprica.vlcj.player.direct.RenderCallbackAdapter;
 import uk.co.caprica.vlcj.player.direct.format.RV32BufferFormat;
 
 /**
- * VLC Class. Controls media playback.
+ * VLC Class. Controls media playback. Holds the media player and information
+ * about general playback behaviour.
  */
 public class VLC {
 
+	/**
+	 * When not run in fullscreen Mode, the movie will be displayed considering
+	 * this aspect ratio
+	 **/
 	private final double ASPECT_RATIO = 16.0 / 9.0;
 
 	/** Minimum volume supported (0 is least) **/
@@ -36,32 +41,45 @@ public class VLC {
 	 **/
 	private static final double JUMP_PERCENTAGE = 0.05;
 
+	/**
+	 * Indicates wether or not a valid VLC installation was found on
+	 * initialization
+	 **/
 	private static boolean vlcFound;
 
+	/** Reference to this vlc instance **/
 	private static VLC instance;
 
+	/** Saves the state of the last valid volume level **/
 	private int lastVolume = (MAX_VOLUME + MIN_VOLUME) / 2;
 
+	/**
+	 * Reference to the media player component that is responsible for rendering
+	 * the movie
+	 **/
 	private DirectMediaPlayerComponent directMediaPlayerComponent;
 
 	/** The mediaplayer that is responsible for playback **/
 	private DirectMediaPlayer directMediaPlayer;
 
 	/**
-	 * True on Initialization of a media
+	 * True on Initialization of a new movie
 	 */
 	private boolean initMedia = true;
 
+	/** Indicates wether or not the volume is muted **/
 	private boolean isMuted = false;
-
+	/** Reference to the currently loaded movie **/
 	private Video currentVideo;
-
+	/** Image that the rendering is done on **/
 	private BufferedImage currentImage;
-
+	/** References to the currently as canvas used panel **/
 	private MoviePanel currentPanel;
 
-	private boolean isPlaying = false;
-
+	/**
+	 * Contructor method for the vlc instance. Searches for a valid installation
+	 * of VLC player
+	 */
 	private VLC() {
 		vlcFound = new NativeDiscovery().discover();
 		// If VLC cannot be found, we will inform the user of manual
@@ -73,6 +91,11 @@ public class VLC {
 		}
 	}
 
+	/**
+	 * Getter method for the vlc instance
+	 * 
+	 * @return a valid instance of vlc
+	 */
 	public static VLC getInstance() {
 		if (instance == null) {
 			VLC.instance = new VLC();
@@ -80,6 +103,11 @@ public class VLC {
 		return instance;
 	}
 
+	/**
+	 * Getter method for the currently loaded movie.
+	 * 
+	 * @return the current movie
+	 */
 	public Video getCurrentVideo() {
 		return currentVideo;
 	}
@@ -94,10 +122,22 @@ public class VLC {
 		return initMedia;
 	}
 
+	/**
+	 * Returns wether or not VLC is installed on this machine
+	 * 
+	 * @return true if vlc was found, false if vlc was not found
+	 */
 	public boolean isVLCInstalled() {
 		return vlcFound;
 	}
 
+	/**
+	 * Updates the state of the movie's timeline
+	 * 
+	 * @param newInit
+	 *            If true, the timeline will be revalidated, iIf false it will
+	 *            not
+	 */
 	public void setProgressBarInitState(boolean newInit) {
 		initMedia = newInit;
 	}
@@ -148,6 +188,13 @@ public class VLC {
 		}
 	}
 
+	/**
+	 * Stops current media playback and switches the loaded file with a new
+	 * movie
+	 * 
+	 * @param videoInstance
+	 *            the new video to be loaded
+	 */
 	public void switchMediaFile(Video videoInstance) {
 		stopMedia();
 		loadMedia(videoInstance);
@@ -174,7 +221,6 @@ public class VLC {
 	public void playMedia() {
 		if (vlcFound && directMediaPlayer != null) {
 			directMediaPlayer.play();
-			isPlaying = true;
 		}
 
 	}
@@ -185,7 +231,6 @@ public class VLC {
 	public void pauseMedia() {
 		if (vlcFound && directMediaPlayer != null) {
 			directMediaPlayer.pause();
-			isPlaying = false;
 		}
 
 	}
@@ -196,7 +241,6 @@ public class VLC {
 	public void stopMedia() {
 		if (vlcFound && directMediaPlayer != null) {
 			directMediaPlayer.stop();
-			isPlaying = false;
 		}
 
 	}
@@ -259,10 +303,18 @@ public class VLC {
 		}
 	}
 
+	/**
+	 * Returns wether or not the volume is muted
+	 * 
+	 * @return true if the volume is muted, false if the volume is not muted
+	 */
 	public boolean isMuted() {
 		return isMuted;
 	}
 
+	/**
+	 * Toggles the volume's state between last valid value and 0
+	 */
 	public void toggleMuted() {
 		if (isMuted) {
 			if (vlcFound && directMediaPlayer != null) {
@@ -277,10 +329,22 @@ public class VLC {
 		}
 	}
 
+	/**
+	 * Getter method for the last valid volume value
+	 * 
+	 * @return the last saved volume level
+	 */
 	public int getlastVolume() {
 		return lastVolume;
 	}
 
+	/**
+	 * Sets the volume to a new value considering min and max possible values
+	 * and saves it as valid
+	 * 
+	 * @param newVolume
+	 *            the new volume level
+	 */
 	public void setVolume(int newVolume) {
 		if (vlcFound && directMediaPlayer != null && directMediaPlayer.getLength() != -1) {
 			if (newVolume > MAX_VOLUME) {
@@ -298,6 +362,11 @@ public class VLC {
 		}
 	}
 
+	/**
+	 * Getter method for the current volume level
+	 * 
+	 * @return the current volume the movie is played at
+	 */
 	public int getVolume() {
 		if (vlcFound && directMediaPlayer != null) {
 			return directMediaPlayer.getVolume();
@@ -306,10 +375,22 @@ public class VLC {
 		}
 	}
 
+	/**
+	 * Returns the tick spacing used on volume in- and de-crease
+	 * 
+	 * @return the size of the tick between to volume levels
+	 */
 	public int getVolumeSteps() {
 		return VOLUME_STEPS;
 	}
 
+	/**
+	 * Converts the current playback time and the total length of the movie file
+	 * into a formatted String of type 00:00:00 / 00:00:00 000,0 with the last 4
+	 * digits beeing a procentual representation of progress in playback
+	 * 
+	 * @return
+	 */
 	public String getFormattedTimeToString() {
 		String strUpdatedTime = null;
 		Double procentualProgress = ((double) directMediaPlayer.getTime() / directMediaPlayer.getLength()) * 100;
@@ -339,9 +420,23 @@ public class VLC {
 		return strUpdatedTime;
 	}
 
+	/** The width of the image that is used for video rendering* */
 	private int imageWidth;
+	/** The height of the image that is used for video rendering* */
 	private int imageHeight;
 
+	/**
+	 * Switches the current canvas panel to a new version that is passed to this
+	 * method and reinitializes the media player with new image resolution
+	 * values used for rendering the movie
+	 * 
+	 * @param newSurface
+	 *            The new panel that will be used as canvas
+	 * @param safeTime
+	 *            If true, the current playback time will be saved and jumped to
+	 *            after reloading the canvas. If false, playback will start at
+	 *            the beginning of the movie file
+	 */
 	public void switchSurface(MoviePanel newSurface, boolean safeTime) {
 		long time = 0;
 		if (directMediaPlayer != null) {
@@ -352,6 +447,7 @@ public class VLC {
 		}
 		if (currentPanel != null) {
 			currentPanel.setInactive();
+			currentPanel.setCurrentImage(null);
 		}
 		currentPanel = newSurface;
 		if (currentPanel != null) {
@@ -393,10 +489,15 @@ public class VLC {
 		}
 	}
 
+	/**
+	 * Based on the saved Aspect ratio in this class the ideal image resolution
+	 * is calculated. Always smaller than the canvas panel and always in
+	 * expected ratio.
+	 */
 	public void calcAspectRatio() {
 		imageWidth = currentPanel.getWidth();
 		imageHeight = currentPanel.getHeight();
-		if (imageWidth > imageHeight * ASPECT_RATIO) {
+		if (imageWidth >= ((imageHeight * ASPECT_RATIO / 10) * 10)) {
 			imageWidth = (int) Math.rint(imageHeight * ASPECT_RATIO / 10) * 10;
 
 		} else {

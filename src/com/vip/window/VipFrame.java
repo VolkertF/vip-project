@@ -529,6 +529,12 @@ public class VipFrame extends JFrame implements ComponentListener {
 	private ImageIcon imgIconVolumeMedium = null;
 	private ImageIcon imgIconVolumeHigh = null;
 	private ImageIcon imgIconFullscreen = null;
+	private ImageIcon imgIconHate = null;
+	private ImageIcon imgIconBad = null;
+	private ImageIcon imgIconIndifferent = null;
+	private ImageIcon imgIconGood = null;
+	private ImageIcon imgIconPerfect = null;
+	private ImageIcon imgIconDelete = null;
 
 	/**
 	 * Tries to load the image icons into the program
@@ -605,6 +611,42 @@ public class VipFrame extends JFrame implements ComponentListener {
 		if (url != null) {
 			img = Toolkit.getDefaultToolkit().createImage(url);
 			imgIconFullscreen = new ImageIcon(img);
+		}
+
+		url = Main.class.getResource("/hate.png");
+		if (url != null) {
+			img = Toolkit.getDefaultToolkit().createImage(url);
+			imgIconHate = new ImageIcon(img);
+		}
+
+		url = Main.class.getResource("/bad.png");
+		if (url != null) {
+			img = Toolkit.getDefaultToolkit().createImage(url);
+			imgIconBad = new ImageIcon(img);
+		}
+
+		url = Main.class.getResource("/indifferent.png");
+		if (url != null) {
+			img = Toolkit.getDefaultToolkit().createImage(url);
+			imgIconIndifferent = new ImageIcon(img);
+		}
+
+		url = Main.class.getResource("/good.png");
+		if (url != null) {
+			img = Toolkit.getDefaultToolkit().createImage(url);
+			imgIconGood = new ImageIcon(img);
+		}
+
+		url = Main.class.getResource("/perfect.png");
+		if (url != null) {
+			img = Toolkit.getDefaultToolkit().createImage(url);
+			imgIconPerfect = new ImageIcon(img);
+		}
+
+		url = Main.class.getResource("/bin.png");
+		if (url != null) {
+			img = Toolkit.getDefaultToolkit().createImage(url);
+			imgIconDelete = new ImageIcon(img);
 		}
 	}
 
@@ -782,7 +824,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 	public void updateGUI() {
 		if (!controller.isFullscreen()) {
 			VLC vlcInstance = controller.getVLC();
-			// updateRatingIndicators();
+			updateRatingIndicators();
 
 			if (vlcInstance.isVLCInstalled() && vlcInstance.getMediaPlayer() != null
 			        && vlcInstance.getMediaPlayer().getLength() != -1) {
@@ -885,6 +927,18 @@ public class VipFrame extends JFrame implements ComponentListener {
 		}
 		String ratingString = String.format("%3.1f", (jsliderRating.getValue() / 2.0));
 		jlabelRating.setText(ratingString);
+		double rating = jsliderRating.getValue() / 2.0;
+		if (rating == 0.0) {
+			jlabelRating.setIcon(imgIconHate);
+		} else if (rating < 3.5) {
+			jlabelRating.setIcon(imgIconBad);
+		} else if (rating < 7.0) {
+			jlabelRating.setIcon(imgIconIndifferent);
+		} else if (rating < 10.0) {
+			jlabelRating.setIcon(imgIconGood);
+		} else {
+			jlabelRating.setIcon(imgIconPerfect);
+		}
 	}
 
 	/**
@@ -942,12 +996,13 @@ public class VipFrame extends JFrame implements ComponentListener {
 			Image img = Toolkit.getDefaultToolkit().createImage(url);
 			imgIcon = new ImageIcon(img);
 		}
-		JButton jbtnOmDbFetch = new JButton("IMDB");
+		JButton jbtnOmDbFetch = new JButton("IMDb");
 		if (imgIcon != null) {
 			jbtnOmDbFetch.setIcon(imgIcon);
 		} else {
 			jbtnOmDbFetch.setText("Fetch IMDB");
 		}
+		jbtnOmDbFetch.setToolTipText("Opens a search dialog so you can fetch the information that you want from IMDb");
 		jbtnOmDbFetch.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent me) {
@@ -959,18 +1014,28 @@ public class VipFrame extends JFrame implements ComponentListener {
 			}
 		});
 
-		JButton jbtnDeleteMovie = new JButton("Remove Movie");
+		JButton jbtnDeleteMovie = new JButton();
+		if (imgIconDelete != null) {
+			jbtnDeleteMovie.setIcon(imgIconDelete);
+		} else {
+			jbtnDeleteMovie.setText("Remove Movie");
+		}
+		jbtnDeleteMovie.setToolTipText("Deletes the currently selected movie from this program");
 		jbtnDeleteMovie.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent me) {
-				int dialogButton = JOptionPane.showConfirmDialog(null,
-		                "Are you sure you want to remove the movie \"" + SearchSortController.getInstance()
-		                        .getVideoByIndex(jlstFileList.getSelectedIndex()).getTitle() + "\" from this list?",
-		                "Warning", JOptionPane.YES_NO_OPTION);
-				if (dialogButton == JOptionPane.YES_OPTION) {
-					SearchSortController.getInstance().deleteMovieFromList(
-		                    SearchSortController.getInstance().getVideoByIndex(jlstFileList.getSelectedIndex()));
-				} else if (dialogButton == JOptionPane.NO_OPTION) {
+				if (jlstFileList.getSelectedIndex() >= 0) {
+					int dialogButton = JOptionPane.showConfirmDialog(null,
+		                    "Are you sure you want to remove the movie \""
+		                            + SearchSortController.getInstance()
+		                                    .getVideoByIndex(jlstFileList.getSelectedIndex()).getTitle()
+		                            + "\" from this list?",
+		                    "Warning", JOptionPane.YES_NO_OPTION);
+					if (dialogButton == JOptionPane.YES_OPTION) {
+						SearchSortController.getInstance().deleteMovieFromList(
+		                        SearchSortController.getInstance().getVideoByIndex(jlstFileList.getSelectedIndex()));
+					} else if (dialogButton == JOptionPane.NO_OPTION) {
+					}
 				}
 			}
 		});

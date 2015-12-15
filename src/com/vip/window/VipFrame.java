@@ -655,6 +655,9 @@ public class VipFrame extends JFrame implements ComponentListener {
 	/** Reference to the playbutton of the mainframe **/
 	JButton jbtnPlayMovie;
 
+	/** Font used from to text area to display information **/
+	private final Font plainFont = new Font("Tahoma", Font.PLAIN, 14);
+
 	/**
 	 * Create Sub-sub- components in the movie panel including the JVLC plugin
 	 * to play movies Maybe also a section to control the movie (play, pause,
@@ -736,8 +739,16 @@ public class VipFrame extends JFrame implements ComponentListener {
 		if (imgIconVolumeMedium != null) {
 			jbtnVolume.setIcon(imgIconVolumeMedium);
 		}
-		jbtnVolume.setToolTipText("Mutes the movie if clicked. If clicked again, volume will resume to original level");
+		jbtnVolume.setToolTipText("Mutes the movie if clicked");
 		jbtnVolume.addActionListener(controller.getButtonParser());
+		jbtnVolume.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent me) {
+				if (SwingUtilities.isMiddleMouseButton(me)) {
+					controller.getVLC().setVolume(VLC.getMaxVolume() / 2);
+				}
+			}
+		});
 		jbtnVolume.setActionCommand("jbtnVolume");
 
 		jsliderVolume = new JSlider(JSlider.HORIZONTAL, VLC.getMinVolume(), VLC.getMaxVolume(),
@@ -776,6 +787,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 
 		jlabelMovieTimer = new JLabel();
 		jlabelMovieTimer.setHorizontalAlignment(SwingConstants.CENTER);
+		jlabelMovieTimer.setFont(plainFont);
 		jlabelMovieTimer.setText("00:00:00 / 00:00:00   0%");
 
 		if (!controller.getVLC().isVLCInstalled()) {
@@ -826,6 +838,10 @@ public class VipFrame extends JFrame implements ComponentListener {
 	public void updateGUI() {
 		if (!controller.isFullscreen()) {
 			VLC vlcInstance = controller.getVLC();
+			if (jlstFileList.getSelectedIndex() >= 0) {
+				controller.updateIntel(
+				        SearchSortController.getInstance().getVideoByIndex(jlstFileList.getSelectedIndex()));
+			}
 			updateRatingIndicators();
 
 			if (vlcInstance.isVLCInstalled() && vlcInstance.getMediaPlayer() != null
@@ -892,6 +908,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 			if (volume == 0) {
 				if (imgIconVolumeMuted != null) {
 					jbtnVolume.setIcon(imgIconVolumeMuted);
+					jbtnVolume.setToolTipText("Unmutes the movie if clicked");
 				}
 			} else if (volume < 33) {
 				if (imgIconVolumeLow != null) {
@@ -959,6 +976,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 		return jtfSearch;
 	}
 
+	/** Font used from to text area to display information **/
 	private final Font boldFont = new Font("Tahoma", Font.BOLD, 14);
 
 	/**

@@ -7,7 +7,9 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -20,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,6 +31,7 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -54,6 +58,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicSliderUI;
 
+import com.vip.Main;
 import com.vip.attributes.Video;
 import com.vip.controllers.Controller;
 import com.vip.controllers.DatabaseController;
@@ -79,7 +84,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 		        // Would need a "changed" boolean
 				controller.getVLC().stopMedia();
 				dataController.saveAll(SearchSortController.getInstance().getMovies());
-				thisFrame.dispose();
+				dispose();
 				System.exit(0);
 			}
 		});
@@ -101,9 +106,6 @@ public class VipFrame extends JFrame implements ComponentListener {
 		setVisible(true);
 		controller.getVLC().switchSurface(mainMoviePanel, false);
 	}
-
-	/** Reference to the main frame **/
-	private VipFrame thisFrame = this;
 
 	/** Indicates the default delay after firing a resizing event in ms **/
 	private final int RESIZE_REFRESH_RATE = 50;
@@ -288,6 +290,9 @@ public class VipFrame extends JFrame implements ComponentListener {
 	 */
 	private JMenuItem jmiJournals;
 
+	/** MenuItem which will show the user credits on used resources **/
+	private JMenuItem jmiCredits;
+
 	/** The slider that is used to manipulate the current video's rating **/
 	private JSlider jsliderRating;
 
@@ -397,16 +402,19 @@ public class VipFrame extends JFrame implements ComponentListener {
 
 		jpnlExplorer = new JPanel();
 		jpnlExplorer.setLayout(new GridBagLayout());
-		jpnlExplorer.setBorder(BorderFactory.createTitledBorder("Explorer"));
+//		jpnlExplorer.setBorder(BorderFactory.createTitledBorder("Explorer"));
+		jpnlExplorer.setBorder(BorderFactory.createTitledBorder(""));
 		jpnlExplorer.setPreferredSize(new Dimension(250, 800));
 
 		jpnlMovie = new JPanel();
 		jpnlMovie.setLayout(new GridBagLayout());
-		jpnlMovie.setBorder(BorderFactory.createTitledBorder("Movie"));
+//		jpnlMovie.setBorder(BorderFactory.createTitledBorder("Movie"));
+		jpnlMovie.setBorder(BorderFactory.createTitledBorder(""));
 
 		jpnlIntel = new JPanel();
 		jpnlIntel.setLayout(new GridBagLayout());
-		jpnlIntel.setBorder(BorderFactory.createTitledBorder("Intel"));
+//		jpnlIntel.setBorder(BorderFactory.createTitledBorder("Intel"));
+		jpnlIntel.setBorder(BorderFactory.createTitledBorder(""));
 		jpnlIntel.setPreferredSize(new Dimension(1200, 150));
 
 		addComponent(0, 0, 1, 2, 0.35, 1.0, jpnlMain, jpnlExplorer, defaultInsets);
@@ -501,6 +509,90 @@ public class VipFrame extends JFrame implements ComponentListener {
 
 	}
 
+	private ImageIcon imgIconPlay = null;
+	private ImageIcon imgIconStop = null;
+	private ImageIcon imgIconNextChapter = null;
+	private ImageIcon imgIconPreviousChapter = null;
+	private ImageIcon imgIconNextMovie = null;
+	private ImageIcon imgIconPreviousMovie = null;
+	private ImageIcon imgIconVolumeMuted = null;
+	private ImageIcon imgIconVolumeLow = null;
+	private ImageIcon imgIconVolumeMedium = null;
+	private ImageIcon imgIconVolumeHigh = null;
+	private ImageIcon imgIconFullscreen = null;
+
+	/**
+	 * Tries to load the image icons into the program
+	 */
+	public void initializeImageIcons() {
+		URL url = Main.class.getResource("/play.png");
+		Image img = Toolkit.getDefaultToolkit().createImage(url);
+		if (url != null) {
+			img = Toolkit.getDefaultToolkit().createImage(url);
+			imgIconPlay = new ImageIcon(img);
+		}
+
+		url = Main.class.getResource("/stop.png");
+		if (url != null) {
+			img = Toolkit.getDefaultToolkit().createImage(url);
+			imgIconStop = new ImageIcon(img);
+		}
+
+		url = Main.class.getResource("/chapter_next.png");
+		if (url != null) {
+			img = Toolkit.getDefaultToolkit().createImage(url);
+			imgIconNextChapter = new ImageIcon(img);
+		}
+
+		url = Main.class.getResource("/chapter_previous.png");
+		if (url != null) {
+			img = Toolkit.getDefaultToolkit().createImage(url);
+			imgIconPreviousChapter = new ImageIcon(img);
+		}
+
+		url = Main.class.getResource("/movie_next.png");
+		if (url != null) {
+			img = Toolkit.getDefaultToolkit().createImage(url);
+			imgIconNextMovie = new ImageIcon(img);
+		}
+
+		url = Main.class.getResource("/movie_previous.png");
+		if (url != null) {
+			img = Toolkit.getDefaultToolkit().createImage(url);
+			imgIconPreviousMovie = new ImageIcon(img);
+		}
+
+		url = Main.class.getResource("/volume_muted.png");
+		if (url != null) {
+			img = Toolkit.getDefaultToolkit().createImage(url);
+			imgIconVolumeMuted = new ImageIcon(img);
+		}
+
+		url = Main.class.getResource("/volume_low.png");
+		if (url != null) {
+			img = Toolkit.getDefaultToolkit().createImage(url);
+			imgIconVolumeLow = new ImageIcon(img);
+		}
+
+		url = Main.class.getResource("/volume_medium.png");
+		if (url != null) {
+			img = Toolkit.getDefaultToolkit().createImage(url);
+			imgIconVolumeMedium = new ImageIcon(img);
+		}
+
+		url = Main.class.getResource("/volume_high.png");
+		if (url != null) {
+			img = Toolkit.getDefaultToolkit().createImage(url);
+			imgIconVolumeHigh = new ImageIcon(img);
+		}
+
+		url = Main.class.getResource("/fullscreen.png");
+		if (url != null) {
+			img = Toolkit.getDefaultToolkit().createImage(url);
+			imgIconFullscreen = new ImageIcon(img);
+		}
+	}
+
 	/**
 	 * Create Sub-sub- components in the movie panel including the JVLC plugin
 	 * to play movies Maybe also a section to control the movie (play, pause,
@@ -515,29 +607,78 @@ public class VipFrame extends JFrame implements ComponentListener {
 		jpnlMovieControls.setLayout(new GridBagLayout());
 		addComponent(0, 1, 1, 1, 1.0, 0.05, jpnlMovie, jpnlMovieControls, defaultInsets);
 
-		JButton jbtnPlayMovie = new JButton("Play/Pause");
+		initializeImageIcons();
+
+		JButton jbtnPlayMovie = new JButton();
+		if (imgIconPlay != null) {
+			jbtnPlayMovie.setIcon(imgIconPlay);
+		} else {
+			jbtnPlayMovie.setText("Play");
+		}
+		jbtnPlayMovie.setToolTipText("Toggles movie playback");
 		jbtnPlayMovie.addActionListener(controller.getButtonParser());
 		jbtnPlayMovie.setActionCommand("jbtnToggleMoviePlayback");
 
-		JButton jbtnStopMovie = new JButton("Stop");
+		JButton jbtnStopMovie = new JButton();
+		if (imgIconStop != null) {
+			jbtnStopMovie.setIcon(imgIconStop);
+		} else {
+			jbtnStopMovie.setText("Stop");
+		}
+		jbtnStopMovie.setToolTipText("Stops current movie playback");
 		jbtnStopMovie.addActionListener(controller.getButtonParser());
 		jbtnStopMovie.setActionCommand("jbtnStopMovie");
 
-		JButton jbtnPreviousMovie = new JButton("Previous Movie");
+		JButton jbtnPreviousMovie = new JButton();
+		if (imgIconStop != null) {
+			jbtnPreviousMovie.setIcon(imgIconPreviousMovie);
+		} else {
+			jbtnPreviousMovie.setText("Previous Movie");
+		}
+		jbtnPreviousMovie.setToolTipText("Jumps to the previous movie item in the list");
 		jbtnPreviousMovie.addActionListener(controller.getButtonParser());
 		jbtnPreviousMovie.setActionCommand("jbtnPreviousMovie");
 
-		JButton jbtnNextMovie = new JButton("Next Movie");
+		JButton jbtnNextMovie = new JButton();
+		if (imgIconNextMovie != null) {
+			jbtnNextMovie.setIcon(imgIconNextMovie);
+		} else {
+			jbtnNextMovie.setText("Next Movie");
+		}
+		jbtnNextMovie.setToolTipText("Jumps to the next movie item in the list");
 		jbtnNextMovie.addActionListener(controller.getButtonParser());
 		jbtnNextMovie.setActionCommand("jbtnNextMovie");
 
-		JButton jbtnPreviousChapter = new JButton("Previous Chapter");
+		JButton jbtnPreviousChapter = new JButton();
+		if (imgIconPreviousChapter != null) {
+			jbtnPreviousChapter.setIcon(imgIconPreviousChapter);
+		} else {
+			jbtnPreviousChapter.setText("Previous Chapter");
+		}
+		jbtnPreviousChapter.setToolTipText(
+		        "<html>Jumps to the previous chapter of the currently playing movie,<br> if it exits. otherwise it will jump back in the movie a few percent of total time</html>");
 		jbtnPreviousChapter.addActionListener(controller.getButtonParser());
 		jbtnPreviousChapter.setActionCommand("jbtnPreviousChapter");
 
-		JButton jbtnNextChapter = new JButton("Next Chapter");
+		JButton jbtnNextChapter = new JButton();
+		if (imgIconNextChapter != null) {
+			jbtnNextChapter.setIcon(imgIconNextChapter);
+		} else {
+			jbtnNextChapter.setText("Previous Chapter");
+		}
+		jbtnNextChapter.setToolTipText(
+		        "<html>Jumps to the next chapter of the currently playing movie,<br> if it exits. otherwise it will jump forward in the movie a few percent of total time</html>");
 		jbtnNextChapter.addActionListener(controller.getButtonParser());
 		jbtnNextChapter.setActionCommand("jbtnNextChapter");
+
+		jbtnVolume = new JButton(Integer.toString(((VLC.getMinVolume() + VLC.getMaxVolume()) / 2)) + "%");
+		if (imgIconVolumeMedium != null) {
+			jbtnVolume.setIcon(imgIconVolumeMedium);
+		}
+		jbtnVolume.setToolTipText("Mutes the movie if clicked. If clicked again, volume will resume to original level");
+		jbtnVolume.setHorizontalAlignment(SwingConstants.RIGHT);
+		jbtnVolume.addActionListener(controller.getButtonParser());
+		jbtnVolume.setActionCommand("jbtnVolume");
 
 		jsliderVolume = new JSlider(JSlider.HORIZONTAL, VLC.getMinVolume(), VLC.getMaxVolume(),
 		        ((VLC.getMinVolume() + VLC.getMaxVolume()) / 2));
@@ -551,11 +692,13 @@ public class VipFrame extends JFrame implements ComponentListener {
 			}
 		});
 
-		jbtnVolume = new JButton(Integer.toString(((VLC.getMinVolume() + VLC.getMaxVolume()) / 2)) + "%");
-		jbtnVolume.addActionListener(controller.getButtonParser());
-		jbtnVolume.setActionCommand("jbtnVolume");
-
-		JButton jbtnFullscreen = new JButton("Fullscreen");
+		JButton jbtnFullscreen = new JButton();
+		if (imgIconFullscreen != null) {
+			jbtnFullscreen.setIcon(imgIconFullscreen);
+		} else {
+			jbtnFullscreen.setText("Fullscreen");
+		}
+		jbtnFullscreen.setToolTipText("Sets display mode to fullscreen");
 		jbtnFullscreen.addActionListener(controller.getButtonParser());
 		jbtnFullscreen.setActionCommand("jbtnFullscreen");
 
@@ -623,7 +766,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 	public void updateGUI() {
 		if (!controller.isFullscreen()) {
 			VLC vlcInstance = controller.getVLC();
-			// updateRatingSlider();
+//			updateRatingIndicators();
 
 			if (vlcInstance.isVLCInstalled() && vlcInstance.getMediaPlayer() != null
 			        && vlcInstance.getMediaPlayer().getLength() != -1) {
@@ -644,7 +787,10 @@ public class VipFrame extends JFrame implements ComponentListener {
 				}
 			} else {
 				if (vlcInstance.isVLCInstalled()) {
+					jsliderMovieProgress.setValue(0);
 					jlabelMovieTimer.setText("00:00:00 / 00:00:00   0%");
+
+					jsliderVolume.setValue((VLC.getMinVolume() + VLC.getMaxVolume()) / 2);
 				}
 			}
 		}
@@ -664,8 +810,35 @@ public class VipFrame extends JFrame implements ComponentListener {
 	 * current volume level.
 	 **/
 	public void updateVolumeIndicators() {
-		jbtnVolume.setText(controller.getVLC().getMediaPlayer().getVolume() + "%");
-		jsliderVolume.setValue(controller.getVLC().getMediaPlayer().getVolume());
+		int volume = controller.getVLC().getMediaPlayer().getVolume();
+		if (volume >= 0) {
+			jbtnVolume.setText(volume + "%");
+			if (volume == 0) {
+				if (imgIconVolumeMuted != null) {
+					jbtnVolume.setIcon(imgIconVolumeMuted);
+				}
+			} else if (volume < 33) {
+				if (imgIconVolumeLow != null) {
+					jbtnVolume.setIcon(imgIconVolumeLow);
+				}
+			} else if (volume < 66) {
+				if (imgIconVolumeMedium != null) {
+					jbtnVolume.setIcon(imgIconVolumeMedium);
+				}
+			} else {
+				if (imgIconVolumeHigh != null) {
+					jbtnVolume.setIcon(imgIconVolumeHigh);
+				}
+			}
+			jsliderVolume.setValue(controller.getVLC().getMediaPlayer().getVolume());
+		} else {
+			jbtnVolume.setText("0%");
+			jsliderVolume.setValue(0);
+			if (imgIconVolumeMuted != null) {
+				jbtnVolume.setIcon(imgIconVolumeMuted);
+			}
+		}
+
 	}
 
 	/**
@@ -732,7 +905,18 @@ public class VipFrame extends JFrame implements ComponentListener {
 		jlabelRating = new JLabel(Integer.toString(jsliderRating.getValue()));
 		jlabelRating.setHorizontalAlignment(SwingConstants.CENTER);
 
-		JButton jbtnOmDbFetch = new JButton("Fetch IMDB");
+		ImageIcon imgIcon = null;
+		URL url = Main.class.getResource("/online.png");
+		if (url != null) {
+			Image img = Toolkit.getDefaultToolkit().createImage(url);
+			imgIcon = new ImageIcon(img);
+		}
+		JButton jbtnOmDbFetch = new JButton("IMDB");
+		if (imgIcon != null) {
+			jbtnOmDbFetch.setIcon(imgIcon);
+		} else {
+			jbtnOmDbFetch.setText("Fetch IMDB");
+		}
 		jbtnOmDbFetch.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent me) {
@@ -800,10 +984,12 @@ public class VipFrame extends JFrame implements ComponentListener {
 		jmiMeetTheTeam = new JMenuItem("Meet the Team");
 		jmiWatchCode = new JMenuItem("Watch the Code in GitHub");
 		jmiJournals = new JMenuItem("Programming-journals");
+		jmiCredits = new JMenuItem("Credits");
 		jmAbout.add(jmiWebsite);
 		jmAbout.add(jmiMeetTheTeam);
 		jmAbout.add(jmiWatchCode);
 		jmAbout.add(jmiJournals);
+		jmAbout.add(jmiCredits);
 
 		// Adding all menus to the actual menuBar
 		jmbMenu.add(jmFile);
@@ -835,10 +1021,26 @@ public class VipFrame extends JFrame implements ComponentListener {
 			e.printStackTrace();
 		}
 
+		jmiCredits.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				JOptionPane.showMessageDialog(rootPane, "Icons made by Google from www.flaticon.com", "Credits",
+		                JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
+
 		// Adding AL to the close button
 		jmiClose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				// TODO ?
+		        // Right now on exit we're default saving the database's
+		        // changes.
+		        // Might could open a window and ask for saving changes
+		        // Would need a "changed" boolean
+				controller.getVLC().stopMedia();
+				dataController.saveAll(SearchSortController.getInstance().getMovies());
 				dispose();
+				System.exit(0);
 			}
 		});
 
@@ -972,19 +1174,6 @@ public class VipFrame extends JFrame implements ComponentListener {
 			resizeTimer.stop();
 		}
 	});
-
-	/*
-	 * /** //Maybe the above implementation should do the same things. TODO: Pls
-	 * consider doing it the above way Fabian :D TODO: Javadoc / private class
-	 * TimerListener implements ActionListener {
-	 * 
-	 * @Override public void actionPerformed(ActionEvent arg0) {
-	 * System.out.println("Frame resized! " + thisFrame.getWidth() + " x " +
-	 * thisFrame.getHeight()); controller.getVLC().switchSurface(mainMoviePanel,
-	 * true); resizeTimer.stop(); }
-	 * 
-	 * }
-	 */
 
 	/**
 	 * Is called everytime the main frame is resized and starts a timer to

@@ -93,26 +93,28 @@ public class MoviePanel extends JPanel {
 				g2.setFont(font);
 				g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 				String toDisplay = "";
-				if (drawTitle) {
-					toDisplay += String.format("\"%.40s\" ", vlcInstance.getCurrentVideo().getTitle());
-				}
-				if (drawTime) {
-					String tmpString = vlcInstance.getFormattedTimeToString();
-					tmpString = tmpString.substring(0, tmpString.lastIndexOf(" "));
-					toDisplay += tmpString + " ";
-				}
-				if (drawVolume) {
-					int volume = vlcInstance.getMediaPlayer().getVolume();
-					if (volume < 0) {
-						volume = 0;
+				if (vlcInstance.getCurrentVideo() != null) {
+					if (drawTitle) {
+						toDisplay += String.format("\"%.40s\" ", vlcInstance.getCurrentVideo().getTitle());
 					}
-					toDisplay += String.format("Vol.: %03d", volume) + "% ";
-				}
-				if (drawFps) {
-					toDisplay += String.format("%03dFps ", averageFps);
-				}
-				if (currentImage != null) {
-					drawOutlineText(g2, toDisplay, currentImage.getWidth(), currentImage.getHeight());
+					if (drawTime) {
+						String tmpString = vlcInstance.getFormattedTimeToString();
+						tmpString = tmpString.substring(0, tmpString.lastIndexOf(" "));
+						toDisplay += tmpString + " ";
+					}
+					if (drawVolume) {
+						int volume = vlcInstance.getMediaPlayer().getVolume();
+						if (volume < 0) {
+							volume = 0;
+						}
+						toDisplay += String.format("Vol.: %03d", volume) + "% ";
+					}
+					if (drawFps) {
+						toDisplay += String.format("%03dFps ", averageFps);
+					}
+					if (currentImage != null) {
+						drawOutlineText(g2, toDisplay, currentImage.getWidth(), currentImage.getHeight());
+					}
 				}
 			}
 		}

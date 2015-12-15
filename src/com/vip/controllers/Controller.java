@@ -418,7 +418,7 @@ public class Controller {
 	 */
 	public void createFullscreen() {
 		isFullscreen = true;
-		fullscreenDialog = new FullscreenDialog(vipFrame, vlcInstance);
+		fullscreenDialog = new FullscreenDialog(vipFrame, vlcInstance, this);
 	}
 
 	/**

@@ -12,7 +12,7 @@ public class Main {
 	private static final int UPDATE_RATE = 100;
 
 	public static void main(String[] args) {
-		URL url = Main.class.getResource("/Icon.png");
+		URL url = Main.class.getResource("/icon.png");
 		Image iconImage = Toolkit.getDefaultToolkit().createImage(url);
 		final VipFrame f = new VipFrame();
 		f.setIconImage(iconImage);

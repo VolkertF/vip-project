@@ -244,6 +244,7 @@ public class VLC {
 	public void stopMedia() {
 		if (vlcFound && directMediaPlayer != null) {
 			directMediaPlayer.stop();
+			currentPanel.setCurrentImage(null);
 		}
 
 	}

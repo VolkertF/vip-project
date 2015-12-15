@@ -2,6 +2,8 @@ package com.vip.window;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -26,6 +28,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.vip.Main;
 import com.vip.attributes.Video;
 import com.vip.controllers.Controller;
 import com.vip.controllers.OMDBController;
@@ -99,6 +102,9 @@ public class OmdbRequest extends JFrame {
 		this.imageUrls = fillArrayListFromArrayList(this.searchResult);
 		this.controller = newController;
 
+		URL url = Main.class.getResource("/icon.png");
+		Image iconImage = Toolkit.getDefaultToolkit().createImage(url);
+		this.setIconImage(iconImage);
 		this.setTitle("IMDB Information Fetcher");
 		this.setLayout(new BorderLayout());
 		this.add(new JScrollPane(resultList), BorderLayout.LINE_END);
@@ -143,7 +149,8 @@ public class OmdbRequest extends JFrame {
 					String[] temp = ((ImageIcon) resultList.getSelectedValue()).getDescription().split("%%%%");
 					String[] tempTemp = temp[3].split("\"");
 					Map<String, String> infoMap = OMDBController.getInstance().getById(tempTemp[1]);
-					// Updates the video's data and repaints the intel-panel and the list
+					// Updates the video's data and repaints the intel-panel and
+		            // the list
 					SearchSortController.getInstance().assignMapToVideo(infoMap, video);
 					video.setChanged(true);
 					controller.updateIntel(video);

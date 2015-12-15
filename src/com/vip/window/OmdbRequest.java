@@ -99,6 +99,7 @@ public class OmdbRequest extends JFrame {
 		this.imageUrls = fillArrayListFromArrayList(this.searchResult);
 		this.controller = newController;
 
+		this.setTitle("IMDB Information Fetcher");
 		this.setLayout(new BorderLayout());
 		this.add(new JScrollPane(resultList), BorderLayout.LINE_END);
 
@@ -144,6 +145,7 @@ public class OmdbRequest extends JFrame {
 					Map<String, String> infoMap = OMDBController.getInstance().getById(tempTemp[1]);
 					// Updates the video's data and repaints the intel-panel and the list
 					SearchSortController.getInstance().assignMapToVideo(infoMap, video);
+					video.setChanged(true);
 					controller.updateIntel(video);
 					controller.getFrame().getFileList().repaint();
 					dispose();

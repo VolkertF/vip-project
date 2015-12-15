@@ -34,6 +34,8 @@ public class Video {
 
 	private boolean infoFetched;
 
+	private boolean hasChanged = false;
+
 	/**
 	 * Used to instantiate Video with a file path
 	 * 
@@ -347,7 +349,7 @@ public class Video {
 	public boolean isInfoFetched() {
 		return infoFetched;
 	}
-	
+
 	/**
 	 * 
 	 * @param infoFetched
@@ -355,13 +357,21 @@ public class Video {
 	public void setInfoFetched(boolean infoFetched) {
 		this.infoFetched = infoFetched;
 	}
-	
+
+	public boolean hasChanged() {
+		return hasChanged;
+	}
+
+	public void setChanged(boolean newState) {
+		hasChanged = newState;
+	}
+
 	/**
 	 * Sets all attributes of video to another video
 	 * 
 	 * @param vid
 	 */
-	public void setAsVideo(Video vid){
+	public void setAsVideo(Video vid) {
 		this.setTitle(vid.getTitle());
 		this.setReleaseDate(vid.getReleaseDate());
 		this.setGenre(vid.getGenre());
@@ -376,39 +386,29 @@ public class Video {
 		this.setEpisode(vid.getEpisode());
 		this.setInfoFetched(vid.isInfoFetched());
 	}
-	
+
 	/**
 	 * To string override for generic object
 	 */
-	public String toString(){
-		
+	public String toString() {
+
 		return this.getTitle();
 	}
-		
+
 	/**
 	 * The toString method used for searching every part of the video
 	 * 
 	 * @return searchString
 	 */
 	public String toStringSearch() {
-		String string = ""
-				+ "\n" + this.getFilePath()
-				+ "\n" + this.getTitle()
-				+ "\n" + this.getReleaseDate()
-				+ "\n" + this.getGenre()
-				+ "\n" + this.getDirector()
-				+ "\n" + this.getCast()
-				+ "\n" + this.getWriters()
-				+ "\n" + this.getPlotSummary()
-				+ "\n" + this.getCountry()
-				+ "\n" + this.getImdbRating()
-				+ "\n" + this.getPersonalRating()
-				+ "\n" + this.getSeason()
-				+ "\n" + this.getEpisode()
-				+ "\n" + this.isInfoFetched();
+		String string = "" + "\n" + this.getFilePath() + "\n" + this.getTitle() + "\n" + this.getReleaseDate() + "\n"
+		        + this.getGenre() + "\n" + this.getDirector() + "\n" + this.getCast() + "\n" + this.getWriters() + "\n"
+		        + this.getPlotSummary() + "\n" + this.getCountry() + "\n" + this.getImdbRating() + "\n"
+		        + this.getPersonalRating() + "\n" + this.getSeason() + "\n" + this.getEpisode() + "\n"
+		        + this.isInfoFetched();
 		return string;
 	}
-	
+
 	/**
 	 * The toString used for displaying the video in the GUI
 	 * 

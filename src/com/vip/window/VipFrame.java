@@ -723,6 +723,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 					Video videoInstance = SearchSortController.getInstance()
 		                    .getVideoByIndex(jlstFileList.getSelectedIndex());
 					videoInstance.setPersonalRating(newRating);
+					videoInstance.setChanged(true);
 					controller.updateIntel(videoInstance);
 				}
 			}

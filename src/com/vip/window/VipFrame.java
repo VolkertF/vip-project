@@ -1080,8 +1080,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 			});
 
 	/*
-	 * /** //Maybe the above implementation should do the same things. TODO: Pls
-	 * consider doing it the above way Fabian :D TODO: Javadoc / private class
+	 * /**TODO: Javadoc / private class
 	 * TimerListener implements ActionListener {
 	 * 
 	 * @Override public void actionPerformed(ActionEvent arg0) {

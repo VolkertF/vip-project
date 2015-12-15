@@ -98,7 +98,7 @@ public class OmdbRequest extends JFrame {
 		this.searchResult = switchArrayList(searchResults);
 		this.imageUrls = fillArrayListFromArrayList(this.searchResult);
 		this.controller = newController;
-
+		//TODO: redesigning Layout to show the Fetch button correctly
 		this.setTitle("IMDB Information Fetcher");
 		this.setLayout(new BorderLayout());
 		this.add(new JScrollPane(resultList), BorderLayout.LINE_END);

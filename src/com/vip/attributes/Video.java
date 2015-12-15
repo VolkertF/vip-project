@@ -415,12 +415,11 @@ public class Video {
 	 * @return fullString
 	 */
 	public String toStringFull() {
-		String string = "File Path: " + this.getFilePath() + "\nTitle: " + this.getTitle() + "\nRelease Date: "
-		        + this.getReleaseDateString() + "\nGenre: " + this.getGenreString() + "\nDirector: "
-		        + this.getDirector() + "\nCast: " + this.getCastString() + "\nWriters: " + this.getWritersString()
-		        + "\nPlot Summary: " + this.getPlotSummary() + "\nCountry: " + this.getCountry() + "\nIMDb Rating: "
-		        + this.getImdbRating() + "\nPersonal Rating: " + this.getPersonalRating() / 2 + "\nSeason: "
-		        + this.getSeason() + "\nEpisode: " + this.getEpisode() + "\nInfo Fetched: " + this.isInfoFetched();
+		String string = "File Path: " + this.getFilePath() + "\n\nTitle: " + this.getTitle() + "\n\nRelease Date: " + this.getReleaseDateString()
+		        + "\t\t\tCountry: " + this.getCountry() + "\n\nGenre: "  + this.getGenreString() + "\t\t\tDirector: " + this.getDirector() + "\n\nCast: " + this.getCastString()
+		        + "\n\nWriters: " + this.getWritersString() + "\n\nIMDb Rating: " + this.getImdbRating()
+		        + "\t\t\tPersonal Rating: " + this.getPersonalRating() / 2 + "\n\nSeason: " + this.getSeason()
+		        + "\t\t\tEpisode: " + this.getEpisode() + "\n\nPlot Summary: " + this.getPlotSummary();
 
 		return string;
 	}

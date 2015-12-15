@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -54,6 +55,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicSliderUI;
@@ -957,6 +959,8 @@ public class VipFrame extends JFrame implements ComponentListener {
 		return jtfSearch;
 	}
 
+	private final Font boldFont = new Font("Tahoma", Font.BOLD, 14);
+
 	/**
 	 * Create Sub-sub-components in the intel panel for showing information on
 	 * the selected video file in the explorer section
@@ -1049,13 +1053,19 @@ public class VipFrame extends JFrame implements ComponentListener {
 		jlabelRating.setBorder(BorderFactory.createTitledBorder(""));
 
 		jtaMediaInfo = new JTextArea(20, 1);
+		jtaMediaInfo.setForeground(Color.DARK_GRAY);
+		jtaMediaInfo.setFont(boldFont);
 		jtaMediaInfo.setEditable(false);
 		jtaMediaInfo.setFocusable(false);
 		jtaMediaInfo.setLineWrap(true);
+		jtaMediaInfo.setWrapStyleWord(true);
 
 		JScrollPane scrollPane = new JScrollPane(jtaMediaInfo);
 		jtaMediaInfo.setOpaque(false);
 		jtaMediaInfo.setBackground(new Color(0, 0, 0, 0));
+		Border border = BorderFactory.createEmptyBorder(0, 0, 0, 0);
+		scrollPane.setViewportBorder(border);
+		scrollPane.setBorder(border);
 		scrollPane.getViewport().setOpaque(false);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 

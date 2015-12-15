@@ -184,7 +184,10 @@ public class OMDBConnector {
 		
 		// Tokenize the title to remove whitespace, then add them to the
 		// URI string with pluses in between each token.
-		removeWhitespace(title);
+		if(title != null && !title.isEmpty()) {
+			removeWhitespace(title);
+		}
+		
 		
 		// Add the final parameters to the URI based on the request
 		if(year != null && !year.isEmpty()) {

@@ -11,6 +11,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
 import com.vip.attributes.Video;
+import com.vip.extractor.SearchResult;
 import com.vip.window.OmdbRequest;
 
 /**
@@ -82,6 +83,14 @@ public class SearchSortController {
 	public void addMovieToList(Video vid) {
 		movies.add(vid);
 	}
+	
+	/**
+	 * 
+	 */
+	public void deleteMovieFromList(Video vid) {
+		movies.remove((Video) vid);
+		defaultJList.removeElement((Video) vid);
+	}
 
 	/**
 	 * Loads the movies from the database into the list of movies open in the
@@ -145,9 +154,14 @@ public class SearchSortController {
 	public void fetchVideoInformation(Video vid) {
 		String searchKey = (String) JOptionPane.showInputDialog(
 		        "Please enter the name of the Video that is searched for! (Previous name: " + vid.getTitle());
-		OmdbRequest window = new OmdbRequest(OMDBController.getInstance().searchApi(searchKey), vid, controller);
-		window.setEnabled(true);
-		window.setVisible(true);
+		ArrayList<SearchResult> temp = OMDBController.getInstance().searchApi(searchKey);
+		if(temp.size() <= 0) {
+			JOptionPane.showMessageDialog(null, "With your search no matches were found. Please try again");
+		} else {
+			OmdbRequest window = new OmdbRequest(temp, vid, controller);
+			window.setEnabled(true);
+			window.setVisible(true);
+		}
 	}
 
 	/**

@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -120,23 +121,7 @@ public class OmdbRequest extends JFrame {
 			}
 		});
 
-		resultList.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
-			}
-
-			@Override
-			public void mousePressed(MouseEvent arg0) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent arg0) {
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent arg0) {
-			}
-
+		resultList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				if (arg0.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(arg0)) {

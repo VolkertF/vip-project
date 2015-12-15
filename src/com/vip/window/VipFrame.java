@@ -17,6 +17,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -88,15 +89,17 @@ public class VipFrame extends JFrame implements ComponentListener {
 		defaultInsets = new Insets(2, 2, 2, 2);
 		changeGUILook();
 		controller.initConfiguration();
-		selectRootFolder();
 		buildPanels();
 		buildExplorerGUI();
 		buildMovieGUI();
 		buildIntelGUI();
 		buildMenuBar();
 		addFileListActionListener();
-		searchForMovies(rootFolderPath);
 		dataController.loadVideos();
+		if(SearchSortController.getInstance().getMovies().size() <= 0) {
+			selectRootFolder();
+			searchForMovies(rootFolderPath);
+		}
 		pack();
 		requestFocus();
 		setVisible(true);
@@ -947,9 +950,11 @@ public class VipFrame extends JFrame implements ComponentListener {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					File databaseFile = new File("test.db");
-					if(databaseFile.delete()) {
-						databaseFile.delete();
-						JOptionPane.showMessageDialog(rootPane, "The database has been resetted.", "Database deleted.", JOptionPane.INFORMATION_MESSAGE);
+					if(databaseFile.exists() && !databaseFile.isDirectory()) {
+						System.gc();
+						if(databaseFile.delete()) {
+							JOptionPane.showMessageDialog(rootPane, "The database has been resetted.", "Database deleted.", JOptionPane.INFORMATION_MESSAGE);
+						}
 					} else {
 						JOptionPane.showMessageDialog(rootPane, "An error occured during database deletion. Please try again", "Database Deletion Error", JOptionPane.WARNING_MESSAGE);
 					}

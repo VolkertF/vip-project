@@ -1222,6 +1222,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 						if (databaseFile.delete()) {
 							JOptionPane.showMessageDialog(rootPane, "The database has been resetted.",
 		                            "Database deleted.", JOptionPane.INFORMATION_MESSAGE);
+							dataController.createDatabase();
 						}
 					} else {
 						JOptionPane.showMessageDialog(rootPane,

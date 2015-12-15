@@ -69,8 +69,8 @@ public class DatabaseController {
 			}
 		} else {
 			JOptionPane.showMessageDialog(null,
-				"An Error occured during saving the Videos. No database exists. The program will now generate a new one just for you!",
-				"Database missing", JOptionPane.ERROR_MESSAGE);
+			        "An Error occured during saving the Videos. No database exists. The program will now generate a new one just for you!",
+			        "Database missing", JOptionPane.ERROR_MESSAGE);
 			database = new VideoTable();
 			database.createTable();
 		}
@@ -85,6 +85,14 @@ public class DatabaseController {
 			if (!temp.isInfoFetched()) {
 				SearchSortController.getInstance().fetchVideoInformation(temp);
 			}
+		}
+	}
+
+	public void createDatabase() {
+		File databaseFile = new File("test.db");
+		if (!databaseFile.exists() && !databaseFile.isDirectory()) {
+			database = new VideoTable();
+			database.createTable();
 		}
 	}
 }

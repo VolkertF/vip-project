@@ -1,5 +1,9 @@
 package com.vip;
 
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.net.URL;
+
 import com.vip.window.VipFrame;
 
 public class Main {
@@ -8,9 +12,11 @@ public class Main {
 	private static final int UPDATE_RATE = 100;
 
 	public static void main(String[] args) {
+		URL url = Main.class.getResource("/Icon.png");
+		Image iconImage = Toolkit.getDefaultToolkit().createImage(url);
 		final VipFrame f = new VipFrame();
+		f.setIconImage(iconImage);
 		// Update the canvas size on start-up
-		
 
 		Thread t = new Thread(new Runnable() {
 			public void run() {

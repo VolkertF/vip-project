@@ -7,6 +7,7 @@ import javax.swing.JList;
 
 import com.vip.attributes.Video;
 import com.vip.controllers.Controller;
+import com.vip.controllers.SearchSortController;
 import com.vip.media.VLC;
 
 /**
@@ -30,7 +31,18 @@ public class ButtonParser implements ActionListener {
 		JList<Video> jlstFileList = controller.getFrame().getFileList();
 		String action = ae.getActionCommand();
 		if ("jbtnToggleMoviePlayback".equals(action))
-			vlc.toggleMediaPlayback();
+			if (vlc.getCurrentVideo() != null) {
+				vlc.toggleMediaPlayback();
+			} else {
+				int index = jlstFileList.getSelectedIndex();
+				if (index >= 0) {
+					Video videoInstance = SearchSortController.getInstance()
+					        .getVideoByIndex(jlstFileList.getSelectedIndex());
+					controller.updateIntel(videoInstance);
+					controller.getVLC().switchMediaFile(videoInstance);
+				}
+			}
+
 		if ("jbtnStopMovie".equals(action))
 			vlc.stopMedia();
 		if ("jbtnPreviousMovie".equals(action)) {

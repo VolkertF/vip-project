@@ -81,9 +81,17 @@ public class SearchSortController {
 	 *            Video that will be added
 	 */
 	public void addMovieToList(Video vid) {
-		movies.add(vid);
+		boolean shouldAdd = true;
+		for (Video videoInstance : movies) {
+			if (vid.getFilePath().equals(videoInstance.getFilePath())) {
+				shouldAdd = false;
+			}
+		}
+		if (shouldAdd) {
+			movies.add(vid);
+		}
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -99,11 +107,11 @@ public class SearchSortController {
 	 * @param dbMovies
 	 *            The movies from the database
 	 */
-	public void loadDatabaseMovies(ArrayList<Video> dbMovies){
-			for(Video dbVid: dbMovies){
-				movies.add(dbVid);
-			}
-			updateList(movies);
+	public void loadDatabaseMovies(ArrayList<Video> dbMovies) {
+		for (Video dbVid : dbMovies) {
+			movies.add(dbVid);
+		}
+		updateList(movies);
 	}
 
 	/**
@@ -155,7 +163,7 @@ public class SearchSortController {
 		String searchKey = (String) JOptionPane.showInputDialog(
 		        "Please enter the name of the Video that is searched for! (Previous name: " + vid.getTitle());
 		ArrayList<SearchResult> temp = OMDBController.getInstance().searchApi(searchKey);
-		if(temp.size() <= 0) {
+		if (temp.size() <= 0) {
 			JOptionPane.showMessageDialog(null, "With your search no matches were found. Please try again");
 		} else {
 			OmdbRequest window = new OmdbRequest(temp, vid, controller);

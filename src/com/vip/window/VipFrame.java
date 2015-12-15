@@ -17,7 +17,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -804,9 +803,12 @@ public class VipFrame extends JFrame implements ComponentListener {
 		jbtnDeleteMovie.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent me) {
-				SearchSortController.getInstance().deleteMovieFromList(
-						SearchSortController.getInstance().getVideoByIndex(
-								jlstFileList.getSelectedIndex()));
+				int dialogButton = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete the movie " + SearchSortController.getInstance().getVideoByIndex(jlstFileList.getSelectedIndex()).getTitle() + "?", "Warning", JOptionPane.YES_NO_OPTION);
+				if(dialogButton == JOptionPane.YES_OPTION) {
+					SearchSortController.getInstance().deleteMovieFromList(
+							SearchSortController.getInstance().getVideoByIndex(
+									jlstFileList.getSelectedIndex()));
+				} else if(dialogButton == JOptionPane.NO_OPTION) {}
 			}
 		});
 

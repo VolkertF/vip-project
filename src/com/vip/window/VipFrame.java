@@ -959,13 +959,13 @@ public class VipFrame extends JFrame implements ComponentListener {
 			}
 		});
 
-		JButton jbtnDeleteMovie = new JButton("Delete Movie");
+		JButton jbtnDeleteMovie = new JButton("Remove Movie");
 		jbtnDeleteMovie.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent me) {
 				int dialogButton = JOptionPane.showConfirmDialog(null,
-		                "Are you sure you want to delete the movie " + SearchSortController.getInstance()
-		                        .getVideoByIndex(jlstFileList.getSelectedIndex()).getTitle() + "?",
+		                "Are you sure you want to remove the movie \"" + SearchSortController.getInstance()
+		                        .getVideoByIndex(jlstFileList.getSelectedIndex()).getTitle() + "\" from this list?",
 		                "Warning", JOptionPane.YES_NO_OPTION);
 				if (dialogButton == JOptionPane.YES_OPTION) {
 					SearchSortController.getInstance().deleteMovieFromList(

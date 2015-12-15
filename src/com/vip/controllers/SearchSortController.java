@@ -89,6 +89,7 @@ public class SearchSortController {
 		}
 		if (shouldAdd) {
 			movies.add(vid);
+			vid.setChanged(true);
 		}
 	}
 

@@ -385,9 +385,7 @@ public class Controller {
 	public void updateIntel(Video videoInstance) {
 		vipFrame.updateRatingIndicators();
 		JTextArea jtaMediaInfo = vipFrame.getIntelTextArea();
-		int position = jtaMediaInfo.getCaretPosition();
 		jtaMediaInfo.setText(videoInstance.toStringFull());
-		jtaMediaInfo.setCaretPosition(position);
 	}
 
 	/**

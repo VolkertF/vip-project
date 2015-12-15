@@ -389,21 +389,10 @@ public class Controller {
 	 */
 	public void updateIntel(Video videoInstance) {
 		vipFrame.updateRatingIndicators();
-		vipFrame.getJlblFilePath().setText(videoInstance.getFilePath());
-		vipFrame.getJlblTitle().setText(videoInstance.getTitle());
-		vipFrame.getJlblDate().setText(videoInstance.getReleaseDateString());
-		vipFrame.getJlblGenre().setText(videoInstance.getGenreString());
-		vipFrame.getJlblDirector().setText(videoInstance.getDirector());
-		vipFrame.getJlblCast().setText(videoInstance.getCastString());
-		vipFrame.getJlblWriter().setText(videoInstance.getWritersString());
-		vipFrame.getJlblCountry().setText(videoInstance.getCountry());
-		vipFrame.getJlblIMDbRating().setText(Double.toString(videoInstance.getImdbRating()));
-		vipFrame.getJlblPersonalRating().setText(Double.toString(videoInstance.getPersonalRating() / 2.0));
-		vipFrame.getJlblSeason().setText(Integer.toString(videoInstance.getSeason()));
-		vipFrame.getJlblEpisode().setText(Integer.toString(videoInstance.getSeason()));
-		vipFrame.getJtaSummary().setText(videoInstance.getPlotSummary());
-		vipFrame.getJtaSummary().setCaretPosition(0);
-
+		JTextArea jtaMediaInfo = vipFrame.getIntelTextArea();
+		int position = jtaMediaInfo.getCaretPosition();
+		jtaMediaInfo.setText(videoInstance.toStringFull());
+		jtaMediaInfo.setCaretPosition(position);
 	}
 
 	/**

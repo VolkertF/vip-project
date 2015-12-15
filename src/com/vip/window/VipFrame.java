@@ -5,8 +5,6 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -310,6 +308,9 @@ public class VipFrame extends JFrame implements ComponentListener {
 	 * The label that indicates the current value of the selected video's rating
 	 **/
 	private JLabel jlabelRating;
+
+	/** The Textarea that contains the currently selected video's intel **/
+	private JTextArea jtaMediaInfo;
 
 	/**
 	 * Helping routine for creating components and adding them to a
@@ -956,25 +957,6 @@ public class VipFrame extends JFrame implements ComponentListener {
 		return jtfSearch;
 	}
 
-	private JLabel jlblFilePath;
-	private JLabel jlblTitle;
-	private JLabel jlblDate;
-	private JLabel jlblGenre;
-	private JLabel jlblDirector;
-	private JLabel jlblCast;
-	private JLabel jlblWriter;
-	private JTextArea jtaSummary;
-	private JLabel jlblCountry;
-	private JLabel jlblIMDbRating;
-	private JLabel jlblPersonalRating;
-	private JLabel jlblSeason;
-	private JLabel jlblEpisode;
-
-	private final Color labelColor = Color.GRAY;
-	private final Color informationColor = Color.DARK_GRAY;
-
-	private final Font boldFont = new Font("Tahoma", Font.BOLD, 14);
-
 	/**
 	 * Create Sub-sub-components in the intel panel for showing information on
 	 * the selected video file in the explorer section
@@ -1066,221 +1048,19 @@ public class VipFrame extends JFrame implements ComponentListener {
 		jpnlIntelNorth.setBorder(BorderFactory.createTitledBorder("Rating"));
 		jlabelRating.setBorder(BorderFactory.createTitledBorder(""));
 
-		// jtaMediaInfo = new JTextArea(20, 1);
-		// jtaMediaInfo.setEditable(false);
-		// jtaMediaInfo.setFocusable(false);
-		// jtaMediaInfo.setLineWrap(true);
-		//
-		// JScrollPane scrollPane = new JScrollPane(jtaMediaInfo);
-		// jtaMediaInfo.setOpaque(false);
-		// jtaMediaInfo.setBackground(new Color(0, 0, 0, 0));
-		// scrollPane.getViewport().setOpaque(false);
-		// scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		jtaMediaInfo = new JTextArea(20, 1);
+		jtaMediaInfo.setEditable(false);
+		jtaMediaInfo.setFocusable(false);
+		jtaMediaInfo.setLineWrap(true);
 
-		JPanel jpnlMovieInformation = new JPanel();
-		jpnlMovieInformation.setLayout(new GridBagLayout());
-
-		JLabel pathlabel = new JLabel("File Path:");
-		pathlabel.setFont(boldFont);
-		pathlabel.setForeground(labelColor);
-		JPanel jpnlFilePath = new JPanel();
-		jpnlFilePath.setLayout(new FlowLayout(FlowLayout.LEFT));
-		jpnlFilePath.add(pathlabel);
-		jlblFilePath = new JLabel("Path");
-		jlblFilePath.setFont(boldFont);
-		jlblFilePath.setForeground(informationColor);
-		jpnlFilePath.add(jlblFilePath);
-
-		JLabel titleLabel = new JLabel("Title:");
-		titleLabel.setFont(boldFont);
-		titleLabel.setForeground(labelColor);
-		JPanel jpnlTitle = new JPanel();
-		jpnlTitle.setLayout(new FlowLayout(FlowLayout.LEFT));
-		jpnlTitle.add(titleLabel);
-		jlblTitle = new JLabel("Title from doom of hell mothafukkaaaaaa");
-		jlblTitle.setFont(boldFont);
-		jlblTitle.setForeground(informationColor);
-		jpnlTitle.add(jlblTitle);
-
-		JLabel dateLabel = new JLabel("Date:");
-		dateLabel.setFont(boldFont);
-		dateLabel.setForeground(labelColor);
-		JPanel jpnlDate = new JPanel();
-		jpnlDate.setLayout(new FlowLayout(FlowLayout.LEFT));
-		jpnlDate.add(dateLabel);
-		jlblDate = new JLabel("12.12.1999");
-		jlblDate.setFont(boldFont);
-		jlblDate.setForeground(informationColor);
-		jpnlDate.add(jlblDate);
-
-		JLabel genreLabel = new JLabel("Genre:");
-		genreLabel.setFont(boldFont);
-		genreLabel.setForeground(labelColor);
-		JPanel jpnlGenre = new JPanel();
-		jpnlGenre.setLayout(new FlowLayout(FlowLayout.LEFT));
-		jpnlGenre.add(genreLabel);
-		jlblGenre = new JLabel("[Slaughters, even, the, best, devil]");
-		jlblGenre.setFont(boldFont);
-		jlblGenre.setForeground(informationColor);
-		jpnlGenre.add(jlblGenre);
-
-		JLabel directorLabel = new JLabel("Director:");
-		directorLabel.setFont(boldFont);
-		directorLabel.setForeground(labelColor);
-		JPanel jpnlDirector = new JPanel();
-		jpnlDirector.setLayout(new FlowLayout(FlowLayout.LEFT));
-		jpnlDirector.add(directorLabel);
-		jlblDirector = new JLabel("Shits McGiggles");
-		jlblDirector.setFont(boldFont);
-		jlblDirector.setForeground(informationColor);
-		jpnlDirector.add(jlblDirector);
-
-		JLabel castLabel = new JLabel("Cast:");
-		castLabel.setFont(boldFont);
-		castLabel.setForeground(labelColor);
-		JPanel jpnlCast = new JPanel();
-		jpnlCast.setLayout(new FlowLayout(FlowLayout.LEFT));
-		jpnlCast.add(castLabel);
-		jlblCast = new JLabel("Will Shmith, Gene Hackman");
-		jlblCast.setFont(boldFont);
-		jlblCast.setForeground(informationColor);
-		jpnlCast.add(jlblCast);
-
-		JLabel writerLabel = new JLabel("Writer:");
-		writerLabel.setFont(boldFont);
-		writerLabel.setForeground(labelColor);
-		JPanel jpnlWriter = new JPanel();
-		jpnlWriter.setLayout(new FlowLayout(FlowLayout.LEFT));
-		jpnlWriter.add(writerLabel);
-		jlblWriter = new JLabel("Who da fuck cares about Writers");
-		jlblWriter.setFont(boldFont);
-		jlblWriter.setForeground(informationColor);
-		jpnlWriter.add(jlblWriter);
-
-		JLabel countryLabel = new JLabel("Country:");
-		countryLabel.setFont(boldFont);
-		countryLabel.setForeground(labelColor);
-		JPanel jpnlCountry = new JPanel();
-		jpnlCountry.setLayout(new FlowLayout(FlowLayout.LEFT));
-		jpnlCountry.add(countryLabel);
-		jlblCountry = new JLabel("United States of 'murica");
-		jlblCountry.setFont(boldFont);
-		jlblCountry.setForeground(informationColor);
-		jpnlCountry.add(jlblCountry);
-
-		JLabel imdbRatingLabel = new JLabel("IMDb Rating:");
-		imdbRatingLabel.setFont(boldFont);
-		imdbRatingLabel.setForeground(labelColor);
-		JPanel jpnlIMDbRating = new JPanel();
-		jpnlIMDbRating.setLayout(new FlowLayout(FlowLayout.LEFT));
-		jpnlIMDbRating.add(imdbRatingLabel);
-		jlblIMDbRating = new JLabel("10.0");
-		jlblIMDbRating.setFont(boldFont);
-		jlblIMDbRating.setForeground(informationColor);
-		jpnlIMDbRating.add(jlblIMDbRating);
-
-		JLabel personalRatingLabel = new JLabel("Personal Rating:");
-		personalRatingLabel.setFont(boldFont);
-		personalRatingLabel.setForeground(labelColor);
-		JPanel jpnlPersonalRating = new JPanel();
-		jpnlPersonalRating.setLayout(new FlowLayout(FlowLayout.LEFT));
-		jpnlPersonalRating.add(personalRatingLabel);
-		jlblPersonalRating = new JLabel("0.5");
-		jlblPersonalRating.setFont(boldFont);
-		jlblPersonalRating.setForeground(informationColor);
-		jpnlPersonalRating.add(jlblPersonalRating);
-
-		JLabel SeasonLabel = new JLabel("Season:");
-		SeasonLabel.setFont(boldFont);
-		SeasonLabel.setForeground(labelColor);
-		JPanel jpnlSeason = new JPanel();
-		jpnlSeason.setLayout(new FlowLayout(FlowLayout.LEFT));
-		jpnlSeason.add(SeasonLabel);
-		jlblSeason = new JLabel("5");
-		jlblSeason.setFont(boldFont);
-		jlblSeason.setForeground(informationColor);
-		jpnlSeason.add(jlblSeason);
-
-		JLabel episodeLabel = new JLabel("Episode:");
-		episodeLabel.setFont(boldFont);
-		episodeLabel.setForeground(labelColor);
-		JPanel jpnlEpisode = new JPanel();
-		jpnlEpisode.setLayout(new FlowLayout(FlowLayout.LEFT));
-		jpnlEpisode.add(episodeLabel);
-		jlblEpisode = new JLabel("23");
-		jlblEpisode.setFont(boldFont);
-		jlblEpisode.setForeground(informationColor);
-		jpnlEpisode.add(jlblEpisode);
-
-		jtaSummary = new JTextArea(20, 1);
-		jtaSummary.setEditable(false);
-		jtaSummary.setFocusable(false);
-		jtaSummary.setLineWrap(true);
-
-		JScrollPane scrollPane = new JScrollPane(jtaSummary);
-		jtaSummary.setOpaque(false);
-		jtaSummary.setBackground(new Color(0, 0, 0, 0));
+		JScrollPane scrollPane = new JScrollPane(jtaMediaInfo);
+		jtaMediaInfo.setOpaque(false);
+		jtaMediaInfo.setBackground(new Color(0, 0, 0, 0));
 		scrollPane.getViewport().setOpaque(false);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-		// first row
-		addComponent(0, 0, 1, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-		addComponent(1, 0, 2, 1, 1, 1, jpnlMovieInformation, jpnlFilePath, defaultInsets);
-		addComponent(3, 0, 2, 1, 1, 1, jpnlMovieInformation, jpnlTitle, defaultInsets);
-		addComponent(5, 0, 1, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-		addComponent(6, 0, 1, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-		addComponent(7, 0, 1, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-		addComponent(8, 0, 1, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-		addComponent(9, 0, 1, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-		addComponent(10, 0, 1, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-		addComponent(11, 0, 1, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-		addComponent(12, 0, 1, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-		addComponent(13, 0, 1, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-		addComponent(14, 0, 1, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-		addComponent(15, 0, 1, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-		addComponent(16, 0, 1, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-		addComponent(17, 0, 1, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-		addComponent(18, 0, 1, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-		addComponent(19, 0, 1, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-
-		// second row
-		addComponent(0, 1, 1, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-		addComponent(1, 1, 2, 1, 1, 1, jpnlMovieInformation, jpnlDate, defaultInsets);
-		addComponent(3, 1, 2, 1, 1, 1, jpnlMovieInformation, jpnlGenre, defaultInsets);
-		addComponent(5, 1, 15, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-
-		// third row
-		addComponent(0, 2, 1, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-		addComponent(1, 2, 2, 1, 1, 1, jpnlMovieInformation, jpnlCountry, defaultInsets);
-		addComponent(3, 2, 1, 1, 1, 1, jpnlMovieInformation, jpnlDirector, defaultInsets);
-		addComponent(5, 2, 15, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-
-		// fourth row
-		addComponent(0, 3, 1, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-		addComponent(1, 3, 2, 1, 1, 1, jpnlMovieInformation, jpnlCast, defaultInsets);
-		addComponent(3, 3, 2, 1, 1, 1, jpnlMovieInformation, jpnlWriter, defaultInsets);
-		addComponent(5, 3, 15, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-
-		// fith row
-		addComponent(0, 4, 1, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-		addComponent(1, 4, 2, 1, 1, 1, jpnlMovieInformation, jpnlSeason, defaultInsets);
-		addComponent(3, 4, 2, 1, 1, 1, jpnlMovieInformation, jpnlEpisode, defaultInsets);
-		addComponent(5, 4, 15, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-		
-		// sith row
-		addComponent(0, 5, 1, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-		addComponent(1, 5, 2, 1, 1, 1, jpnlMovieInformation, jpnlIMDbRating, defaultInsets);
-		addComponent(3, 5, 2, 1, 1, 1, jpnlMovieInformation, jpnlPersonalRating, defaultInsets);
-		addComponent(5, 5, 15, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-
-		// seventh - thenth row
-		addComponent(0, 6, 20, 1, 1, 1, jpnlMovieInformation, new JLabel(), defaultInsets);
-		addComponent(5, 0, 15, 7, 1, 1, jpnlMovieInformation, scrollPane, defaultInsets);
-
 		addComponent(0, 0, 1, 1, 1, 0.1, jpnlIntel, jpnlIntelNorth, defaultInsets);
-		addComponent(0, 1, 1, 1, 1, 0.9, jpnlIntel, jpnlMovieInformation, defaultInsets);
-		// addComponent(0, 1, 1, 1, 1, 0.9, jpnlIntel, scrollPane,
-		// defaultInsets);
+		addComponent(0, 1, 1, 1, 1, 0.9, jpnlIntel, scrollPane, defaultInsets);
 	}
 
 	/**
@@ -1495,6 +1275,16 @@ public class VipFrame extends JFrame implements ComponentListener {
 	}
 
 	/**
+	 * Getter method for the intel Textarea. This Textarea displays the
+	 * currently selected video object's information.
+	 * 
+	 * @return the Textarea object
+	 */
+	public JTextArea getIntelTextArea() {
+		return jtaMediaInfo;
+	}
+
+	/**
 	 * Not Needed
 	 */
 	@Override
@@ -1597,109 +1387,5 @@ public class VipFrame extends JFrame implements ComponentListener {
 			return chooser.getSelectedFile().getAbsolutePath();
 		}
 		return "";
-	}
-
-	public JLabel getJlblFilePath() {
-		return jlblFilePath;
-	}
-
-	public void setJlblFilePath(JLabel jlblFilePath) {
-		this.jlblFilePath = jlblFilePath;
-	}
-
-	public JLabel getJlblTitle() {
-		return jlblTitle;
-	}
-
-	public void setJlblTitle(JLabel jlblTitle) {
-		this.jlblTitle = jlblTitle;
-	}
-
-	public JLabel getJlblDate() {
-		return jlblDate;
-	}
-
-	public void setJlblDate(JLabel jlblDate) {
-		this.jlblDate = jlblDate;
-	}
-
-	public JLabel getJlblGenre() {
-		return jlblGenre;
-	}
-
-	public void setJlblGenre(JLabel jlblGenre) {
-		this.jlblGenre = jlblGenre;
-	}
-
-	public JLabel getJlblDirector() {
-		return jlblDirector;
-	}
-
-	public void setJlblDirector(JLabel jlblDirector) {
-		this.jlblDirector = jlblDirector;
-	}
-
-	public JLabel getJlblCast() {
-		return jlblCast;
-	}
-
-	public void setJlblCast(JLabel jlblCast) {
-		this.jlblCast = jlblCast;
-	}
-
-	public JLabel getJlblWriter() {
-		return jlblWriter;
-	}
-
-	public void setJlblWriter(JLabel jlblWriter) {
-		this.jlblWriter = jlblWriter;
-	}
-
-	public JTextArea getJtaSummary() {
-		return jtaSummary;
-	}
-
-	public void setJtaSummary(JTextArea jtaSummary) {
-		this.jtaSummary = jtaSummary;
-	}
-
-	public JLabel getJlblCountry() {
-		return jlblCountry;
-	}
-
-	public void setJlblCountry(JLabel jlblCountry) {
-		this.jlblCountry = jlblCountry;
-	}
-
-	public JLabel getJlblIMDbRating() {
-		return jlblIMDbRating;
-	}
-
-	public void setJlblIMDbRating(JLabel jlblIMDbRating) {
-		this.jlblIMDbRating = jlblIMDbRating;
-	}
-
-	public JLabel getJlblPersonalRating() {
-		return jlblPersonalRating;
-	}
-
-	public void setJlblPersonalRating(JLabel jlblPersonalRating) {
-		this.jlblPersonalRating = jlblPersonalRating;
-	}
-
-	public JLabel getJlblSeason() {
-		return jlblSeason;
-	}
-
-	public void setJlblSeason(JLabel jlblSeason) {
-		this.jlblSeason = jlblSeason;
-	}
-
-	public JLabel getJlblEpisode() {
-		return jlblEpisode;
-	}
-
-	public void setJlblEpisode(JLabel jlblEpisode) {
-		this.jlblEpisode = jlblEpisode;
 	}
 }

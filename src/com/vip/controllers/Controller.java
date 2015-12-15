@@ -385,7 +385,13 @@ public class Controller {
 	public void updateIntel(Video videoInstance) {
 		vipFrame.updateRatingIndicators();
 		JTextArea jtaMediaInfo = vipFrame.getIntelTextArea();
-		jtaMediaInfo.setText(videoInstance.toStringFull());
+		if (jtaMediaInfo.getText().isEmpty()) {
+			jtaMediaInfo.setText(videoInstance.toStringFull());
+		} else if (!jtaMediaInfo.getText().contains(SearchSortController.getInstance()
+		        .getVideoByIndex(vipFrame.getFileList().getSelectedIndex()).getFilePath())) {
+			jtaMediaInfo.setText(videoInstance.toStringFull());
+		}
+
 	}
 
 	/**

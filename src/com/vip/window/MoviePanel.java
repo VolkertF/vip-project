@@ -67,8 +67,8 @@ public class MoviePanel extends JPanel {
 
 	@Override
 	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
 		if (isActive) {
+			super.paintComponent(g);
 			Graphics2D g2 = (Graphics2D) g;
 			updatedTicks++;
 			long time = System.currentTimeMillis();

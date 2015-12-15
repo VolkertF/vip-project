@@ -417,8 +417,8 @@ public class Controller {
 	 * Creates a new fullscreen Dialog that overlays the mainframe
 	 */
 	public void createFullscreen() {
-		fullscreenDialog = new FullscreenDialog(vipFrame, vlcInstance);
 		isFullscreen = true;
+		fullscreenDialog = new FullscreenDialog(vipFrame, vlcInstance);
 	}
 
 	/**

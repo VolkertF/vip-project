@@ -77,6 +77,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 		        // changes.
 		        // Might could open a window and ask for saving changes
 		        // Would need a "changed" boolean
+				controller.getVLC().stopMedia();
 				dataController.saveAll(SearchSortController.getInstance().getMovies());
 				thisFrame.dispose();
 				System.exit(0);
@@ -620,29 +621,31 @@ public class VipFrame extends JFrame implements ComponentListener {
 	 * Updates the state of the nominators for current progress in media file
 	 */
 	public void updateGUI() {
-		VLC vlcInstance = controller.getVLC();
-		// updateRatingSlider();
+		if (!controller.isFullscreen()) {
+			VLC vlcInstance = controller.getVLC();
+			// updateRatingSlider();
 
-		if (vlcInstance.isVLCInstalled() && vlcInstance.getMediaPlayer() != null
-		        && vlcInstance.getMediaPlayer().getLength() != -1) {
-			if (controller.getVLC().shouldInitProgressBar()) {
-				initProgressBar();
-				controller.getVLC().setProgressBarInitState(false);
-			} else {
+			if (vlcInstance.isVLCInstalled() && vlcInstance.getMediaPlayer() != null
+			        && vlcInstance.getMediaPlayer().getLength() != -1) {
+				if (controller.getVLC().shouldInitProgressBar()) {
+					initProgressBar();
+					controller.getVLC().setProgressBarInitState(false);
+				} else {
 
-				// If initialization fails: retry
-				if (jsliderMovieProgress.getMaximum() == 0) {
-					controller.getVLC().setProgressBarInitState(true);
+					// If initialization fails: retry
+					if (jsliderMovieProgress.getMaximum() == 0) {
+						controller.getVLC().setProgressBarInitState(true);
+					}
+					updateVolumeIndicators();
+					updateTimelineLabel();
+
+					int currentMovieTime = (int) controller.getVLC().getMediaPlayer().getTime();
+					jsliderMovieProgress.setValue(currentMovieTime);
 				}
-				updateVolumeIndicators();
-				updateTimelineLabel();
-
-				int currentMovieTime = (int) controller.getVLC().getMediaPlayer().getTime();
-				jsliderMovieProgress.setValue(currentMovieTime);
-			}
-		} else {
-			if (vlcInstance.isVLCInstalled()) {
-				jlabelMovieTimer.setText("00:00:00 / 00:00:00   0%");
+			} else {
+				if (vlcInstance.isVLCInstalled()) {
+					jlabelMovieTimer.setText("00:00:00 / 00:00:00   0%");
+				}
 			}
 		}
 	}
@@ -869,10 +872,21 @@ public class VipFrame extends JFrame implements ComponentListener {
 	 */
 	private void addFileListActionListener() {
 		jlstFileList.addMouseListener(new MouseListener() {
-			@Override public void mouseReleased(MouseEvent arg0) {}
-			@Override public void mouseExited(MouseEvent arg0) {}
-			@Override public void mouseEntered(MouseEvent arg0) {}
-			@Override public void mousePressed(MouseEvent ev) {}
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+			}
+
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+			}
+
+			@Override
+			public void mousePressed(MouseEvent ev) {
+			}
 
 			@Override
 			public void mouseClicked(MouseEvent ev) {
@@ -884,7 +898,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 						controller.getVLC().switchMediaFile(videoInstance);
 					}
 				}
-			}			
+			}
 		});
 	}
 

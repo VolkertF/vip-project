@@ -1,6 +1,10 @@
 package com.vip.media;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.IntBuffer;
 
 import com.vip.attributes.Video;
 import com.vip.window.MoviePanel;
@@ -12,7 +16,6 @@ import uk.co.caprica.vlcj.player.direct.BufferFormatCallback;
 import uk.co.caprica.vlcj.player.direct.DirectMediaPlayer;
 import uk.co.caprica.vlcj.player.direct.RenderCallback;
 import uk.co.caprica.vlcj.player.direct.RenderCallbackAdapter;
-import uk.co.caprica.vlcj.player.direct.format.RV32BufferFormat;
 
 /**
  * VLC Class. Controls media playback. Holds the media player and information
@@ -447,13 +450,12 @@ public class VLC {
 		}
 		if (currentPanel != null) {
 			currentPanel.setInactive();
-			currentPanel.setCurrentImage(null);
 		}
 		currentPanel = newSurface;
 		if (currentPanel != null) {
 			currentPanel.setActive();
 			calcAspectRatio();
-			currentImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_3BYTE_BGR);
+			currentImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_BGR);
 			directMediaPlayerComponent = new DirectMediaPlayerComponent(new MovieBufferFormatCallback()) {
 				@Override
 				protected RenderCallback onGetRenderCallback() {
@@ -471,19 +473,24 @@ public class VLC {
 	private class MovieBufferFormatCallback implements BufferFormatCallback {
 		@Override
 		public BufferFormat getBufferFormat(int sourceWidth, int sourceHeight) {
-			return new RV32BufferFormat(imageWidth, imageHeight);
+			BufferFormat format = new BufferFormat("RGBA", imageWidth, imageHeight, new int[] { imageWidth * 4 },
+			        new int[] { imageHeight });
+
+			return format;
 		}
 	};
 
 	private class MovieRenderCallbackAdapter extends RenderCallbackAdapter {
 
 		private MovieRenderCallbackAdapter() {
-			super(new int[imageWidth * imageHeight]);
+			super(((DataBufferInt) currentImage.getRaster().getDataBuffer()).getData());
 		}
 
 		@Override
 		protected void onDisplay(DirectMediaPlayer mediaPlayer, int[] rgbBuffer) {
-			currentImage.setRGB(0, 0, imageWidth, imageHeight, rgbBuffer, 0, imageWidth);
+			ByteBuffer byteBuffer = ByteBuffer.allocateDirect(rgbBuffer.length * 4).order(ByteOrder.nativeOrder());
+			IntBuffer intBuffer = byteBuffer.asIntBuffer();
+			intBuffer.put(rgbBuffer);
 			currentPanel.setCurrentImage(currentImage);
 			currentPanel.repaint();
 		}

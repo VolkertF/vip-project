@@ -142,13 +142,7 @@ public class Controller {
 		pw.println("//Contains general application information");
 		pw.println(GENERAL_ENTRY_POINT);
 		pw.println("//If true last movie watched will automatically start playing");
-		pw.println("AUTO_PLAYBACK_ON_START=true");
-		pw.println("//ID of the movie last watched, will be loaded on application start");
-		pw.println("RESUME_TIMESTAMP=00:00:00");
-		pw.println("//ID of the movie last watched, will be loaded on application start");
-		pw.println("LAST_MOVIE_WATCHED_ID=1");
-		pw.println("//VOLUME_DEFAULT between 0 and 200");
-		pw.println("VOLUME_DEFAULT=100");
+		pw.println("//As of now, theres nothing to do here!");
 		pw.println();
 	}
 
@@ -161,7 +155,8 @@ public class Controller {
 	private void writeDefaultKeyboard(PrintWriter pw) {
 		pw.println("//Contains information about shortcuts");
 		pw.println(SHORTCUT_ENTRY_POINT);
-		pw.println("//Do NOT change order of items\n//It would kill an innocent kitten");
+		pw.println(
+		        "//Do NOT change order of items\n//It would kill an innocent kitten\n//You though might change the shortcuts with valid keys and modifiers (CTRL, SHIFT)");
 		pw.println("TOGGLE_PLAYBACK=SPACE");
 		pw.println("NEXT_MOVIE=N");
 		pw.println("PREVIOUS_MOVIE=B");

@@ -164,15 +164,21 @@ public class SearchSortController {
 	 */
 	public void fetchVideoInformation(Video vid) {
 		String searchKey = (String) JOptionPane.showInputDialog(
-		        "Please enter the name of the Video that is searched for! (Previous name: " + vid.getTitle());
-		ArrayList<SearchResult> temp = OMDBController.getInstance().searchApi(searchKey);
-		if (temp.size() <= 0) {
-			JOptionPane.showMessageDialog(null, "With your search no matches were found. Please try again");
+		        "Please enter the name of the Video that is searched for! (Previous name: \"" + vid.getTitle()+"\")");
+		if (searchKey == null || searchKey.length() < 0) {
+
 		} else {
-			OmdbRequest window = new OmdbRequest(temp, vid, controller);
-			window.setEnabled(true);
-			window.setVisible(true);
+			ArrayList<SearchResult> temp = OMDBController.getInstance().searchApi(searchKey);
+			if (temp.size() <= 0) {
+				JOptionPane.showMessageDialog(null, "With your search no matches were found. Please try again");
+				fetchVideoInformation(vid);
+			} else {
+				OmdbRequest window = new OmdbRequest(temp, vid, controller);
+				window.setEnabled(true);
+				window.setVisible(true);
+			}
 		}
+
 	}
 
 	/**

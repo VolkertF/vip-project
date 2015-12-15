@@ -19,7 +19,10 @@ public class ButtonParser implements ActionListener {
 	private Controller controller;
 
 	/**
+	 * Constructor for a new ButtonParser
 	 * 
+	 * @param newController
+	 *            Reference to the program's controller
 	 */
 	public ButtonParser(Controller newController) {
 		controller = newController;

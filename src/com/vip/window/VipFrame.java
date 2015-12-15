@@ -519,6 +519,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 
 	}
 
+	// Not gonna comment this. should be obious what this is!
 	private ImageIcon imgIconPlay = null;
 	private ImageIcon imgIconPause = null;
 	private ImageIcon imgIconStop = null;

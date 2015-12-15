@@ -81,6 +81,8 @@ public class SearchSortController {
 	 *            Video that will be added
 	 */
 	public void addMovieToList(Video vid) {
+		// Searches through the current list, of the new video is already
+		// existant (based on the unique file path)
 		boolean shouldAdd = true;
 		for (Video videoInstance : movies) {
 			if (vid.getFilePath().equals(videoInstance.getFilePath())) {

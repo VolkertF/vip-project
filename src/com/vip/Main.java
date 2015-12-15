@@ -12,12 +12,14 @@ public class Main {
 	private static final int UPDATE_RATE = 100;
 
 	public static void main(String[] args) {
-		URL url = Main.class.getResource("/icon.png");
-		Image iconImage = Toolkit.getDefaultToolkit().createImage(url);
 		final VipFrame f = new VipFrame();
-		f.setIconImage(iconImage);
-		// Update the canvas size on start-up
+		URL url = Main.class.getResource("/icon.png");
+		if (url != null) {
+			Image iconImage = Toolkit.getDefaultToolkit().createImage(url);
+			f.setIconImage(iconImage);
+		}
 
+		// Update GUI on a regular basis
 		Thread t = new Thread(new Runnable() {
 			public void run() {
 				try {

@@ -13,15 +13,36 @@ import javax.swing.JFrame;
 import com.vip.controllers.Controller;
 import com.vip.media.VLC;
 
+/**
+ * A Dialog that is drawn on top of the JFrame and is used as a screen sized
+ * canvas
+ * 
+ * @author Fabian
+ *
+ */
 @SuppressWarnings("serial")
 public class FullscreenDialog extends JDialog implements MouseMotionListener, MouseListener {
 
+	/** Surface that the movie is drawn on **/
 	private MoviePanel jpnlVideoSurface;
 
+	/** Reference to the vlc instance **/
 	private VLC vlcInstance;
 
+	/** Reference to the program's controller **/
 	private Controller controller;
 
+	/**
+	 * Constructor of the dialog. sets up a new undecorated dialog, puts it up
+	 * front and makes its panel the active one for rendering the movie
+	 * 
+	 * @param parentFrame
+	 *            the Frame upon which the dialog is created
+	 * @param vlcInstance
+	 *            the vlc instance responsible for medi related operations
+	 * @param newController
+	 *            refenrece to the program's controller
+	 */
 	public FullscreenDialog(VipFrame parentFrame, VLC vlcInstance, Controller newController) {
 		super(parentFrame, true);
 		this.addMouseMotionListener(this);

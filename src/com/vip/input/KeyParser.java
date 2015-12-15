@@ -35,8 +35,11 @@ public class KeyParser implements KeyEventDispatcher {
 	public static final int FULLSCREEN_TOGGLE = 11;
 	public static final int SEARCH = 12;
 
+	/** Array of integers, that holds keycodes for all the shortcuts **/
 	private int[] shortcutList = new int[NrOfShortcuts];
+	/** Holds flags for control modifiers to each shortcut **/
 	private boolean[] shortcutCTRLmask = new boolean[NrOfShortcuts];
+	/** Holds flags for shift modifiers to each shortcut **/
 	private boolean[] shortcutSHIFTmask = new boolean[NrOfShortcuts];
 
 	public int[] getShortcutList() {
@@ -81,7 +84,7 @@ public class KeyParser implements KeyEventDispatcher {
 			}
 			if (currentKey == shortcutList[VOLUME_UP]) {
 				if (isValidInput(ke, VOLUME_UP)) {
-					if(controller.isFullscreen()){
+					if (controller.isFullscreen()) {
 						controller.getFullscreen().getSurface().setDisplayStates(true, false, false, false);
 					}
 					vlc.setVolume(vlc.getVolume() + vlc.getVolumeSteps());
@@ -89,7 +92,7 @@ public class KeyParser implements KeyEventDispatcher {
 			}
 			if (currentKey == shortcutList[VOLUME_DOWN]) {
 				if (isValidInput(ke, VOLUME_DOWN)) {
-					if(controller.isFullscreen()){
+					if (controller.isFullscreen()) {
 						controller.getFullscreen().getSurface().setDisplayStates(true, false, false, false);
 					}
 					vlc.setVolume(vlc.getVolume() - vlc.getVolumeSteps());

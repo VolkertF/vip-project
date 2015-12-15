@@ -6,8 +6,8 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -105,6 +105,7 @@ public class OmdbRequest extends JFrame {
 		URL url = Main.class.getResource("/icon.png");
 		Image iconImage = Toolkit.getDefaultToolkit().createImage(url);
 		this.setIconImage(iconImage);
+		// TODO: redesigning Layout to show the Fetch button correctly
 		this.setTitle("IMDB Information Fetcher");
 		this.setLayout(new BorderLayout());
 		this.add(new JScrollPane(resultList), BorderLayout.LINE_END);
@@ -126,23 +127,7 @@ public class OmdbRequest extends JFrame {
 			}
 		});
 
-		resultList.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
-			}
-
-			@Override
-			public void mousePressed(MouseEvent arg0) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent arg0) {
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent arg0) {
-			}
-
+		resultList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				if (arg0.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(arg0)) {

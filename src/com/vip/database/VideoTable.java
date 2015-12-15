@@ -21,7 +21,6 @@ public class VideoTable {
 			Class.forName("org.sqlite.JDBC");
 			c = DriverManager.getConnection("jdbc:sqlite:test.db");
 			c.setAutoCommit(false);
-			System.out.println("Opened database successfully");
 
 			statement = c.createStatement();
 			String sql = "CREATE TABLE IF NOT EXISTS VIDEO " + "(PATH 			STRING		PRIMARY KEY		NOT NULL,"
@@ -172,7 +171,6 @@ public class VideoTable {
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 			System.exit(0);
 		}
-		System.out.println("Operation done successfully");
 		return videoList;
 
 	}

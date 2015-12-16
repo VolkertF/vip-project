@@ -195,25 +195,26 @@ public class SearchSortController {
 	@SuppressWarnings("deprecation")
 	public void assignMapToVideo(Map<String, String> map, Video vid) {
 		String type = map.get("Type");
-		if (type.equals("movie")) {
-			vid.setTitle(map.get("Title"));
-			String[] dateTemplate = map.get("Released").split(" ");
-			int month = 0;
-			month = dateTemplate[1].equals("Jan") ? 1 : dateTemplate[1].equals("Feb") ? 2 : dateTemplate[1].equals("Feb") ? 2 : dateTemplate[1].equals("Mar") ? 3 : dateTemplate[1].equals("Apr") ? 4 : dateTemplate[1].equals("May") ? 5 : dateTemplate[1].equals("Jun") ? 6 : dateTemplate[1].equals("Jul") ? 7 : dateTemplate[1].equals("Aug") ? 8 : dateTemplate[1].equals("Sep") ? 9 : dateTemplate[1].equals("Oct") ? 10 : dateTemplate[1].equals("Nov") ? 11 : dateTemplate[1].equals("Dec") ? 12 : 13;
-			if(month == 13) {
-				vid.setReleaseDate(null);
-			}
-			vid.setReleaseDate(new Date(Integer.parseInt(dateTemplate[2])-1900, month, Integer.parseInt(dateTemplate[0])));
-			vid.setGenre(new ArrayList<String>(Arrays.asList(map.get("Genre").split(","))));
-			vid.setDirector(map.get("Director"));
-			vid.setCast(new ArrayList<String>(Arrays.asList(map.get("Actors").split(","))));
-			vid.setWriters(new ArrayList<String>(Arrays.asList(map.get("Writer").split(","))));
-			vid.setPlotSummary(map.get("Plot"));
-			vid.setCountry(map.get("Country"));
-			vid.setImdbRating(Double.parseDouble(map.get("imdbRating")));
-			vid.setInfoFetched(true);
-		} else if (type.equals("episode"))
-			;
+		vid.setTitle(map.get("Title"));
+		String[] dateTemplate = map.get("Released").split(" ");
+		int month = 0;
+		month = dateTemplate[1].equals("Jan") ? 1 : dateTemplate[1].equals("Feb") ? 2 : dateTemplate[1].equals("Feb") ? 2 : dateTemplate[1].equals("Mar") ? 3 : dateTemplate[1].equals("Apr") ? 4 : dateTemplate[1].equals("May") ? 5 : dateTemplate[1].equals("Jun") ? 6 : dateTemplate[1].equals("Jul") ? 7 : dateTemplate[1].equals("Aug") ? 8 : dateTemplate[1].equals("Sep") ? 9 : dateTemplate[1].equals("Oct") ? 10 : dateTemplate[1].equals("Nov") ? 11 : dateTemplate[1].equals("Dec") ? 12 : 13;
+		if(month == 13) {
+			vid.setReleaseDate(null);
+		}
+		vid.setReleaseDate(new Date(Integer.parseInt(dateTemplate[2])-1900, month, Integer.parseInt(dateTemplate[0])));
+		vid.setGenre(new ArrayList<String>(Arrays.asList(map.get("Genre").split(","))));
+		vid.setDirector(map.get("Director"));
+		vid.setCast(new ArrayList<String>(Arrays.asList(map.get("Actors").split(","))));
+		vid.setWriters(new ArrayList<String>(Arrays.asList(map.get("Writer").split(","))));
+		vid.setPlotSummary(map.get("Plot"));
+		vid.setCountry(map.get("Country"));
+		vid.setImdbRating(Double.parseDouble(map.get("imdbRating")));
+		vid.setInfoFetched(true);
+		if (type.equals("episode")) {	
+			vid.setSeason(Integer.parseInt(map.get("Season")));
+			vid.setEpisode(Integer.parseInt(map.get("Episode")));
+		}
 	}
 
 	/**

@@ -17,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -68,6 +69,7 @@ import com.vip.attributes.Video;
 import com.vip.controllers.Controller;
 import com.vip.controllers.DatabaseController;
 import com.vip.controllers.SearchSortController;
+import com.vip.input.KeyParser;
 import com.vip.media.VLC;
 
 @SuppressWarnings("serial")
@@ -1150,7 +1152,9 @@ public class VipFrame extends JFrame implements ComponentListener {
 		// MenuHelp
 		jmHelp = new JMenu("Help");
 		jmiTutorial = new JMenuItem("Tutorial");
+		JMenuItem jmiShortcuts = new JMenuItem("Shortcuts");
 		jmHelp.add(jmiTutorial);
+		jmHelp.add(jmiShortcuts);
 
 		// MenuAbout
 		jmAbout = new JMenu("About");
@@ -1226,6 +1230,38 @@ public class VipFrame extends JFrame implements ComponentListener {
 			}
 		});
 
+		jmiShortcuts.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+
+				String tutorial = "<html>This Panel will provide you with the information you need to use your shortcuts!<br>"
+		                + "<p>You can toggle playback using: " + shortcutToString(KeyParser.TOGGLE_PLAYBACK)
+		                + "<br></p>" + "<p>You can jump to the next video in the list using: "
+		                + shortcutToString(KeyParser.NEXT_MOVIE) + "<br></p>"
+		                + "<p>You can jump to the previous video in the list using: "
+		                + shortcutToString(KeyParser.PREVIOUS_MOVIE) + "<br></p>"
+		                + "<p>You can jump to the next Chapter in the current movie using: "
+		                + shortcutToString(KeyParser.NEXT_CHAPTER) + "<br></p>"
+		                + "<p>You can jump to the previous Chapter in the current movie using: "
+		                + shortcutToString(KeyParser.PREVIOUS_CHAPTER) + "<br></p>"
+		                + "<p>You can jump forward in the current movie using: "
+		                + shortcutToString(KeyParser.JUMP_FORWARD) + "<br></p>"
+		                + "<p>You can jump back in the current movie using: "
+		                + shortcutToString(KeyParser.JUMP_BACKWARD) + "<br></p>"
+		                + "<p>You can mute the volume of the current movie using: "
+		                + shortcutToString(KeyParser.MUTE_VOLUME) + "<br></p>"
+		                + "<p>You can increase the current volume using: " + shortcutToString(KeyParser.VOLUME_UP)
+		                + "<br></p>" + "<p>You can decrease the current volume using: "
+		                + shortcutToString(KeyParser.VOLUME_DOWN) + "<br></p>"
+		                + "<p>You can open the preferences window using: "
+		                + shortcutToString(KeyParser.OPEN_PREFERENCES) + " (Not implemented yet!)<br></p>"
+		                + "<p>You can toggle fullscreen mode using: " + shortcutToString(KeyParser.FULLSCREEN_TOGGLE)
+		                + "<br></p>" + "<p>You can focus the search field using: " + shortcutToString(KeyParser.SEARCH)
+		                + "<br></p>";
+				JOptionPane.showMessageDialog(null, tutorial, "Shortcuts", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
+
 		jmiAddFile.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -1272,6 +1308,22 @@ public class VipFrame extends JFrame implements ComponentListener {
 				}
 			}
 		});
+	}
+
+	public String shortcutToString(int Index) {
+		StringBuilder sb = new StringBuilder("");
+		int[] shortcutList = controller.getKeyParser().getShortcutArray();
+		boolean[] ctrlMask = controller.getKeyParser().getCTRLMaskArray();
+		boolean[] shiftMask = controller.getKeyParser().getSHIFTMaskArray();
+		if (ctrlMask[Index]) {
+			sb.append("CTRL + ");
+		}
+		if (shiftMask[Index]) {
+			sb.append("SHIFT + ");
+		}
+		sb.append(KeyEvent.getKeyText(shortcutList[Index]));
+		String shortcut = sb.toString();
+		return shortcut;
 	}
 
 	/**

@@ -1077,13 +1077,16 @@ public class VipFrame extends JFrame implements ComponentListener {
 		                    "Are you sure you want to remove the movie \""
 		                            + SearchSortController.getInstance()
 		                                    .getVideoByIndex(jlstFileList.getSelectedIndex()).getTitle()
-		                            + "\" from this list?",
+		                            + "\" from this list and the database?",
 		                    "Warning", JOptionPane.YES_NO_OPTION);
 					if (dialogButton == JOptionPane.YES_OPTION) {
 						int newIndex = jlstFileList.getSelectedIndex();
-						SearchSortController.getInstance().deleteMovieFromList(
-		                        SearchSortController.getInstance().getVideoByIndex(jlstFileList.getSelectedIndex()));
-						controller.setToListItem(newIndex);
+						Video video = SearchSortController.getInstance()
+		                        .getVideoByIndex(jlstFileList.getSelectedIndex());
+						dataController.remove(video);
+						SearchSortController.getInstance().deleteMovieFromList(video);
+						if (jlstFileList.getModel().getSize() > 0 && newIndex >= 0)
+							jlstFileList.setSelectedIndex(newIndex);
 					} else if (dialogButton == JOptionPane.NO_OPTION) {
 					}
 				}

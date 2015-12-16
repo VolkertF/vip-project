@@ -52,6 +52,14 @@ public class DatabaseController {
 
 		database.saveVideo(video);
 	}
+	
+	public void remove(Video video){
+		if (video == null) {
+			System.out.println("Video object is null");
+		}
+
+		database.deleteVideo(video);
+	}
 
 	/**
 	 * An alternative to the save()-Method. It takes more than one object to

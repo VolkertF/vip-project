@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -91,6 +92,30 @@ public class VideoTable {
 				System.exit(0);
 			}
 		}
+	}
+
+	public void deleteVideo(Video video) {
+		Connection c = null;
+		PreparedStatement statement = null;
+
+		try {
+			Class.forName("org.sqlite.JDBC");
+			c = DriverManager.getConnection("jdbc:sqlite:test.db");
+			c.setAutoCommit(false);
+
+			String updateString = "	DELETE FROM VIDEO WHERE PATH = ?";
+			statement = c.prepareStatement(updateString);
+
+			statement.setString(1, video.getFilePath());
+
+			statement.execute();
+			c.commit();
+			statement.close();
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			System.exit(0);
+		}
+
 	}
 
 	/*

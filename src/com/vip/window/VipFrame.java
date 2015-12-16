@@ -1310,6 +1310,14 @@ public class VipFrame extends JFrame implements ComponentListener {
 		});
 	}
 
+	/**
+	 * Translates a shortcut to its String represantation including its ctrl and
+	 * shift mask.
+	 * 
+	 * @param Index
+	 *            Indicating which shortcut is to be locked at
+	 * @return A String represantation of the shortcut
+	 */
 	public String shortcutToString(int Index) {
 		StringBuilder sb = new StringBuilder("");
 		int[] shortcutList = controller.getKeyParser().getShortcutArray();

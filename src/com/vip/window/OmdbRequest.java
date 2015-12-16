@@ -107,15 +107,19 @@ public class OmdbRequest extends JFrame {
 		this.setIconImage(iconImage);
 		// TODO: redesigning Layout to show the Fetch button correctly
 		this.setTitle("IMDB Information Fetcher");
+		this.setLocation(750, 200);
 		this.setLayout(new BorderLayout());
 		this.add(new JScrollPane(resultList), BorderLayout.LINE_END);
 
 		this.add(new JPanel(), BorderLayout.CENTER);
-		this.add(buttonFetch, BorderLayout.SOUTH);
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new BorderLayout());
+		this.add(buttonPanel, BorderLayout.SOUTH);
+		buttonPanel.add(buttonFetch, BorderLayout.CENTER);
 		buttonFetch.setText("Fetch Information");
 		buttonFetch.setToolTipText("Press this button if you have selected the right movie you wanted to search for");
 		buttonFetch.setVisible(true);
-		this.add(buttonCancel, BorderLayout.SOUTH);
+		buttonPanel.add(buttonCancel, BorderLayout.LINE_END);
 		buttonCancel.setVisible(true);
 		buttonCancel.setText("Cancel");
 		buttonCancel.setToolTipText("Press this button if you want to leave this screen and return to the main frame.");
@@ -123,6 +127,22 @@ public class OmdbRequest extends JFrame {
 		buttonCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				dispose();
+			}
+		});
+		
+		buttonFetch.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				String[] temp = ((ImageIcon) resultList.getSelectedValue()).getDescription().split("%%%%");
+				String[] tempTemp = temp[3].split("\"");
+				Map<String, String> infoMap = OMDBController.getInstance().getById(tempTemp[1]);
+				// Updates the video's data and repaints the intel-panel and
+	            // the list
+				SearchSortController.getInstance().assignMapToVideo(infoMap, video);
+				video.setChanged(true);
+				controller.updateIntel(video);
+				controller.getFrame().getFileList().repaint();
 				dispose();
 			}
 		});
@@ -170,7 +190,7 @@ public class OmdbRequest extends JFrame {
 		                "<html>Name: " + descrip[1] + " <br>Year of Release: " + descrip[2] + "</html>");
 			}
 		});
-		this.setPreferredSize(new Dimension(400, 500));
+		this.setPreferredSize(new Dimension(280, 500));
 		this.pack();
 	}
 

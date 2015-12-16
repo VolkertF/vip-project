@@ -2,6 +2,8 @@ package com.vip.window;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -192,6 +194,7 @@ public class OmdbRequest extends JFrame {
 		});
 		this.setPreferredSize(new Dimension(280, 500));
 		this.pack();
+		this.setScreenLocation();
 	}
 
 	/**
@@ -230,5 +233,17 @@ public class OmdbRequest extends JFrame {
 			mediaSearchResult.add((MediaSearchResult) temp);
 		}
 		return mediaSearchResult;
+	}
+	
+	/**
+	 * Helping method for showing the Frame in the middle of every screen.
+	 */
+	private void setScreenLocation() {
+		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice[] allDevices = env.getScreenDevices();
+		int width = (int) allDevices[0].getDefaultConfiguration().getBounds().width;
+		int height = (int) allDevices[0].getDefaultConfiguration().getBounds().height;
+		System.out.println(height + " " + width);
+		this.setLocation(((width/2) - (this.getWidth()/2)), ((height/2) - (this.getHeight()/2)));
 	}
 }

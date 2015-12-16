@@ -6,6 +6,8 @@ import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -105,6 +107,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 			searchForMovies(rootFolderPath);
 		}
 		pack();
+		setScreenLocation();
 		requestFocus();
 		setVisible(true);
 		controller.getVLC().switchSurface(mainMoviePanel, false);
@@ -1406,5 +1409,17 @@ public class VipFrame extends JFrame implements ComponentListener {
 			return chooser.getSelectedFile().getAbsolutePath();
 		}
 		return "";
+	}
+	
+	/**
+	 * Helping method for showing the Frame in the middle of every screen.
+	 */
+	private void setScreenLocation() {
+		GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice[] allDevices = env.getScreenDevices();
+		int width = (int) allDevices[0].getDefaultConfiguration().getBounds().width;
+		int height = (int) allDevices[0].getDefaultConfiguration().getBounds().height;
+		System.out.println(height + " " + width);
+		this.setLocation(((width/2) - (this.getWidth()/2)), ((height/2) - (this.getHeight()/2)));
 	}
 }

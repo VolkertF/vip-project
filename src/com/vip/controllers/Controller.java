@@ -244,7 +244,8 @@ public class Controller {
 			manager.addKeyEventDispatcher(keyParser);
 
 		} else {
-			System.out.println("Shortcut-section not found");
+			configFile.delete();
+			initConfiguration();
 		}
 	}
 

@@ -65,18 +65,22 @@ public class KeyParser implements KeyEventDispatcher {
 		int keyState = ke.getID();
 		int isReleased = KeyEvent.KEY_RELEASED;
 		int currentKey = ke.getKeyCode();
+		String sourceName = "Irrelevant";
+		if (ke.getSource() instanceof JTextField) {
+			sourceName = ((JTextField) ke.getSource()).getName();
+		}
+		if (ke.getSource() instanceof JList) {
+			sourceName = ((JList) ke.getSource()).getName();
+		}
 		// When no textfield is focused and the key is pressed, input will be
 		// processed
-		if (keyState == isReleased && !(ke.getSource() instanceof JTextField)) {
-			if (ke.getSource() instanceof JList) {
-				JList list = (JList) ke.getSource();
-				if (list.getName().equals("FileList")) {
-					int index = controller.getFrame().getFileList().getSelectedIndex();
-					if (index >= 0) {
-						controller.updateIntel(SearchSortController.getInstance().getVideoByIndex(index));
-						if(currentKey == KeyEvent.VK_ENTER){
-							controller.setToListItem(index);
-						}
+		if (keyState == isReleased && !sourceName.equals("SearchField")) {
+			if (sourceName.equals("FileList")) {
+				int index = controller.getFrame().getFileList().getSelectedIndex();
+				if (index >= 0) {
+					controller.updateIntel(SearchSortController.getInstance().getVideoByIndex(index));
+					if (currentKey == KeyEvent.VK_ENTER) {
+						controller.setToListItem(index);
 					}
 				}
 			}

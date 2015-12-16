@@ -401,6 +401,10 @@ public class Controller {
 			if (!jtaMediaInfo.getText().contains(videoInstance.getFilePath())) {
 				jtaMediaInfo.setText(videoInstance.toStringFull());
 				jtaMediaInfo.setCaretPosition(0);
+				// Or changed information
+			} else if (videoInstance.hasChanged()) {
+				jtaMediaInfo.setText(videoInstance.toStringFull());
+				jtaMediaInfo.setCaretPosition(0);
 			}
 			// If new inormation not existant: empty information
 		} else {

@@ -442,7 +442,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 	}
 
 	JScrollPane scrollPane;
-	
+
 	public JScrollPane getScrollPane() {
 		return scrollPane;
 	}
@@ -463,18 +463,12 @@ public class VipFrame extends JFrame implements ComponentListener {
 		jlstFileList.setName("FileList");
 		JTextArea jtaScrollPaneText = new JTextArea(20, 1);
 		scrollPane = new JScrollPane(jtaScrollPaneText);
-		
-        InputMap im = scrollPane.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        im.put(KeyStroke.getKeyStroke("UP"), "none");
-        im.put(KeyStroke.getKeyStroke("DOWN"), "none");
-        im.put(KeyStroke.getKeyStroke("LEFT"), "none");
-        im.put(KeyStroke.getKeyStroke("RIGHT"), "none");
-		
-		
+
 		scrollPane.getViewport().setView(jlstFileList);
 		jlstFileList.revalidate();
 
 		jtfSearch = new JTextField(20);
+		jtfSearch.setName("SearchField");
 
 		String[] sortCategories = { "By Title", // Index 0
 		        "By Country", // Index 1
@@ -782,6 +776,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 
 		jsliderVolume = new JSlider(JSlider.HORIZONTAL, VLC.getMinVolume(), VLC.getMaxVolume(),
 		        ((VLC.getMinVolume() + VLC.getMaxVolume()) / 2));
+		jsliderVolume.setName("VolumeSlider");
 		jsliderVolume.addMouseListener(new MouseAdapter() {
 
 			public void mouseReleased(MouseEvent me) {
@@ -791,6 +786,9 @@ public class VipFrame extends JFrame implements ComponentListener {
 				controller.getVLC().setVolume(newVolume);
 			}
 		});
+		InputMap im = jsliderVolume.getInputMap(JComponent.WHEN_FOCUSED);
+		im.put(KeyStroke.getKeyStroke("LEFT"), "none");
+		im.put(KeyStroke.getKeyStroke("RIGHT"), "none");
 
 		JButton jbtnFullscreen = new JButton();
 		if (imgIconFullscreen != null) {
@@ -804,6 +802,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 
 		jsliderMovieProgress = new JSlider(0, 100, 0);
 		jsliderMovieProgress.setMajorTickSpacing(5);
+		jsliderMovieProgress.setName("MovieSlider");
 		jsliderMovieProgress.addMouseListener(new MouseAdapter() {
 
 			public void mouseReleased(MouseEvent me) {
@@ -813,6 +812,9 @@ public class VipFrame extends JFrame implements ComponentListener {
 				controller.getVLC().getMediaPlayer().setTime(newTime);
 			}
 		});
+		im = jsliderMovieProgress.getInputMap(JComponent.WHEN_FOCUSED);
+		im.put(KeyStroke.getKeyStroke("LEFT"), "none");
+		im.put(KeyStroke.getKeyStroke("RIGHT"), "none");
 
 		jlabelMovieTimer = new JLabel();
 		jlabelMovieTimer.setHorizontalAlignment(SwingConstants.CENTER);
@@ -1014,6 +1016,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 		jpnlIntelNorth.setLayout(new GridBagLayout());
 
 		jsliderRating = new JSlider(0, 20, 0);
+		jsliderRating.setName("RatingSlider");
 		jsliderRating.setMajorTickSpacing(1);
 		jsliderRating.setMinorTickSpacing(1);
 		jsliderRating.setPaintTicks(true);
@@ -1031,6 +1034,10 @@ public class VipFrame extends JFrame implements ComponentListener {
 				}
 			}
 		});
+
+		InputMap im = jsliderRating.getInputMap(JComponent.WHEN_FOCUSED);
+		im.put(KeyStroke.getKeyStroke("LEFT"), "none");
+		im.put(KeyStroke.getKeyStroke("RIGHT"), "none");
 
 		jlabelRating = new JLabel(Integer.toString(jsliderRating.getValue()));
 		jlabelRating.setHorizontalAlignment(SwingConstants.CENTER);
@@ -1445,11 +1452,11 @@ public class VipFrame extends JFrame implements ComponentListener {
 		int height = (int) allDevices[0].getDefaultConfiguration().getBounds().height;
 		this.setLocation(((width / 2) - (this.getWidth() / 2)), ((height / 2) - (this.getHeight() / 2)));
 	}
-	
+
 	/** ms rate on which the timeline slider is updated **/
 	private static final int UPDATE_RATE = 100;
-	
-	/** Thread that handles GUI updates**/
+
+	/** Thread that handles GUI updates **/
 	Thread t = new Thread(new Runnable() {
 		public void run() {
 			try {

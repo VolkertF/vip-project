@@ -115,7 +115,12 @@ public class MoviePanel extends JPanel {
 					}
 				}
 			}
-			g2.setColor(Color.BLACK);
+			if(vlcInstance.isVLCInstalled()){
+				g2.setColor(Color.BLACK);	
+			}else{
+				g2.setColor(Color.LIGHT_GRAY);
+			}
+
 			g2.fillRect(0, 0, this.getWidth(), this.getHeight());
 			// We draw the movie if possible
 			if (currentImage != null) {

@@ -243,7 +243,6 @@ public class OmdbRequest extends JFrame {
 		GraphicsDevice[] allDevices = env.getScreenDevices();
 		int width = (int) allDevices[0].getDefaultConfiguration().getBounds().width;
 		int height = (int) allDevices[0].getDefaultConfiguration().getBounds().height;
-		System.out.println(height + " " + width);
 		this.setLocation(((width/2) - (this.getWidth()/2)), ((height/2) - (this.getHeight()/2)));
 	}
 }

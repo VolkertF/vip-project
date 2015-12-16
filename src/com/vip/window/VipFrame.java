@@ -703,6 +703,8 @@ public class VipFrame extends JFrame implements ComponentListener {
 		}
 		jbtnPlayMovie.addActionListener(controller.getButtonParser());
 		jbtnPlayMovie.setActionCommand("jbtnToggleMoviePlayback");
+		InputMap im = jbtnPlayMovie.getInputMap(JComponent.WHEN_FOCUSED);
+		im.put(KeyStroke.getKeyStroke("SPACE"), "none");
 
 		JButton jbtnStopMovie = new JButton();
 		if (imgIconStop != null) {
@@ -713,6 +715,8 @@ public class VipFrame extends JFrame implements ComponentListener {
 		jbtnStopMovie.setToolTipText("Stops current movie playback");
 		jbtnStopMovie.addActionListener(controller.getButtonParser());
 		jbtnStopMovie.setActionCommand("jbtnStopMovie");
+		im = jbtnStopMovie.getInputMap(JComponent.WHEN_FOCUSED);
+		im.put(KeyStroke.getKeyStroke("SPACE"), "none");
 
 		JButton jbtnPreviousMovie = new JButton();
 		if (imgIconStop != null) {
@@ -723,6 +727,8 @@ public class VipFrame extends JFrame implements ComponentListener {
 		jbtnPreviousMovie.setToolTipText("Jumps to the previous movie item in the list");
 		jbtnPreviousMovie.addActionListener(controller.getButtonParser());
 		jbtnPreviousMovie.setActionCommand("jbtnPreviousMovie");
+		im = jbtnPreviousMovie.getInputMap(JComponent.WHEN_FOCUSED);
+		im.put(KeyStroke.getKeyStroke("SPACE"), "none");
 
 		JButton jbtnNextMovie = new JButton();
 		if (imgIconNextMovie != null) {
@@ -733,6 +739,8 @@ public class VipFrame extends JFrame implements ComponentListener {
 		jbtnNextMovie.setToolTipText("Jumps to the next movie item in the list");
 		jbtnNextMovie.addActionListener(controller.getButtonParser());
 		jbtnNextMovie.setActionCommand("jbtnNextMovie");
+		im = jbtnNextMovie.getInputMap(JComponent.WHEN_FOCUSED);
+		im.put(KeyStroke.getKeyStroke("SPACE"), "none");
 
 		JButton jbtnPreviousChapter = new JButton();
 		if (imgIconPreviousChapter != null) {
@@ -744,6 +752,8 @@ public class VipFrame extends JFrame implements ComponentListener {
 		        "<html>Jumps to the previous chapter of the currently playing movie,<br> if it exits. otherwise it will jump back in the movie a few percent of total time</html>");
 		jbtnPreviousChapter.addActionListener(controller.getButtonParser());
 		jbtnPreviousChapter.setActionCommand("jbtnPreviousChapter");
+		im = jbtnPreviousChapter.getInputMap(JComponent.WHEN_FOCUSED);
+		im.put(KeyStroke.getKeyStroke("SPACE"), "none");
 
 		JButton jbtnNextChapter = new JButton();
 		if (imgIconNextChapter != null) {
@@ -755,6 +765,8 @@ public class VipFrame extends JFrame implements ComponentListener {
 		        "<html>Jumps to the next chapter of the currently playing movie,<br> if it exits. otherwise it will jump forward in the movie a few percent of total time</html>");
 		jbtnNextChapter.addActionListener(controller.getButtonParser());
 		jbtnNextChapter.setActionCommand("jbtnNextChapter");
+		im = jbtnNextChapter.getInputMap(JComponent.WHEN_FOCUSED);
+		im.put(KeyStroke.getKeyStroke("SPACE"), "none");
 
 		jbtnVolume = new JButton(Integer.toString(((VLC.getMinVolume() + VLC.getMaxVolume()) / 2)) + "%");
 		if (imgIconVolumeMedium != null) {
@@ -771,6 +783,8 @@ public class VipFrame extends JFrame implements ComponentListener {
 			}
 		});
 		jbtnVolume.setActionCommand("jbtnVolume");
+		im = jbtnVolume.getInputMap(JComponent.WHEN_FOCUSED);
+		im.put(KeyStroke.getKeyStroke("SPACE"), "none");
 
 		jsliderVolume = new JSlider(JSlider.HORIZONTAL, VLC.getMinVolume(), VLC.getMaxVolume(),
 		        ((VLC.getMinVolume() + VLC.getMaxVolume()) / 2));
@@ -784,9 +798,10 @@ public class VipFrame extends JFrame implements ComponentListener {
 				controller.getVLC().setVolume(newVolume);
 			}
 		});
-		InputMap im = jsliderVolume.getInputMap(JComponent.WHEN_FOCUSED);
+		im = jsliderVolume.getInputMap(JComponent.WHEN_FOCUSED);
 		im.put(KeyStroke.getKeyStroke("LEFT"), "none");
 		im.put(KeyStroke.getKeyStroke("RIGHT"), "none");
+		im.put(KeyStroke.getKeyStroke("SPACE"), "none");
 
 		JButton jbtnFullscreen = new JButton();
 		if (imgIconFullscreen != null) {
@@ -797,6 +812,8 @@ public class VipFrame extends JFrame implements ComponentListener {
 		jbtnFullscreen.setToolTipText("Sets display mode to fullscreen");
 		jbtnFullscreen.addActionListener(controller.getButtonParser());
 		jbtnFullscreen.setActionCommand("jbtnFullscreen");
+		im = jbtnFullscreen.getInputMap(JComponent.WHEN_FOCUSED);
+		im.put(KeyStroke.getKeyStroke("SPACE"), "none");
 
 		jsliderMovieProgress = new JSlider(0, 100, 0);
 		jsliderMovieProgress.setMajorTickSpacing(5);
@@ -813,6 +830,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 		im = jsliderMovieProgress.getInputMap(JComponent.WHEN_FOCUSED);
 		im.put(KeyStroke.getKeyStroke("LEFT"), "none");
 		im.put(KeyStroke.getKeyStroke("RIGHT"), "none");
+		im.put(KeyStroke.getKeyStroke("SPACE"), "none");
 
 		jlabelMovieTimer = new JLabel();
 		jlabelMovieTimer.setHorizontalAlignment(SwingConstants.CENTER);

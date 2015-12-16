@@ -99,8 +99,8 @@ public class SearchSortController {
 	 * 
 	 */
 	public void deleteMovieFromList(Video vid) {
-		movies.remove((Video) vid);
-		defaultJList.removeElement((Video) vid);
+		movies.remove(vid);
+		defaultJList.removeElement(vid);
 	}
 
 	/**

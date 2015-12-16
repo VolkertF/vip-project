@@ -3,9 +3,11 @@ package com.vip.input;
 import java.awt.KeyEventDispatcher;
 import java.awt.event.KeyEvent;
 
+import javax.swing.JList;
 import javax.swing.JTextField;
 
 import com.vip.controllers.Controller;
+import com.vip.controllers.SearchSortController;
 import com.vip.media.VLC;
 
 /**
@@ -57,6 +59,7 @@ public class KeyParser implements KeyEventDispatcher {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent ke) {
 		int keyState = ke.getID();
@@ -65,10 +68,21 @@ public class KeyParser implements KeyEventDispatcher {
 		// When no textfield is focused and the key is pressed, input will be
 		// processed
 		if (keyState == isReleased && !(ke.getSource() instanceof JTextField)) {
+			if (ke.getSource() instanceof JList) {
+				JList list = (JList) ke.getSource();
+				if (list.getName().equals("FileList")) {
+					int index = controller.getFrame().getFileList().getSelectedIndex();
+					if (index >= 0) {
+						controller.updateIntel(SearchSortController.getInstance().getVideoByIndex(index));
+						if(currentKey == KeyEvent.VK_ENTER){
+							controller.setToListItem(index);
+						}
+					}
+				}
+			}
 			VLC vlc = controller.getVLC();
 			if (controller.isFullscreen()) {
 				controller.getFullscreen().getSurface().setDrawOverlay(true);
-				controller.getFullscreen().getSurface().setDisplayStates(true, true, false, false);
 			}
 			if (currentKey == shortcutList[TOGGLE_PLAYBACK]) {
 				if (isValidInput(ke, TOGGLE_PLAYBACK))
@@ -85,7 +99,6 @@ public class KeyParser implements KeyEventDispatcher {
 			if (currentKey == shortcutList[VOLUME_UP]) {
 				if (isValidInput(ke, VOLUME_UP)) {
 					if (controller.isFullscreen()) {
-						controller.getFullscreen().getSurface().setDisplayStates(true, false, false, false);
 					}
 					vlc.setVolume(vlc.getVolume() + vlc.getVolumeSteps());
 				}
@@ -93,7 +106,6 @@ public class KeyParser implements KeyEventDispatcher {
 			if (currentKey == shortcutList[VOLUME_DOWN]) {
 				if (isValidInput(ke, VOLUME_DOWN)) {
 					if (controller.isFullscreen()) {
-						controller.getFullscreen().getSurface().setDisplayStates(true, false, false, false);
 					}
 					vlc.setVolume(vlc.getVolume() - vlc.getVolumeSteps());
 				}

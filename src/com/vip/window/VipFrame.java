@@ -17,6 +17,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -32,8 +34,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -50,6 +55,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -111,6 +117,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 		requestFocus();
 		setVisible(true);
 		controller.getVLC().switchSurface(mainMoviePanel, false);
+		t.start();
 	}
 
 	/** Indicates the default delay after firing a resizing event in ms **/
@@ -434,6 +441,16 @@ public class VipFrame extends JFrame implements ComponentListener {
 		addComponent(1, 1, 1, 1, 0.65, 0.3, jpnlMain, jpnlIntel, defaultInsets);
 	}
 
+	JScrollPane scrollPane;
+	
+	public JScrollPane getScrollPane() {
+		return scrollPane;
+	}
+
+	public void setScrollPane(JScrollPane scrollPane) {
+		this.scrollPane = scrollPane;
+	}
+
 	/**
 	 * Create Sub-sub-panels in the explorer panel
 	 */
@@ -443,8 +460,17 @@ public class VipFrame extends JFrame implements ComponentListener {
 		SearchSortController.getInstance().setController(controller);
 		jlstFileList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jlstFileList.setSelectedIndex(0);
+		jlstFileList.setName("FileList");
 		JTextArea jtaScrollPaneText = new JTextArea(20, 1);
-		JScrollPane scrollPane = new JScrollPane(jtaScrollPaneText);
+		scrollPane = new JScrollPane(jtaScrollPaneText);
+		
+        InputMap im = scrollPane.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        im.put(KeyStroke.getKeyStroke("UP"), "none");
+        im.put(KeyStroke.getKeyStroke("DOWN"), "none");
+        im.put(KeyStroke.getKeyStroke("LEFT"), "none");
+        im.put(KeyStroke.getKeyStroke("RIGHT"), "none");
+		
+		
 		scrollPane.getViewport().setView(jlstFileList);
 		jlstFileList.revalidate();
 
@@ -841,10 +867,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 	public void updateGUI() {
 		if (!controller.isFullscreen()) {
 			VLC vlcInstance = controller.getVLC();
-			if (jlstFileList.getSelectedIndex() >= 0) {
-				controller.updateIntel(
-				        SearchSortController.getInstance().getVideoByIndex(jlstFileList.getSelectedIndex()));
-			}
+
 			updateRatingIndicators();
 
 			if (vlcInstance.isVLCInstalled() && vlcInstance.getMediaPlayer() != null
@@ -1054,8 +1077,10 @@ public class VipFrame extends JFrame implements ComponentListener {
 		                            + "\" from this list?",
 		                    "Warning", JOptionPane.YES_NO_OPTION);
 					if (dialogButton == JOptionPane.YES_OPTION) {
+						int newIndex = jlstFileList.getSelectedIndex();
 						SearchSortController.getInstance().deleteMovieFromList(
 		                        SearchSortController.getInstance().getVideoByIndex(jlstFileList.getSelectedIndex()));
+						controller.setToListItem(newIndex);
 					} else if (dialogButton == JOptionPane.NO_OPTION) {
 					}
 				}
@@ -1186,13 +1211,12 @@ public class VipFrame extends JFrame implements ComponentListener {
 				System.exit(0);
 			}
 		});
-		
+
 		jmiTutorial.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String tutorial = "<html>This is a tutorial for using VIP: The Video Information Program.<br><p>1. You can add your own video files or even whole directories<br>by using the 'Add File' and 'Add Directory' MenuItems,<br>that can be found in the menuBar</p><p>2. You can play a movie from the list by performing a double click<br>on the movie in the list, or selecting the movie and press play<br>under the video panel.</p><p>3. You can fetch information to every single video in your list.<br>Just select the video you want to add information to and press<br>the fetch button. Now you can enter a search key to simply<br>search in the imdb. Next you have to select one of the shown results,<br>and all information will be added automatically.</p><p>4. You can close your program everytime you want. After you<br>re-open it again, the program will restore all the movies in the list.</p><br><br>Have fun and enjoy the program!</html>";
-				JOptionPane.showMessageDialog(null, tutorial, "Quick Tutorial",
-						JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, tutorial, "Quick Tutorial", JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
 
@@ -1410,7 +1434,7 @@ public class VipFrame extends JFrame implements ComponentListener {
 		}
 		return "";
 	}
-	
+
 	/**
 	 * Helping method for showing the Frame in the middle of every screen.
 	 */
@@ -1419,7 +1443,25 @@ public class VipFrame extends JFrame implements ComponentListener {
 		GraphicsDevice[] allDevices = env.getScreenDevices();
 		int width = (int) allDevices[0].getDefaultConfiguration().getBounds().width;
 		int height = (int) allDevices[0].getDefaultConfiguration().getBounds().height;
-		System.out.println(height + " " + width);
-		this.setLocation(((width/2) - (this.getWidth()/2)), ((height/2) - (this.getHeight()/2)));
+		this.setLocation(((width / 2) - (this.getWidth() / 2)), ((height / 2) - (this.getHeight() / 2)));
 	}
+	
+	/** ms rate on which the timeline slider is updated **/
+	private static final int UPDATE_RATE = 100;
+	
+	/** Thread that handles GUI updates**/
+	Thread t = new Thread(new Runnable() {
+		public void run() {
+			try {
+				while (true) {
+					Thread.sleep(UPDATE_RATE);
+					updateGUI();
+				}
+			} catch (InterruptedException e) {
+				// TODO Restart Thread, maybe outsource code snippet into
+	            // new method
+				e.printStackTrace();
+			}
+		}
+	});
 }

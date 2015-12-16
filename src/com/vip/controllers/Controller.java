@@ -279,6 +279,9 @@ public class Controller {
 		case "NUM_MINUS":
 			keyParser.getShortcutArray()[index] = KeyEvent.VK_SUBTRACT;
 			break;
+		case "ENTER":
+			keyParser.getShortcutArray()[index] = -1;
+			break;
 		default:
 			keyParser.getShortcutArray()[index] = KeyEvent.getExtendedKeyCodeForChar(information.charAt(0));
 			break;
@@ -382,14 +385,27 @@ public class Controller {
 	 * @param videoInstance
 	 *            the video which's intel should be displayed
 	 */
-	public void updateIntel(Video videoInstance) {
+	public synchronized void updateIntel(Video videoInstance) {
 		vipFrame.updateRatingIndicators();
 		JTextArea jtaMediaInfo = vipFrame.getIntelTextArea();
+		// If no information displayed yet: display
 		if (jtaMediaInfo.getText().isEmpty()) {
-			jtaMediaInfo.setText(videoInstance.toStringFull());
-		} else if (!jtaMediaInfo.getText().contains(SearchSortController.getInstance()
-		        .getVideoByIndex(vipFrame.getFileList().getSelectedIndex()).getFilePath())) {
-			jtaMediaInfo.setText(videoInstance.toStringFull());
+			if (videoInstance != null) {
+				jtaMediaInfo.setText(videoInstance.toStringFull());
+			} else {
+				jtaMediaInfo.setText("");
+			}
+			jtaMediaInfo.setCaretPosition(0);
+			// If information displayed: check if new information
+		} else if (videoInstance != null) {
+			if (!jtaMediaInfo.getText().contains(videoInstance.getFilePath())) {
+				jtaMediaInfo.setText(videoInstance.toStringFull());
+				jtaMediaInfo.setCaretPosition(0);
+			}
+			// If new inormation not existant: empty information
+		} else {
+			jtaMediaInfo.setText("");
+			jtaMediaInfo.setCaretPosition(0);
 		}
 
 	}
@@ -456,10 +472,12 @@ public class Controller {
 			newIndex = (jlstFileList.getModel().getSize() - 1);
 			jlstFileList.setSelectedIndex(newIndex);
 		}
-		jlstFileList.setSelectedIndex(newIndex);
-		Video videoInstance = com.vip.controllers.SearchSortController.getInstance().getVideoByIndex(newIndex);
-		updateIntel(videoInstance);
-		vlcInstance.switchMediaFile(videoInstance);
+		if (jlstFileList.getModel().getSize() > 1) {
+			jlstFileList.setSelectedIndex(newIndex);
+			Video videoInstance = com.vip.controllers.SearchSortController.getInstance().getVideoByIndex(newIndex);
+			updateIntel(videoInstance);
+			vlcInstance.switchMediaFile(videoInstance);
+		}
 	}
 
 	/**
@@ -475,9 +493,27 @@ public class Controller {
 		if (newIndex >= (jlstFileList.getModel().getSize())) {
 			newIndex = 0;
 		}
-		jlstFileList.setSelectedIndex(newIndex);
-		Video videoInstance = com.vip.controllers.SearchSortController.getInstance().getVideoByIndex(newIndex);
-		updateIntel(videoInstance);
-		vlcInstance.switchMediaFile(videoInstance);
+		if (jlstFileList.getModel().getSize() > 1) {
+			jlstFileList.setSelectedIndex(newIndex);
+			Video videoInstance = com.vip.controllers.SearchSortController.getInstance().getVideoByIndex(newIndex);
+			updateIntel(videoInstance);
+			vlcInstance.switchMediaFile(videoInstance);
+		}
+	}
+
+	public void setToListItem(int index) {
+		JList<Video> jlstFileList = vipFrame.getFileList();
+		int size = jlstFileList.getModel().getSize();
+		if (index >= size) {
+			index = 0;
+		}
+		if (size >= 1) {
+			jlstFileList.setSelectedIndex(index);
+			Video videoInstance = com.vip.controllers.SearchSortController.getInstance().getVideoByIndex(index);
+			updateIntel(videoInstance);
+			vlcInstance.switchMediaFile(videoInstance);
+		} else {
+			vlcInstance.stopMedia();
+		}
 	}
 }

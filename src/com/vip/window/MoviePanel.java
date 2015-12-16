@@ -53,13 +53,13 @@ public class MoviePanel extends JPanel {
 	/** Indicates wether or not the overlay should be drawn **/
 	private boolean shouldDrawOverlay = false;
 	/** Indicates wether or not the volume level should be drawn **/
-	private boolean drawVolume = false;
+	private boolean drawVolume = true;
 	/** Indicates wether or not the current movie time should be drawn **/
-	private boolean drawTime = false;
+	private boolean drawTime = true;
 	/** Indicates wether or not the average FPS should be drawn **/
 	private boolean drawFps = false;
 	/** Indicates wether or not the movie's title should be drawn **/
-	private boolean drawTitle = false;
+	private boolean drawTitle = true;
 	/** Indicates wether or not this panel is active **/
 	private boolean isActive = false;
 

@@ -200,9 +200,13 @@ public class VLC {
 	 */
 	public void switchMediaFile(Video videoInstance) {
 		stopMedia();
-		loadMedia(videoInstance);
-		playMedia();
 		currentVideo = videoInstance;
+		if(currentVideo == null){
+			switchSurface(currentPanel, false);
+		}else{
+			loadMedia(videoInstance);
+			playMedia();
+		}
 	}
 
 	/**

@@ -1188,7 +1188,8 @@ public class VipFrame extends JFrame implements ComponentListener {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String tutorial = "<html>This is a tutorial for using VIP: The Video Information Program.<br><p>1. You can add your own video files or even whole directories<br>by using the 'Add File' and 'Add Directory' MenuItems,<br>that can be found in the menuBar</p><p>2. You can play a movie from the list by performing a double click<br>on the movie in the list, or selecting the movie and press play<br>under the video panel.</p><p>3. You can fetch information to every single video in your list.<br>Just select the video you want to add information to and press<br>the fetch button. Now you can enter a search key to simply<br>search in the imdb. Next you have to select one of the shown results,<br>and all information will be added automatically.</p><p>4. You can close your program everytime you want. After you<br>re-open it again, the program will restore all the movies in the list.</p><br><br>Have fun and enjoy the program!</html>";
-				JOptionPane.showMessageDialog(null, tutorial, "Quick Tutorial", JOptionPane.INFORMATION_MESSAGE);				
+				JOptionPane.showMessageDialog(null, tutorial, "Quick Tutorial",
+						JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
 

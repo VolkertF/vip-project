@@ -157,18 +157,18 @@ public class Controller {
 		pw.println(SHORTCUT_ENTRY_POINT);
 		pw.println(
 		        "//Do NOT change order of items\n//It would kill an innocent kitten\n//You though might change the shortcuts with valid keys and modifiers (CTRL, SHIFT)");
-		pw.println("TOGGLE_PLAYBACK=CTRL SPACE");
-		pw.println("NEXT_MOVIE=CTRL N");
-		pw.println("PREVIOUS_MOVIE=CTRL B");
-		pw.println("NEXT_CHAPTER=CTRL SHIFT N");
-		pw.println("PREVIOUS_CHAPTER=CTRL P");
+		pw.println("TOGGLE_PLAYBACK=SPACE");
+		pw.println("NEXT_MOVIE=N");
+		pw.println("PREVIOUS_MOVIE=B");
+		pw.println("NEXT_CHAPTER=N");
+		pw.println("PREVIOUS_CHAPTER=P");
 		pw.println("JUMP_FORWARD=CTRL J");
 		pw.println("JUMP_BACKWARD=CTRL H");
-		pw.println("MUTE_VOLUME=CTRL M");
+		pw.println("MUTE_VOLUME=M");
 		pw.println("VOLUME_UP=NUM_PLUS");
 		pw.println("VOLUME_DOWN=NUM_MINUS");
 		pw.println("OPEN_PREFERENCES=CTRL P");
-		pw.println("FULLSCREEN_TOGGLE=SHIFT F");
+		pw.println("FULLSCREEN_TOGGLE=F");
 		pw.println("SEARCH=CTRL F");
 		pw.println();
 
